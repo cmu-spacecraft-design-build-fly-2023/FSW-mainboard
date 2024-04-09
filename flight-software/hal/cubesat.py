@@ -62,10 +62,8 @@ class CubeSat:
         self._jetson_monitor = None
         self._imu = None
         self._charger = None
-        self._torque_xp = None
-        self._torque_xm = None
-        self._torque_yp = None
-        self._torque_ym = None
+        self._torque_x = None
+        self._torque_y = None
         self._torque_z = None
         self._sun_sensor_xp = None
         self._sun_sensor_xm = None
@@ -179,32 +177,18 @@ class CubeSat:
         return self._charger
     
     @property
-    def TORQUE_XP(self):
-        """TORQUE_XP: Returns the torque driver in the x+ direction
+    def TORQUE_X(self):
+        """TORQUE_X: Returns the torque driver in the x direction
         :return: object or None
         """
-        return self._torque_xp
-    
-    @property
-    def TORQUE_XM(self):
-        """TORQUE_XM: Returns the torque driver in the x- direction
-        :return: object or None
-        """
-        return self._torque_xm
+        return self._torque_x
     
     @property
     def TORQUE_YP(self):
-        """TORQUE_YP: Returns the torque driver in the y+ direction
+        """TORQUE_Y: Returns the torque driver in the y direction
         :return: object or None
         """
-        return self._torque_yp
-    
-    @property
-    def TORQUE_YM(self):
-        """TORQUE_YM: Returns the torque driver in the y- direction
-        :return: object or None
-        """
-        return self._torque_ym
+        return self._torque_y
     
     @property
     def TORQUE_Z(self):
