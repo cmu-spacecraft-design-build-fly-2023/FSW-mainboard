@@ -18,7 +18,8 @@ DH.delete_all_files()
 
 try:
     # Run forever
-    state_manager.start("STARTUP")
+    # state_manager.start("STARTUP")
+    import comms_test
     # import obdh_sd_test
     pass
 except Exception as e:
