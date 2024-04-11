@@ -209,7 +209,7 @@ class PyCubed:
         # Initialize radio #1 - UHF
         try:
             self.radio1 = rfm9x.RFM9x(
-                self.spi, _rf_cs1, _rf_rst1, 433.0, code_rate=8, baudrate=1320000
+                self.spi, _rf_cs1, _rf_rst1, 915.6, code_rate=8, baudrate=1320000
             )
             # Default LoRa Modulation Settings
             # Frequency: 433 MHz, SF7, BW125kHz, CR4/8, Preamble=8, CRC=True
