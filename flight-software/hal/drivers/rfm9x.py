@@ -10,7 +10,7 @@ CircuitPython Version: 7.0.0 alpha
 Library Repo: https://github.com/pycubed/library_pycubed.py
 * Edits by: Max Holliday
 """
-import time
+import time, math
 from random import random
 import digitalio
 from micropython import const
@@ -1085,3 +1085,26 @@ class RFM9x(Diagnostics):
         # Clear interrupt.
         self._write_u8(_RH_RF95_REG_12_IRQ_FLAGS, 0xFF)
         return
+    
+######################### DIAGNOSTICS #########################
+    def _read_frequency(self) -> bool:
+        frequency = self._device.frequency_mhz()
+        if math.isclose(frequency, 433, abs_tol = 1) or math.isclose(frequency, 915, abs_tol = 1):
+            return True
+        else:
+            return False
+
+
+    def run_diagnostics(self) -> list[int] | None:
+        """run_diagnostic_test: Run all tests for the component
+        """
+        error_list: list[int] = []
+
+        error_list.append(self._read_frequency())
+
+        error_list = list(set(error_list))
+
+        if not Diagnostics.NOERROR in error_list:
+            self.errors_present = True
+
+        return error_list

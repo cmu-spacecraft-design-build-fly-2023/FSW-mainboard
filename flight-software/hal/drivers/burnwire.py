@@ -136,6 +136,23 @@ class BurnWires(Diagnostics):
         Get the current duration in seconds for burning.
         """
         return self.__burn_duration
+    
+    def __turn_off_all_burns(self) -> None:
+        """__turn_off_all_burns: turns off all the burn wires
+        """
+        self.__burn_xp.duty_cycle = self.DUTY_CYCLE_OFF
+        self.__burn_xm.duty_cycle = self.DUTY_CYCLE_OFF
+        self.__burn_yp.duty_cycle = self.DUTY_CYCLE_OFF
+        self.__burn_ym.duty_cycle = self.DUTY_CYCLE_OFF
+    
+    def reset(self):
+        """reset: Turns off an on the relay to turn off an on the burn wires.
+
+        Turns off all burn wire duty cycles to be safe.
+        """
+        self.disable()
+        self.__turn_off_all_burns(self)
+        self.enable()
 
     def enable(self):
         """

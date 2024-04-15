@@ -10,13 +10,13 @@ ARGUS_V1 = const(1)
 HARDWARE_VERSION = ARGUS_V1
 
 # Enable for Middleware
-EnableMiddleware = True
+EN_MIDDLEWARE = False
 
 SATELLITE: CubeSat = None
 
 if HARDWARE_VERSION == PYCUBED_V05:
     SATELLITE = None
 elif HARDWARE_VERSION == ARGUS_V1:
-    SATELLITE = ArgusV1()
+    SATELLITE = ArgusV1(EN_MIDDLEWARE)
 else:
     raise ValueError(f"Invalid hardware version {HARDWARE_VERSION}")

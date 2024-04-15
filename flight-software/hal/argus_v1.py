@@ -126,6 +126,8 @@ class ArgusV1(CubeSat):
         """
         error_list: list[int] = []
 
+        self.__state_flags_boot() # Does not require error checking
+
         error_list.append(self.__rtc_boot())
         error_list.append(self.__gps_boot())
         error_list.append(self.__battery_power_monitor_boot())
@@ -146,6 +148,7 @@ class ArgusV1(CubeSat):
         error_list.append(self.__radio_boot())
         error_list.append(self.__neopixel_boot())
         error_list.append(self.__sd_card_boot())
+        error_list.append(self._burn_wire_boot())
 
         error_list = [error for error in error_list if error != Diagnostics.NOERROR]
 
@@ -153,6 +156,11 @@ class ArgusV1(CubeSat):
 
         return error_list
 
+    def __state_flags_boot(self) -> None:
+        """state_flags_boot: Boot sequence for the state flags
+        """
+        self._state_flags = StateFlags()
+    
     def __gps_boot(self) -> int:
         """GPS_boot: Boot sequence for the GPS
 
