@@ -6,8 +6,8 @@ frequency           = 1000
 
 # Create a burn wires object
 burn_wires = BurnWires(
-    enable_pin=ArgusV1Components.BURN_WIRES_ENABLE,
-    burn_xp=ArgusV1Components.BURN_WIRES_XP,
+    enable_pin=ArgusV1Components.BURN_WIRE_ENABLE,
+    burn_xp=ArgusV1Components.BURN_WIRE_XP,
     burn_xm=ArgusV1Components.BURN_WIRES_XM,
     burn_yp=ArgusV1Components.BURN_WIRES_YP,
     burn_ym=ArgusV1Components.BURN_WIRES_YM,
