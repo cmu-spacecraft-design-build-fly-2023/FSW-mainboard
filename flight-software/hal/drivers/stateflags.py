@@ -8,13 +8,13 @@ a particular event has occurred.
 Author: Harry Rosmann
 
 """
-from bitflags import bitFlag, multiBitFlag
+from .bitflags import bitFlag, multiBitFlag
 from micropython import const
 
 class StateFlags:
     """StateFlags: Class for managing flags and counters in the NVM.
     """
-    def __init__():
+    def __init__(self):
         pass
 
     # TODO: Update to reflect desired design

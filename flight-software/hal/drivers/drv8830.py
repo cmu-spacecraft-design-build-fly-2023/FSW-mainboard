@@ -123,7 +123,7 @@ class DRV8830(Diagnostics):
         self._vset = 0x00
         self._in_x = BridgeControl.STANDBY
         # Clear all fault status flags
-        self._clear = True
+        self.clear_faults()
 
         super().__init__()
 
@@ -304,13 +304,11 @@ class DRV8830(Diagnostics):
         :return: true if test passes, false if fails
         """
         throttle_volts_val = self.throttle_volts
-        print(throttle_volts_val)
         if throttle_volts_val is not None:
             if (throttle_volts_val < -5.06) or (throttle_volts_val > 5.06):
                 return Diagnostics.DRV8830_THROTTLE_OUTSIDE_RANGE
             
         throttle_raw_val = self.throttle_volts
-        print(throttle_raw_val)
         if throttle_raw_val is not None:
             if (throttle_raw_val < -63) or (throttle_raw_val > 63):
                 return Diagnostics.DRV8830_THROTTLE_OUTSIDE_RANGE

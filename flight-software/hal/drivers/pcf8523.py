@@ -170,8 +170,8 @@ class PCF8523(Diagnostics):
         with self.i2c_device as i2c:
             i2c.write_then_readinto(buf, buf, out_end=1, in_start=1)
 
-        if (buf[1] & 0b00000111) != 0b00000111:
-            raise ValueError("Unable to find PCF8523 at i2c address 0x68.")
+        # if (buf[1] & 0b00000111) != 0b00000111:
+        #     raise ValueError("Unable to find PCF8523 at i2c address 0x68.")
         
         super().__init__()
 

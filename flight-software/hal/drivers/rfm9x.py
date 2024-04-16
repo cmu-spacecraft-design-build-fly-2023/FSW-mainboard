@@ -231,6 +231,8 @@ class RFM9x(Diagnostics):
         self,
         spi,
         cs,
+        dio0,
+        rst,
         enable,
         frequency,
         *,
@@ -242,23 +244,33 @@ class RFM9x(Diagnostics):
     ):
         self.high_power = high_power
         self.max_output=max_output
+
+        self.dio0 = digitalio.DigitalInOut(dio0)
+        self.dio0.switch_to_input()
         self.dio0=False
+
+        self.__cs = digitalio.DigitalInOut(cs)
+        self.__cs.switch_to_output(value=True)
+
+        self.__enable = digitalio.DigitalInOut(enable)
+        self.__enable.switch_to_output(value=True)
+
         # Device support SPI mode 0 (polarity & phase = 0) up to a max of 10mhz.
         # Set Default Baudrate to 5MHz to avoid problems
-        self._device = spidev.SPIDevice(spi, cs, baudrate=baudrate, polarity=0, phase=0)
+        self._device = spidev.SPIDevice(spi, self.__cs, baudrate=baudrate, polarity=0, phase=0)
         # Setup reset as a digital input (default state for reset line according
         # to the datasheet).  This line is pulled low as an output quickly to
         # trigger a reset.  Note that reset MUST be done like this and set as
         # a high impedence input or else the chip cannot change modes (trust me!).
-        self._enable = enable
-        self._enable.switch_to_input(pull=digitalio.Pull.UP)
+        self._rst = digitalio.DigitalInOut(rst)
+        self._rst.switch_to_input(pull=digitalio.Pull.UP)
         self.reset()
         # No device type check!  Catch an error from the very first request and
         # throw a nicer message to indicate possible wiring problems.
         version = self._read_u8(_RH_RF95_REG_42_VERSION)
         if version != 18:
             raise RuntimeError(
-                "Failed to find rfm9x with expected version -- check wiring"
+                f"Failed to find rfm9x with expected version -- check wiring. Found {version}"
             )
 
         # Set sleep mode, wait 10ms and confirm in sleep mode (basic device check).
@@ -356,7 +368,12 @@ class RFM9x(Diagnostics):
         self.pa_ramp=0   # mode agnostic
         self.lna_boost=3 # mode agnostic
 
-        super().__init__(self._enable)
+        self.enable_crc = True
+        self.ack_delay = 0.2
+
+        super().__init__(self.__enable)
+
+        self.sleep()
 
     def cw(self,msg=None):
         success=False
@@ -459,17 +476,17 @@ class RFM9x(Diagnostics):
             device.write(self._BUFFER, end=2)
 
     def enable(self):
-        self._enable.switch_to_input(pull=digitalio.Pull.UP)
+        self.__enable.value = True
 
     def disable(self):
-        self._enable.switch_to_output(value=False)
+        self.__enable.value = False
 
     def reset(self):
         """Perform a reset of the chip."""
         # See section 7.2.2 of the datasheet for reset description.
-        self.disable()
+        self._rst.switch_to_output(value=False)
         time.sleep(0.0001)  # 100 us
-        self.enable()
+        self._rst.switch_to_input(pull=digitalio.Pull.UP)
         time.sleep(0.005)  # 5 ms
 
     def idle(self):

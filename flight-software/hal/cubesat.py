@@ -6,16 +6,8 @@ from micropython import const
 from hal.drivers.diagnostics.diagnostics import Diagnostics
 
 class CubeSat:
-    instance = None
-
-    def __new__(cls):
-        """
-        Override to ensure this class has only one instance.
-        """
-        if not cls.instance:
-            cls.instance = object.__new__(cls)
-            cls.instance = super(CubeSat, cls).__new__(cls)
-        return cls.instance
+    """CubeSat: Base class for all CubeSat implementations
+    """
 
     def __init__(self):
         # List of successfully initialized devices
