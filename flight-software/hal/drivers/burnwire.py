@@ -63,7 +63,7 @@ class BurnWires(Diagnostics):
         self.__burn_yp = self.__configure_burn_pin(burn_yp)
         self.__burn_ym = self.__configure_burn_pin(burn_ym)
 
-        super().__init__()
+        super().__init__(self.__enable)
 
     @property
     def frequency_hz(self):
@@ -73,7 +73,7 @@ class BurnWires(Diagnostics):
         return self.__pwm_frequency
     
     @frequency_hz.setter
-    def frequency(self, frequency_hz):
+    def frequency_hz(self, frequency_hz):
         """
         Set the frequency in Hz for the PWM signal.
 
@@ -83,7 +83,7 @@ class BurnWires(Diagnostics):
         self.__pwm_frequency = frequency_hz
     
     @frequency_hz.getter
-    def frequency(self):
+    def frequency_hz(self):
         """
         Get the current frequency in Hz for the PWM signal.
         """
@@ -97,7 +97,7 @@ class BurnWires(Diagnostics):
         return self.__duty_cycle
     
     @duty_cycle_pct.setter
-    def duty_cycle(self, duty_cycle_pct):
+    def duty_cycle_pct(self, duty_cycle_pct):
         """
         Set the duty cycle percentage for the PWM signal.
 
@@ -121,7 +121,7 @@ class BurnWires(Diagnostics):
         return self.__burn_duration
     
     @duration_s.setter
-    def duration(self, duration_s):
+    def duration_s(self, duration_s):
         """
         Set the duration in seconds for burning.
 
@@ -131,11 +131,28 @@ class BurnWires(Diagnostics):
         self.__burn_duration = duration_s
 
     @duration_s.getter
-    def duration(self):
+    def duration_s(self):
         """
         Get the current duration in seconds for burning.
         """
         return self.__burn_duration
+    
+    def __turn_off_all_burns(self) -> None:
+        """__turn_off_all_burns: turns off all the burn wires
+        """
+        self.__burn_xp.duty_cycle = self.DUTY_CYCLE_OFF
+        self.__burn_xm.duty_cycle = self.DUTY_CYCLE_OFF
+        self.__burn_yp.duty_cycle = self.DUTY_CYCLE_OFF
+        self.__burn_ym.duty_cycle = self.DUTY_CYCLE_OFF
+    
+    def reset(self):
+        """reset: Turns off an on the relay to turn off an on the burn wires.
+
+        Turns off all burn wire duty cycles to be safe.
+        """
+        self.disable()
+        self.__turn_off_all_burns(self)
+        self.enable()
 
     def enable(self):
         """
@@ -177,7 +194,7 @@ class BurnWires(Diagnostics):
             The configured burn pin.
         """
         # Set the duty cycle to 0 so it doesn't start burning
-        burn_wire = pwmio.PWMOut(burn_pin, frequency=self.frequency, duty_cycle=self.DUTY_CYCLE_OFF)
+        burn_wire = pwmio.PWMOut(burn_pin, frequency=self.frequency_hz, duty_cycle=self.DUTY_CYCLE_OFF)
 
         return burn_wire
     
@@ -188,9 +205,9 @@ class BurnWires(Diagnostics):
         Args:
             burn_wire: The burn pin used for burning a wire.
         """
-        burn_wire.duty_cycle = self.duty_cycle
-        time.sleep(self.duration)
-        burn_wire.duty_cycle = self.DUTY_CYCLE_OFF
+        self.duty_cycle_pct = self.duty_cycle_pct
+        time.sleep(self.duration_s)
+        self.duty_cycle_pct = self.DUTY_CYCLE_OFF
 
     def burn_xp(self):
         """

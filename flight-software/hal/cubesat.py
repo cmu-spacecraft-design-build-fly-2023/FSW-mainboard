@@ -2,45 +2,12 @@ import board
 import time
 import digitalio
 
-from hal.bitflags import bitFlag, multiBitFlag 
 from micropython import const
 from hal.drivers.diagnostics.diagnostics import Diagnostics
 
-# NVM register numbers
-_BOOTCNT  = const(0)
-_VBUSRST  = const(6)
-_STATECNT = const(7)
-_TOUTS    = const(9)
-_GSRSP    = const(10)
-_ICHRG    = const(11)
-_FLAG     = const(16)
-
 class CubeSat:
-    # General NVM counters
-    c_boot      = multiBitFlag(register=_BOOTCNT, lowest_bit=0,num_bits=8)
-    c_vbusrst   = multiBitFlag(register=_VBUSRST, lowest_bit=0,num_bits=8)
-    c_state_err = multiBitFlag(register=_STATECNT,lowest_bit=0,num_bits=8)
-    c_gs_resp   = multiBitFlag(register=_GSRSP,   lowest_bit=0,num_bits=8)
-    c_ichrg     = multiBitFlag(register=_ICHRG,   lowest_bit=0,num_bits=8)
-
-    # Define NVM flags
-    f_lowbatt  = bitFlag(register=_FLAG,bit=0)
-    f_solar    = bitFlag(register=_FLAG,bit=1)
-    f_gpson    = bitFlag(register=_FLAG,bit=2)
-    f_lowbtout = bitFlag(register=_FLAG,bit=3)
-    f_gpsfix   = bitFlag(register=_FLAG,bit=4)
-    f_shtdwn   = bitFlag(register=_FLAG,bit=5)
-
-    instance = None
-
-    def __new__(cls):
-        """
-        Override to ensure this class has only one instance.
-        """
-        if not cls.instance:
-            cls.instance = object.__new__(cls)
-            cls.instance = super(CubeSat, cls).__new__(cls)
-        return cls.instance
+    """CubeSat: Base class for all CubeSat implementations
+    """
 
     def __init__(self):
         # List of successfully initialized devices
@@ -49,6 +16,9 @@ class CubeSat:
         # List of errors from most recent system diagnostic test
         self._recent_errors: list[int] = [Diagnostics.NOERROR]
         
+        # State flags
+        self._state_flags = None
+
         # Interfaces
         self._uart1 = None
         self._uart2 = None
@@ -109,6 +79,14 @@ class CubeSat:
         """
         self._device_list.append(device)
     
+    ######################### STATE FLAGS ########################
+    @property
+    def STATE_FLAGS(self):
+        """STATE_FLAGS: Returns the state flags object
+        :return: object or None
+        """
+        return self._state_flags
+
     ######################### INTERFACES #########################
     
     @property
