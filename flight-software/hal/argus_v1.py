@@ -10,7 +10,7 @@ import board
 import sdcardio
 
 from hal.drivers.diagnostics.diagnostics import Diagnostics
-from hal.drivers import pcf8523, rfm9x, adm1176, bq25883, opt4001, gps, bmx160, drv8830, burnwire, torque_coil
+from hal.drivers import pcf8523, rfm9x, adm1176, bq25883, opt4001, gps, bmx160, drv8830, burnwire
 from hal.drivers.middleware.middleware import *
 from hal.drivers.middleware.exceptions import *
 
@@ -132,9 +132,11 @@ class ArgusV1(CubeSat):
         error_list.append(self.__jetson_power_monitor_boot())
         error_list.append(self.__imu_boot())
         error_list.append(self.__charger_boot())
-        error_list.append(self.__torque_boot('X'))
-        error_list.append(self.__torque_boot('Y'))
-        error_list.append(self.__torque_boot('Z'))
+        error_list.append(self.__torque_xp_boot())
+        error_list.append(self.__torque_xm_boot())
+        error_list.append(self.__torque_yp_boot())
+        error_list.append(self.__torque_ym_boot())
+        error_list.append(self.__torque_z_boot())
         error_list.append(self.__sun_sensor_xp_boot())
         error_list.append(self.__sun_sensor_xm_boot())
         error_list.append(self.__sun_sensor_yp_boot())
@@ -247,19 +249,98 @@ class ArgusV1(CubeSat):
         
         return Diagnostics.NOERROR
     
-    def __torque_boot(self, panel) -> int:
-        """torque_boot: Boot sequence for the torque driver in the designated direction
+    def __torque_xp_boot(self) -> int:
+        """torque_xp_boot: Boot sequence for the torque driver in the x+ direction
 
         :return: Error code if the torque driver failed to initialize
         """
-        torque_instance = torque_coil.TorqueCoil(panel, self.__middleware_enabled)
-        torque = torque_instance.torque_boot()
-        
-        if torque == []:
+        try:
+            torque_xp = drv8830.DRV8830(ArgusV1Components.TORQUE_COILS_I2C,
+                                        ArgusV1Components.TORQUE_XP_I2C_ADDRESS)
+            
+            if self.__middleware_enabled:
+                torque_xp = Middleware(torque_xp, torque_xp_fatal_exception)
+            
+            self._torque_xp = torque_xp
+            self._device_list.append(torque_xp)
+        except Exception:
             return Diagnostics.DRV8830_NOT_INITIALIZED
         
-        self._torque = torque
-        self._device_list.extend(torque)
+        return Diagnostics.NOERROR
+    
+    def __torque_xm_boot(self) -> int:
+        """torque_xm_boot: Boot sequence for the torque driver in the x- direction
+
+        :return: Error code if the torque driver failed to initialize
+        """
+        try:
+            torque_xm = drv8830.DRV8830(ArgusV1Components.TORQUE_COILS_I2C,
+                                        ArgusV1Components.TORQUE_XM_I2C_ADDRESS)
+            
+            if self.__middleware_enabled:
+                torque_xm = Middleware(torque_xm, torque_xm_fatal_exception)
+            
+            self._torque_xm = torque_xm
+            self._device_list.append(torque_xm)
+        except Exception:
+            return Diagnostics.DRV8830_NOT_INITIALIZED
+        
+        return Diagnostics.NOERROR
+    
+    def __torque_yp_boot(self) -> int:
+        """torque_yp_boot: Boot sequence for the torque driver in the y+ direction
+
+        :return: Error code if the torque driver failed to initialize
+        """
+        try:
+            torque_yp = drv8830.DRV8830(ArgusV1Components.TORQUE_COILS_I2C,
+                                        ArgusV1Components.TORQUE_YP_I2C_ADDRESS)
+            
+            if self.__middleware_enabled:
+                torque_yp = Middleware(torque_yp, torque_yp_fatal_exception)
+            
+            self._torque_yp = torque_yp
+            self._device_list.append(torque_yp)
+        except Exception:
+            return Diagnostics.DRV8830_NOT_INITIALIZED
+        
+        return Diagnostics.NOERROR
+    
+    def __torque_ym_boot(self) -> int:
+        """torque_ym_boot: Boot sequence for the torque driver in the y- direction
+
+        :return: Error code if the torque driver failed to initialize
+        """
+        try:
+            torque_ym = drv8830.DRV8830(ArgusV1Components.TORQUE_COILS_I2C,
+                                        ArgusV1Components.TORQUE_YM_I2C_ADDRESS)
+            
+            if self.__middleware_enabled:
+                torque_ym = Middleware(torque_ym, torque_ym_fatal_exception)
+            
+            self._torque_ym = torque_ym
+            self._device_list.append(torque_ym)
+        except Exception:
+            return Diagnostics.DRV8830_NOT_INITIALIZED
+        
+        return Diagnostics.NOERROR
+    
+    def __torque_z_boot(self) -> int:
+        """torque_z_boot: Boot sequence for the torque driver in the z direction
+
+        :return: Error code if the torque driver failed to initialize
+        """
+        try:
+            torque_z = drv8830.DRV8830(ArgusV1Components.TORQUE_COILS_I2C,
+                                       ArgusV1Components.TORQUE_Z_I2C_ADDRESS)
+            
+            if self.__middleware_enabled:
+                torque_z = Middleware(torque_z, torque_z_fatal_exception)
+            
+            self._torque_z = torque_z
+            self._device_list.append(torque_z)
+        except Exception:
+            return Diagnostics.DRV8830_NOT_INITIALIZED
         
         return Diagnostics.NOERROR
     
@@ -484,14 +565,14 @@ class ArgusV1(CubeSat):
             return Diagnostics.DIAGNOSTICS_ERROR_IMU
         elif device is self.CHARGER:
             return Diagnostics.DIAGNOSTICS_ERROR_CHARGER
-        elif device is self.TORQUE_X:
-            return Diagnostics.DIAGNOSTICS_ERROR_TORQUE_X
-        # elif device is self.TORQUE_XM:
-        #     return Diagnostics.DIAGNOSTICS_ERROR_TORQUE_XM
+        elif device is self.TORQUE_XP:
+            return Diagnostics.DIAGNOSTICS_ERROR_TORQUE_XP
+        elif device is self.TORQUE_XM:
+            return Diagnostics.DIAGNOSTICS_ERROR_TORQUE_XM
         elif device is self.TORQUE_YP:
-            return Diagnostics.DIAGNOSTICS_ERROR_TORQUE_Y
-        # elif device is self.TORQUE_YM:
-        #     return Diagnostics.DIAGNOSTICS_ERROR_TORQUE_YM
+            return Diagnostics.DIAGNOSTICS_ERROR_TORQUE_YP
+        elif device is self.TORQUE_YM:
+            return Diagnostics.DIAGNOSTICS_ERROR_TORQUE_YM
         elif device is self.TORQUE_Z:
             return Diagnostics.DIAGNOSTICS_ERROR_TORQUE_Z
         elif device is self.SUN_SENSOR_XP:
