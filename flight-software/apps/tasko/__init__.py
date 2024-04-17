@@ -11,7 +11,7 @@ __global_event_loop = None
 try:
     global tasko_logging
     if tasko_logging:
-        print('Enabling tasko instrumentation')
+        print("Enabling tasko instrumentation")
 except NameError:
     # Set False by default to skip debug logging
     tasko_logging = False

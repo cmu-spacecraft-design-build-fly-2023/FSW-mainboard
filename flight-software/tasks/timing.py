@@ -10,15 +10,11 @@ from apps.data_handler import DataHandler as DH
 import time
 
 
-
 class Task(DebugTask):
 
-    name = 'TIMING'
+    name = "TIMING"
     ID = 0x01
-    
 
     async def main_task(self):
-        print(f'[{self.ID}][{self.name}] GLOBAL STATE: {SM.current_state}.')
-        print(f'[{self.ID}][{self.name}] No time distribution & handling yet.')
-        
-
+        print(f"[{self.ID}][{self.name}] GLOBAL STATE: {SM.current_state}.")
+        print(f"[{self.ID}][{self.name}] No time distribution & handling yet.")

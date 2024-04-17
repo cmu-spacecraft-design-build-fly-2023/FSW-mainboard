@@ -20,12 +20,14 @@ def _to_signed(num):
         num -= 0x10000
     return num
 
+
 DATA_V_MASK = const(0xF0)
 DATA_I_MASK = const(0x0F)
-_cmd=bytearray(1)
-_extcmd=bytearray(b'\x00\x04')
+_cmd = bytearray(1)
+_extcmd = bytearray(b"\x00\x04")
 _BUFFER = bytearray(3)
 _STATUS = bytearray(1)
+
 
 # Voltage conversions
 VI_RESOLUTION   = const(4096)
@@ -64,8 +66,8 @@ class ADM1176(Diagnostics):
     def __init__(self, i2c_bus, addr=0x4A):
         self.i2c_device = I2CDevice(i2c_bus, addr, probe=False)
         self.i2c_addr = addr
-        self.sense_resistor=1
-        self.config('V_CONT,I_CONT')
+        self.sense_resistor = 1
+        self.config("V_CONT,I_CONT")
 
         self._on = True
         self._overcurrent_level = 0xFF
@@ -122,7 +124,7 @@ class ADM1176(Diagnostics):
         _extcmd[1] &= ~CONTROL_SWOFF
         with self.i2c_device as i2c:
             i2c.write(_extcmd)
-        self.config('V_CONT,I_CONT')
+        self.config("V_CONT,I_CONT")
 
     @property
     def device_on(self) -> bool:

@@ -185,31 +185,33 @@ class OPT4001(Diagnostics):
 
     # Configuration settings
     # Locations of these bits are descirbed in page 30 and 31 of the datasheet
-    quick_wakeup            = RWBit(CONFIGURATION, 15, register_width=2, lsb_first=False)
-    lux_range               = RWBits(4, CONFIGURATION, 10, register_width=2, lsb_first=False)
-    conversion_time         = RWBits(4, CONFIGURATION, 6, register_width=2, lsb_first=False)
-    operating_mode          = RWBits(2, CONFIGURATION, 4, register_width=2, lsb_first=False)
-    latch                   = RWBit(CONFIGURATION, 3, register_width=2, lsb_first=False)
-    int_pol                 = RWBit(CONFIGURATION, 2, register_width=2, lsb_first=False)
-    fault_count             = RWBits(2, CONFIGURATION, 0, register_width=2, lsb_first=False)
+    quick_wakeup = RWBit(CONFIGURATION, 15, register_width=2, lsb_first=False)
+    lux_range = RWBits(4, CONFIGURATION, 10, register_width=2, lsb_first=False)
+    conversion_time = RWBits(4, CONFIGURATION, 6, register_width=2, lsb_first=False)
+    operating_mode = RWBits(2, CONFIGURATION, 4, register_width=2, lsb_first=False)
+    latch = RWBit(CONFIGURATION, 3, register_width=2, lsb_first=False)
+    int_pol = RWBit(CONFIGURATION, 2, register_width=2, lsb_first=False)
+    fault_count = RWBits(2, CONFIGURATION, 0, register_width=2, lsb_first=False)
 
     # flags
-    overload_flag           = ROBit(FLAGS, 3, register_width=2, lsb_first=False)
-    conversion_ready_flag   = ROBit(FLAGS, 2, register_width=2, lsb_first=False)
-    flag_h                  = ROBit(FLAGS, 1, register_width=2, lsb_first=False)
-    flag_L                  = ROBit(FLAGS, 0, register_width=2, lsb_first=False)
+    overload_flag = ROBit(FLAGS, 3, register_width=2, lsb_first=False)
+    conversion_ready_flag = ROBit(FLAGS, 2, register_width=2, lsb_first=False)
+    flag_h = ROBit(FLAGS, 1, register_width=2, lsb_first=False)
+    flag_L = ROBit(FLAGS, 0, register_width=2, lsb_first=False)
 
-    def __init__(self,
-                 i2c_bus: I2C,
-                 address: int = 0x44,
-                 package: int = 0,
-                 quick_wakeup: bool = False,
-                 lux_range: int = 0b1100,
-                 conversion_time: int = 0b1000,
-                 operating_mode: int = 0b00,
-                 latch: bool = True,
-                 int_pol: bool = False,
-                 fault_count: int = 0b00) -> "OPT4001":
+    def __init__(
+        self,
+        i2c_bus: I2C,
+        address: int = 0x44,
+        package: int = 0,
+        quick_wakeup: bool = False,
+        lux_range: int = 0b1100,
+        conversion_time: int = 0b1000,
+        operating_mode: int = 0b00,
+        latch: bool = True,
+        int_pol: bool = False,
+        fault_count: int = 0b00,
+    ) -> "OPT4001":
 
         self.i2c_device = I2CDevice(i2c_bus, address)
         """
@@ -300,13 +302,13 @@ class OPT4001(Diagnostics):
     def check_id(self) -> bool:
         # first check that DIDL == 0
         self.read_u16(DEVICE_ID)
-        DIDL = (self.buf[0] >> 4) & ((1 << 2) - 1)      # 13-12
+        DIDL = (self.buf[0] >> 4) & ((1 << 2) - 1)  # 13-12
         if not DIDL == 0:
             return False
 
         # second check that DIDH == 0x121
-        DIDH = self.buf[0] & ((1 << 4) - 1)             # 11-8
-        DIDH = (DIDH << 8) + self.buf[1]                # add 7-0
+        DIDH = self.buf[0] & ((1 << 4) - 1)  # 11-8
+        DIDH = (DIDH << 8) + self.buf[1]  # add 7-0
         if not (DIDH == 0x121):
             return False
 
@@ -319,9 +321,9 @@ class OPT4001(Diagnostics):
         # separate each component
         exponent = (self.buf[0] >> 4) & ((1 << 4) - 1)  # 15-12
 
-        result_msb = (self.buf[0] & ((1 << 4) - 1))     # 11-8
-        result_msb = result_msb << 8                    # pad
-        result_msb += self.buf[1]                       # add 7-0
+        result_msb = self.buf[0] & ((1 << 4) - 1)  # 11-8
+        result_msb = result_msb << 8  # pad
+        result_msb += self.buf[1]  # add 7-0
 
         return exponent, result_msb
 
@@ -330,9 +332,9 @@ class OPT4001(Diagnostics):
         self.read_u16(register)
 
         # separate each component
-        result_lsb = self.buf[0]                        # 15-8
-        counter = (self.buf[1] >> 4) & ((1 << 4) - 1)   # 7-4
-        crc = self.buf[1] & ((1 << 4) - 1)              # 3-0
+        result_lsb = self.buf[0]  # 15-8
+        counter = (self.buf[1] >> 4) & ((1 << 4) - 1)  # 7-4
+        crc = self.buf[1] & ((1 << 4) - 1)  # 3-0
 
         return result_lsb, counter, crc
 
@@ -386,7 +388,7 @@ class OPT4001(Diagnostics):
         # equations from pages 17 and 18 of datasheet
         mantissa = (result_msb << 8) + result_lsb
         adc_codes = mantissa << exponent
-        lux = adc_codes * .0004375
+        lux = adc_codes * 0.0004375
 
         return lux if just_lux else lux, counter, crc
 
@@ -413,7 +415,7 @@ class OPT4001(Diagnostics):
         # equations from pages 17 and 18 of datasheet
         mantissa = (result_msb << 8) + result_lsb
         adc_codes = mantissa << exponent
-        lux = adc_codes * .0004375
+        lux = adc_codes * 0.0004375
 
         return lux if just_lux else lux, counter, crc
 
@@ -468,7 +470,7 @@ class OPT4001(Diagnostics):
         channels = {
             0: (FIFO_0_H, FIFO_0_L),
             1: (FIFO_1_H, FIFO_1_L),
-            2: (FIFO_2_H, FIFO_2_L)
+            2: (FIFO_2_H, FIFO_2_L),
         }
         register_h, register_l = channels[id]
         return self.read_from_fifo(register_h, register_l, True)
@@ -481,7 +483,7 @@ class OPT4001(Diagnostics):
         channels = {
             0: (FIFO_0_H, FIFO_0_L),
             1: (FIFO_1_H, FIFO_1_L),
-            2: (FIFO_2_H, FIFO_2_L)
+            2: (FIFO_2_H, FIFO_2_L),
         }
         register_h, register_l = channels[id]
         return self.read_from_fifo(register_h, register_l, False)

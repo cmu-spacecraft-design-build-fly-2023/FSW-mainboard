@@ -37,23 +37,30 @@ def copy_folder(source_folder, destination_folder, show_identical_files=True):
                 print(f"Deleted {destination_path}")
 
 
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     # Parses command line arguments.
     parser = argparse.ArgumentParser()
-    parser.add_argument("-s", "--source_folder", type=str, default="flight-software", help="Source folder path")
-    parser.add_argument("-d", "--destination_folder", type=str, default="/media/ibrahima/PYCUBED", help="Destination folder path")
+    parser.add_argument(
+        "-s",
+        "--source_folder",
+        type=str,
+        default="flight-software",
+        help="Source folder path",
+    )
+    parser.add_argument(
+        "-d",
+        "--destination_folder",
+        type=str,
+        default="/media/ibrahima/PYCUBED",
+        help="Destination folder path",
+    )
     args = parser.parse_args()
 
     source_folder = args.source_folder
     destination_folder = args.destination_folder
 
-
-
     """source_folder = "flight-software"
     destination_folder = '/media/ibrahima/PYCUBED'"""
 
     copy_folder(source_folder, destination_folder, show_identical_files=True)
-

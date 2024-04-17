@@ -21,13 +21,13 @@ class TestManagedSpi(TestCase):
         loop = Loop()
 
         # Synchronize access to an SPI allowing other tasks to work while waiting
-        spi_bus = 'board.SPI'
+        spi_bus = "board.SPI"
         managed_spi = ManagedSpi(spi_bus, loop=loop)
 
         # Configure 3 pins for selecting different chip selects on the shared SPI bus
-        sdcard_spi = managed_spi.cs_handle(FakeDigitalIO('D1'))
-        screen_spi = managed_spi.cs_handle(FakeDigitalIO('D2'))
-        sensor_spi = managed_spi.cs_handle(FakeDigitalIO('D3'))
+        sdcard_spi = managed_spi.cs_handle(FakeDigitalIO("D1"))
+        screen_spi = managed_spi.cs_handle(FakeDigitalIO("D2"))
+        sensor_spi = managed_spi.cs_handle(FakeDigitalIO("D3"))
 
         did_read = did_screen = did_sensor = False
 
@@ -45,7 +45,7 @@ class TestManagedSpi(TestCase):
                         await YieldOne()
                 did_read = True
                 await YieldOne()
-        
+
         async def update_screen():
             nonlocal did_screen
             while True:
@@ -58,7 +58,7 @@ class TestManagedSpi(TestCase):
                         await YieldOne()
                 did_screen = True
                 await YieldOne()
-        
+
         async def read_sensor():
             nonlocal did_sensor
             while True:
@@ -85,17 +85,17 @@ class TestManagedSpi(TestCase):
         self.assertFalse(sensor_spi.active)
 
         loop._step()
-        self.assertTrue(sdcard_spi.active) # sdcard was the first to queue up
+        self.assertTrue(sdcard_spi.active)  # sdcard was the first to queue up
         loop._step()
         loop._step()
 
         loop._step()
-        self.assertTrue(sensor_spi.active) # sensor was the second to queue up
+        self.assertTrue(sensor_spi.active)  # sensor was the second to queue up
         loop._step()
         loop._step()
 
         loop._step()
-        self.assertTrue(screen_spi.active) # screen was the last to queue up
+        self.assertTrue(screen_spi.active)  # screen was the last to queue up
         loop._step()
         loop._step()
 

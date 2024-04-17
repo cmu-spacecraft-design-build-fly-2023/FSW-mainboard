@@ -40,7 +40,7 @@ class Sleeper:
 
     def __repr__(self):
         return "{{Sleeper remaining: {:.2f}, task: {} }}".format(
-            (self.resume_nanos() - _monotonic_ns()) , self.task
+            (self.resume_nanos() - _monotonic_ns()), self.task
         )
 
     __str__ = __repr__
@@ -153,7 +153,7 @@ class Loop:
         self._sleeping = []
         self._ready = []
         self._current = None
-        self.debug=debug
+        self.debug = debug
         if debug:
             self._debug = print
         else:
@@ -312,9 +312,9 @@ class Loop:
             for i in self._sleeping:
                 self._debug("    {}".format(i))
 
-        #Create the ready list based on whichever tasks are ready to be executed
+        # Create the ready list based on whichever tasks are ready to be executed
         self._ready = [x for x in self._sleeping if x.resume_nanos() <= _monotonic_ns()]
-        #Sort the ready tasks based on priority
+        # Sort the ready tasks based on priority
         self._ready.sort(key=lambda x: x.task.priority)
 
         if self.debug:
@@ -322,8 +322,7 @@ class Loop:
             for i in self._ready:
                 self._debug("    {}".format(i))
 
-
-        #Run the ready tasks, and simultaneously remove them from the _sleeping and _ready lists
+        # Run the ready tasks, and simultaneously remove them from the _sleeping and _ready lists
         for i in range(len(self._ready)):
             ready_task = self._ready.pop(0)
             self._sleeping.remove(ready_task)
@@ -331,9 +330,9 @@ class Loop:
 
         if len(self._tasks) == 0 and len(self._sleeping) > 0:
 
-            #Sort the sleeper list only when we need to, i.e, only
-            #when there are no active tasks, and the system needs to
-            #ACTUALLY sleep.
+            # Sort the sleeper list only when we need to, i.e, only
+            # when there are no active tasks, and the system needs to
+            # ACTUALLY sleep.
 
             self._sleeping.sort(key=Sleeper.resume_nanos)
             next_sleeper = self._sleeping[0]
@@ -386,4 +385,3 @@ class Loop:
         # Pretty subtle here.  This yields once, then it continues next time the task scheduler executes it.
         # The async function is parked at this point.
         await _yield_once()
-

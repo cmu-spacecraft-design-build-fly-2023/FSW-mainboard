@@ -124,7 +124,7 @@ class BQ25883(Diagnostics):
     @charging_current.setter
     def charging_current(self, value: int) -> None:
         # default:0x1e=1500mA, 0x8=400mA
-        self._ichrg=value
+        self._ichrg = value
 
     @property
     def wdt(self) -> int:
@@ -133,7 +133,9 @@ class BQ25883(Diagnostics):
     def wdt(self, value: int) -> None:
         if not value:
             self._wdt = 0
+            self._wdt = 0
         else:
+            self._wdt = value
             self._wdt = value
 
     @property

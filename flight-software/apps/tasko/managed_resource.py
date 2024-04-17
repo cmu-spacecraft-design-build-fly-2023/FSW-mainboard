@@ -10,7 +10,14 @@ class ManagedResource:
 
     A ManagedResource instance should be shared among all users of `resource`.
     """
-    def __init__(self, resource, on_acquire=lambda *args, **kwargs: None, on_release=lambda *args, **kwargs: None, loop=tasko.get_loop()):
+
+    def __init__(
+        self,
+        resource,
+        on_acquire=lambda *args, **kwargs: None,
+        on_release=lambda *args, **kwargs: None,
+        loop=tasko.get_loop(),
+    ):
         """
         :param resource: The resource you want to manage access to (e.g., a busio.SPI)
         :param on_acquire: function(*args, **kwargs) => void  acquires your singleton resource (CS pin low or something)
@@ -43,7 +50,9 @@ class ManagedResource:
         return self._resource
 
     async def _aexit(self, args, kwargs):
-        assert self._owned, 'Exited from a context where a managed resource was not owned'
+        assert (
+            self._owned
+        ), "Exited from a context where a managed resource was not owned"
         self._on_release(*args, **kwargs)
         if len(self._ownership_queue) > 0:
             resume_fn = self._ownership_queue.pop(0)
@@ -53,10 +62,12 @@ class ManagedResource:
         else:
             self._owned = False
 
+
 class Handle:
     """
     For binding resource initialization/teardown args to a resource.
     """
+
     def __init__(self, managed_resource, args, kwargs):
         self._managed_resource = managed_resource
         self._args = args

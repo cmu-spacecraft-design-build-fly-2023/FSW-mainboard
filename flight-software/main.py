@@ -1,7 +1,6 @@
-
 import sys
 
-for path in ['/hal', '/apps']:
+for path in ["/hal", "/apps"]:
     if path not in sys.path:
         sys.path.append(path)
 
@@ -11,19 +10,18 @@ from hal.pycubed import hardware
 from state_manager import state_manager
 
 
-"""import time 
+"""
 from apps.data_handler import DataHandler as DH
 DH.delete_all_files()
-time.sleep(5000)"""
-
+"""
 
 
 try:
     # Run forever
-    state_manager.start('STARTUP')
-    #import obdh_sd_test
+    # state_manager.start("STARTUP")
+    import comms_test
+    # import obdh_sd_test
+    pass
 except Exception as e:
     print(e)
     # TODO Log the error
-    # Reset
-
