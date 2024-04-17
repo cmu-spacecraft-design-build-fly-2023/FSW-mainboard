@@ -14,17 +14,19 @@ import time
 import sys
 
 # PyCubed Board Lib
-from hal.pycubed import cubesat
+from hal.cubesat import CubeSat
 
 # Argus-1 Lib
-from apps.radio_protocol import *
+from apps.comms.radio_protocol import *
 
 class SATELLITE_RADIO:
     '''
         Name: __init__
         Description: Initialization of SATELLITE class
     '''
-    def __init__(self):
+    def __init__(self, sat: CubeSat):
+        self.sat = sat
+        
         self.image_strs = ['/sd/IMAGES/ohio.jpg','/sd/IMAGES/tokyo_small.jpg','/sd/IMAGES/oregon_small.jpg']
         self.image_num = 0
 
@@ -172,20 +174,20 @@ class SATELLITE_RADIO:
     '''
     def receive_message(self):
         while (self.gs_req_ack == 0):
-            my_packet = cubesat.radio1.receive(timeout = 5)
+            my_packet = self.sat.RADIO.receive(timeout = 5)
             if my_packet is None:
                 self.heartbeat_sent = False
                 self.gs_req_message_ID = 0x00
                 self.gs_req_ack = 1
             else:
                 print(f'Received (raw bytes): {my_packet}')
-                crc_check = cubesat.radio1.crc_error()
+                crc_check = self.sat.RADIO.crc_error()
                 print(f'CRC Status: {crc_check}')
 
                 if (crc_check > 0):
                     self.crc_count += 1
 
-                rssi = cubesat.radio1.rssi(raw=True)
+                rssi = self.sat.RADIO.rssi(raw=True)
                 print(f'Received signal strength: {rssi} dBm')
                 self.unpack_message(my_packet)
         self.gs_req_ack = 0
@@ -267,7 +269,7 @@ class SATELLITE_RADIO:
                 tx_message = construct_message(self.gs_req_message_ID)
 
             # Send a message to GS
-            cubesat.radio1.send(tx_message)
+            self.sat.RADIO.send(tx_message)
             self.crc_count = 0
 
             # Debug output of message in bytes

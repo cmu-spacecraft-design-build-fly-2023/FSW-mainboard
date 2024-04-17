@@ -5,20 +5,18 @@ Comms PyCubed test bench.
 
 Authors: DJ Morvay, Akshat Sahay
 """
-
-# PyCubed Board Lib
-from hal.pycubed import cubesat
+from hal.configuration import SATELLITE
 
 # Argus-1 Radio Libs
 from apps.comms.radio_helpers import *
 
-SAT_RADIO1 = SATELLITE_RADIO()
+SAT_RADIO = SATELLITE_RADIO(SATELLITE)
 
 ## ---------- MAIN CODE STARTS HERE! ---------- ##
 
 while True:
-    if cubesat.hardware['Radio1']:
-        SAT_RADIO1.transmit_message()
+    if SATELLITE.RADIO is not None:
+        SAT_RADIO.transmit_message()
 
-    if cubesat.hardware['Radio1']:
-        SAT_RADIO1.receive_message()
+    if SATELLITE.RADIO is not None:
+        SAT_RADIO.receive_message()

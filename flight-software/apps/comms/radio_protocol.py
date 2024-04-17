@@ -13,9 +13,6 @@ LENGTH     : 1 byte
 Authors: DJ Morvay, Akshat Sahay
 """
 
-# PyCubed Board Lib
-from hal.pycubed import cubesat
-
 # Message ID definitions 
 SAT_HEARTBEAT_BATT  = 0x00
 SAT_HEARTBEAT_SUN   = 0x01
