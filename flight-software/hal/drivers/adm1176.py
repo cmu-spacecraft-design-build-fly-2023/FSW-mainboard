@@ -31,8 +31,8 @@ _STATUS = bytearray(1)
 
 # Voltage conversions
 VI_RESOLUTION   = const(4096)
-I_FULLSCALE     = const(0.10584)
-V_FULLSCALE     = const(26.35) 
+I_FULLSCALE     = 0.10584
+V_FULLSCALE     = 26.35
 
 V_CONT_BIT      = const(0x1 << 0)
 V_ONCE_BIT      = const(0x1 << 1)
@@ -213,8 +213,8 @@ class ADM1176(Diagnostics):
         
         :return: true if test passes, false if fails
         """
-        V_MAX = const(9.0)
-        V_MIN = const(6.0)
+        V_MAX = 9.0
+        V_MIN = 6.0
         
         for i in range(10):
             (rVoltage, rCurrent) = self.read_voltage_current()

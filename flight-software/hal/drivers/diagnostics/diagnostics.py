@@ -107,7 +107,7 @@ class Diagnostics:
     __ERROR_MIN                                     = const(0)
     __ERROR_MAX                                     = const(61)
 
-    RESET_DELAY                                     = const(0.01)
+    RESET_DELAY                                     = 0.01
 
     def __init__(self, enable: DigitalInOut = None) -> None:
         self._enable = enable

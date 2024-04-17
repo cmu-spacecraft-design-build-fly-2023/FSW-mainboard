@@ -95,8 +95,8 @@ class ArgusV1Components:
     RADIO_RESET                             = board.RF1_RST
     RADIO_ENABLE                            = board.EN_RF
     RADIO_DIO0                              = board.RF1_IO0
-    RADIO_FREQ                              = const(433.0)
-    # RADIO_FREQ                            = const(915.6)
+    RADIO_FREQ                              = 433.0
+    # RADIO_FREQ                            = 915.6
 
     # SD CARD
     SD_CARD_SPI                             = ArgusV1Interfaces.SPI
@@ -117,7 +117,7 @@ class ArgusV1Components:
     # NEOPIXEL
     NEOPIXEL_SDA                            = board.NEOPIXEL
     NEOPIXEL_N                              = const(1) # Number of neopixels in chain
-    NEOPIXEL_BRIGHTNESS                     = const(0.2)
+    NEOPIXEL_BRIGHTNESS                     = 0.2
 
     # JETSON
     JETSON_UART                             = ArgusV1Interfaces.UART2
@@ -154,24 +154,24 @@ class ArgusV1(CubeSat):
 
         self.__state_flags_boot() # Does not require error checking
 
-        error_list += self.__rtc_boot()
-        error_list += self.__gps_boot()
-        error_list += self.__battery_power_monitor_boot()
-        error_list += self.__jetson_power_monitor_boot()
-        error_list += self.__imu_boot()
-        error_list += self.__charger_boot()
+        error_list += [self.__rtc_boot()]
+        error_list += [self.__gps_boot()]
+        error_list += [self.__battery_power_monitor_boot()]
+        error_list += [self.__jetson_power_monitor_boot()]
+        error_list += [self.__imu_boot()]
+        error_list += [self.__charger_boot()]
         error_list += self.__torque_interface_boot()
-        error_list += self.__sun_sensor_xp_boot()
-        error_list += self.__sun_sensor_xm_boot()
-        error_list += self.__sun_sensor_yp_boot()
-        error_list += self.__sun_sensor_ym_boot()
-        error_list += self.__sun_sensor_zp_boot()
-        error_list += self.__sun_sensor_zm_boot()
-        error_list += self.__radio_boot()
-        error_list += self.__neopixel_boot()
-        error_list += self.__sd_card_boot()
-        error_list += self._burn_wire_boot()
-        error_list += self._jetson_boot()
+        error_list += [self.__sun_sensor_xp_boot()]
+        error_list += [self.__sun_sensor_xm_boot()]
+        error_list += [self.__sun_sensor_yp_boot()]
+        error_list += [self.__sun_sensor_ym_boot()]
+        error_list += [self.__sun_sensor_zp_boot()]
+        error_list += [self.__sun_sensor_zm_boot()]
+        error_list += [self.__radio_boot()]
+        error_list += [self.__neopixel_boot()]
+        error_list += [self.__sd_card_boot()]
+        error_list += [self._burn_wire_boot()]
+        error_list += [self._jetson_boot()]
 
         error_list = [error for error in error_list if error != Diagnostics.NOERROR]
 
@@ -206,10 +206,8 @@ class ArgusV1(CubeSat):
             self._gps = gps1
             self.__device_list.append(gps1)
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
 
             return Diagnostics.GPS_NOT_INITIALIZED
         
@@ -230,10 +228,8 @@ class ArgusV1(CubeSat):
             self._battery_monitor = battery_monitor
             self.__device_list.append(battery_monitor)
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
 
             return Diagnostics.ADM1176_NOT_INITIALIZED
         
@@ -254,10 +250,8 @@ class ArgusV1(CubeSat):
             self._jetson_monitor = jetson_monitor
             self.__device_list.append(jetson_monitor)
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
                 
             return Diagnostics.ADM1176_NOT_INITIALIZED
         
@@ -279,10 +273,8 @@ class ArgusV1(CubeSat):
             self._imu = imu
             self.__device_list.append(imu)
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
                 
             return Diagnostics.BMX160_NOT_INITIALIZED
         
@@ -303,10 +295,8 @@ class ArgusV1(CubeSat):
             self._charger = charger
             self.__device_list.append(charger)
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
                 
             return Diagnostics.BQ25883_NOT_INITIALIZED
         
@@ -327,10 +317,8 @@ class ArgusV1(CubeSat):
             self.__torque_xp_driver = torque_xp
             self.__device_list.append(torque_xp)
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
                 
             return Diagnostics.DRV8830_NOT_INITIALIZED
         
@@ -351,10 +339,8 @@ class ArgusV1(CubeSat):
             self.__torque_xm_driver = torque_xm
             self.__device_list.append(torque_xm)
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
                 
             return Diagnostics.DRV8830_NOT_INITIALIZED
         
@@ -375,10 +361,8 @@ class ArgusV1(CubeSat):
             self.__torque_yp_driver = torque_yp
             self.__device_list.append(torque_yp)
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
                 
             return Diagnostics.DRV8830_NOT_INITIALIZED
         
@@ -399,10 +383,8 @@ class ArgusV1(CubeSat):
             self.__torque_ym_driver = torque_ym
             self.__device_list.append(torque_ym)
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
                 
             return Diagnostics.DRV8830_NOT_INITIALIZED
         
@@ -423,57 +405,49 @@ class ArgusV1(CubeSat):
             self.__torque_z_driver = torque_z
             self.__device_list.append(torque_z)
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
                 
             return Diagnostics.DRV8830_NOT_INITIALIZED
         
         return Diagnostics.NOERROR
     
-    def __torque_interface_boot(self) -> int:
+    def __torque_interface_boot(self) -> list[int]:
         """torque_interface_boot: Boot sequence for the torque interface
 
         :return: Error code if the torque interface failed to initialize
         """
         error_list: list[int] = []
 
-        error_list += self.__torque_xp_boot()
-        error_list += self.__torque_xm_boot()
-        error_list += self.__torque_yp_boot()
-        error_list += self.__torque_ym_boot()
-        error_list += self.__torque_z_boot()
+        error_list += [self.__torque_xp_boot()]
+        error_list += [self.__torque_xm_boot()]
+        error_list += [self.__torque_yp_boot()]
+        error_list += [self.__torque_ym_boot()]
+        error_list += [self.__torque_z_boot()]
 
         # X direction
         try:
             torque_interface = torque_coil.TorqueInterface(self._torque_xp, self._torque_xm)
             self._torque_x = torque_interface
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
 
         # Y direction
         try:
             torque_interface = torque_coil.TorqueInterface(self._torque_yp, self._torque_ym)
             self._torque_y = torque_interface
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
         
         # Z direction
         try:
             torque_interface = torque_coil.TorqueInterface(self._torque_z)
             self._torque_z = torque_interface
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
         
         return error_list
     
@@ -492,10 +466,8 @@ class ArgusV1(CubeSat):
             self._sun_sensor_xp = sun_sensor_xp
             self.__device_list.append(sun_sensor_xp)
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
                 
             return Diagnostics.OPT4001_NOT_INITIALIZED
         
@@ -516,10 +488,8 @@ class ArgusV1(CubeSat):
             self._sun_sensor_xm = sun_sensor_xm
             self.__device_list.append(sun_sensor_xm)
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
                 
             return Diagnostics.OPT4001_NOT_INITIALIZED
         
@@ -540,10 +510,8 @@ class ArgusV1(CubeSat):
             self._sun_sensor_yp = sun_sensor_yp
             self.__device_list.append(sun_sensor_yp)
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
                 
             return Diagnostics.OPT4001_NOT_INITIALIZED
         
@@ -564,10 +532,8 @@ class ArgusV1(CubeSat):
             self._sun_sensor_ym = sun_sensor_ym
             self.__device_list.append(sun_sensor_ym)
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
                 
             return Diagnostics.OPT4001_NOT_INITIALIZED
         
@@ -588,10 +554,8 @@ class ArgusV1(CubeSat):
             self._sun_sensor_zp = sun_sensor_zp
             self.__device_list.append(sun_sensor_zp)
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
                 
             return Diagnostics.OPT4001_NOT_INITIALIZED
         
@@ -612,10 +576,8 @@ class ArgusV1(CubeSat):
             self._sun_sensor_zm = sun_sensor_zm
             self.__device_list.append(sun_sensor_zm)
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
                 
             return Diagnostics.OPT4001_NOT_INITIALIZED
         
@@ -640,10 +602,8 @@ class ArgusV1(CubeSat):
             self._radio = radio
             self.__device_list.append(radio)
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
                 
             return Diagnostics.RFM9X_NOT_INITIALIZED
     
@@ -664,10 +624,8 @@ class ArgusV1(CubeSat):
             self._rtc = rtc
             self.__device_list.append(rtc)
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
                 
             return Diagnostics.PCF8523_NOT_INITIALIZED
         
@@ -685,10 +643,8 @@ class ArgusV1(CubeSat):
             self.__device_list.append(neopixel)
             self.append_device(neopixel)
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
                 
             return Diagnostics.NEOPIXEL_NOT_INITIALIZED
         
@@ -704,10 +660,8 @@ class ArgusV1(CubeSat):
             self._sd_card = sd_card
             self.append_device(sd_card)
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
                 
             return Diagnostics.SDCARD_NOT_INITIALIZED
         
@@ -729,10 +683,8 @@ class ArgusV1(CubeSat):
             self._burn_wires = burn_wires
             self.append_device(burn_wires)
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
                 
             return Diagnostics.BURNWIRES_NOT_INITIALIZED
         
@@ -746,10 +698,8 @@ class ArgusV1(CubeSat):
             self._jetson = jetson
             self.append_device(jetson)
         except Exception as e:
-            if not self.__middleware_enabled:
-                raise e
             if self.__debug:
-                print(e)
+                raise e
                 
             return Diagnostics.JETSON_NOT_INITIALIZED
         
@@ -774,15 +724,15 @@ class ArgusV1(CubeSat):
             return Diagnostics.DIAGNOSTICS_ERROR_IMU
         elif device is self.CHARGER:
             return Diagnostics.DIAGNOSTICS_ERROR_CHARGER
-        elif device is self.TORQUE_XP:
+        elif device is self.__torque_xp_driver:
             return Diagnostics.DIAGNOSTICS_ERROR_TORQUE_XP
-        elif device is self.TORQUE_XM:
+        elif device is self.__torque_xm_driver:
             return Diagnostics.DIAGNOSTICS_ERROR_TORQUE_XM
-        elif device is self.TORQUE_YP:
+        elif device is self.__torque_yp_driver:
             return Diagnostics.DIAGNOSTICS_ERROR_TORQUE_YP
-        elif device is self.TORQUE_YM:
+        elif device is self.__torque_ym_driver:
             return Diagnostics.DIAGNOSTICS_ERROR_TORQUE_YM
-        elif device is self.TORQUE_Z:
+        elif device is self.__torque_z_driver:
             return Diagnostics.DIAGNOSTICS_ERROR_TORQUE_Z
         elif device is self.SUN_SENSOR_XP:
             return Diagnostics.DIAGNOSTICS_ERROR_SUN_SENSOR_XP

@@ -10,7 +10,7 @@ ARGUS_V1 = const(1)
 HARDWARE_VERSION = ARGUS_V1
 
 # Enable for Middleware
-DEBUG_MODE = True
+DEBUG_MODE = False
 EN_MIDDLEWARE = False
 
 SATELLITE: CubeSat = None
