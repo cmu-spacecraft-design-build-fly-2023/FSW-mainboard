@@ -45,6 +45,7 @@ class CubeSat:
         self._radio             = None
         self._sd_card           = None
         self._burn_wires        = None
+        self._jetson            = None
 
         # Debugging
         self._neopixel          = None
@@ -244,3 +245,10 @@ class CubeSat:
         :return: object or None
         """
         return self._burn_wires
+    
+    @property
+    def JETSON(self):
+        """JETSON: Returns the Jetson object
+        :return: object or None
+        """
+        return self._jetson

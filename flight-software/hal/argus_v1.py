@@ -119,6 +119,10 @@ class ArgusV1Components:
     NEOPIXEL_N                              = const(1) # Number of neopixels in chain
     NEOPIXEL_BRIGHTNESS                     = const(0.2)
 
+    # JETSON
+    JETSON_UART                             = ArgusV1Interfaces.UART2
+    JETSON_ENABLE                           = board.EN_JET
+
 class ArgusV1(CubeSat):
     """ArgusV1: Represents the Argus V1 CubeSat.
     
@@ -167,6 +171,7 @@ class ArgusV1(CubeSat):
         error_list += self.__neopixel_boot()
         error_list += self.__sd_card_boot()
         error_list += self._burn_wire_boot()
+        error_list += self._jetson_boot()
 
         error_list = [error for error in error_list if error != Diagnostics.NOERROR]
 
@@ -730,6 +735,23 @@ class ArgusV1(CubeSat):
                 print(e)
                 
             return Diagnostics.BURNWIRES_NOT_INITIALIZED
+        
+        return Diagnostics.NOERROR
+    
+    def _jetson_boot(self) -> int:
+        """jetson_boot: Boot sequence for the Jetson
+        """
+        try:
+            jetson = Middleware(ArgusV1Components.JETSON_UART, jetson_fatal_exception)
+            self._jetson = jetson
+            self.append_device(jetson)
+        except Exception as e:
+            if not self.__middleware_enabled:
+                raise e
+            if self.__debug:
+                print(e)
+                
+            return Diagnostics.JETSON_NOT_INITIALIZED
         
         return Diagnostics.NOERROR
 
