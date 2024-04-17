@@ -14,7 +14,7 @@ Authors: DJ Morvay, Akshat Sahay
 """
 
 # PyCubed Board Lib
-from pycubed import cubesat
+from hal.pycubed import cubesat
 
 # Message ID definitions 
 SAT_HEARTBEAT_BATT  = 0x00

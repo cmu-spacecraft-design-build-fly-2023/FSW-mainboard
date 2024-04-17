@@ -7,7 +7,7 @@ Authors: DJ Morvay, Akshat Sahay
 """
 
 # PyCubed Board Lib
-from pycubed import cubesat
+from hal.pycubed import cubesat
 
 # Argus-1 Radio Libs
 from apps.comms.radio_helpers import *

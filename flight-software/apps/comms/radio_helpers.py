@@ -14,10 +14,10 @@ import time
 import sys
 
 # PyCubed Board Lib
-from pycubed import cubesat
+from hal.pycubed import cubesat
 
 # Argus-1 Lib
-from radio_protocol import *
+from apps.radio_protocol import *
 
 class SATELLITE_RADIO:
     '''
