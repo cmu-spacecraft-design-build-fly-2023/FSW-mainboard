@@ -25,7 +25,6 @@ print()
 from apps.data_handler import DataHandler as DH
 DH.delete_all_files()
 """
-# import sd
 import comms_test
 
 try:
