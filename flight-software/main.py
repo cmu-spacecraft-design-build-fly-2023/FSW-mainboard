@@ -15,16 +15,17 @@ print()
 print("Boot Errors: ", boot_errors)
 print()
 
-print("Running system diagnostics...")
-errors = SATELLITE.run_system_diagnostics()
-print("System diagnostics complete")
-print("Errors:", errors)
-print()
+# print("Running system diagnostics...")
+# errors = SATELLITE.run_system_diagnostics()
+# print("System diagnostics complete")
+# print("Errors:", errors)
+# print()
 
 """
 from apps.data_handler import DataHandler as DH
 DH.delete_all_files()
 """
+# import sd
 import comms_test
 
 try:

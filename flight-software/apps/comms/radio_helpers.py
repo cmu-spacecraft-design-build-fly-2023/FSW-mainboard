@@ -30,7 +30,7 @@ class SATELLITE_RADIO:
         self.image_strs = ['/sd/IMAGES/ohio.jpg','/sd/IMAGES/tokyo_small.jpg','/sd/IMAGES/oregon_small.jpg']
         self.image_num = 0
 
-        #self.image_get_info()
+        self.image_get_info()
         self.send_mod = 10
         self.heartbeat_sent = False
         self.image_deleted = True

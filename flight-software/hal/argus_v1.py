@@ -7,7 +7,8 @@ import busio
 from hal.cubesat import CubeSat
 from micropython import const
 import board
-import sdcardio
+import sdcardio, sys, os
+from storage import mount, umount, remount, VfsFat
 
 import neopixel
 from hal.drivers.diagnostics.diagnostics import Diagnostics
@@ -95,8 +96,8 @@ class ArgusV1Components:
     RADIO_RESET                             = board.RF1_RST
     RADIO_ENABLE                            = board.EN_RF
     RADIO_DIO0                              = board.RF1_IO0
-    RADIO_FREQ                              = 433.0
-    # RADIO_FREQ                            = 915.6
+    # RADIO_FREQ                              = 433.0
+    RADIO_FREQ                              = 915.6
 
     # SD CARD
     SD_CARD_SPI                             = ArgusV1Interfaces.SPI
@@ -122,6 +123,10 @@ class ArgusV1Components:
     # JETSON
     JETSON_UART                             = ArgusV1Interfaces.UART2
     JETSON_ENABLE                           = board.EN_JET
+
+    # VFS
+    VFS_MOUNT_POINT                         = "/sd"
+
 
 class ArgusV1(CubeSat):
     """ArgusV1: Represents the Argus V1 CubeSat.
@@ -170,8 +175,9 @@ class ArgusV1(CubeSat):
         error_list += self.__radio_boot()
         error_list += self.__neopixel_boot()
         error_list += self.__sd_card_boot()
-        error_list += self._burn_wire_boot()
-        error_list += self._jetson_boot()
+        error_list += self.__vfs_boot()
+        error_list += self.__burn_wire_boot()
+        error_list += self.__jetson_boot()
 
         error_list = [error for error in error_list if error != Diagnostics.NOERROR]
 
@@ -419,11 +425,11 @@ class ArgusV1(CubeSat):
         """
         error_list: list[int] = []
 
-        error_list += [self.__torque_xp_boot()]
-        error_list += [self.__torque_xm_boot()]
-        error_list += [self.__torque_yp_boot()]
-        error_list += [self.__torque_ym_boot()]
-        error_list += [self.__torque_z_boot()]
+        error_list += self.__torque_xp_boot()
+        error_list += self.__torque_xm_boot()
+        error_list += self.__torque_yp_boot()
+        error_list += self.__torque_ym_boot()
+        error_list += self.__torque_z_boot()
 
         # X direction
         try:
@@ -667,7 +673,32 @@ class ArgusV1(CubeSat):
         
         return [Diagnostics.NOERROR]
     
-    def _burn_wire_boot(self) -> list[int]:
+    def __vfs_boot(self) -> list[int]:
+        """vfs_boot: Boot sequence for the VFS
+        """
+        if self._sd_card is None:
+            return [Diagnostics.SDCARD_NOT_INITIALIZED]
+
+        try:        
+            vfs = VfsFat(self._sd_card)
+            
+            mount(vfs, ArgusV1Components.VFS_MOUNT_POINT)
+
+            if not "sd" in os.listdir('/'):
+                os.mkdir("/sd")
+
+            sys.path.append(ArgusV1Components.VFS_MOUNT_POINT)
+            self._vfs = vfs
+        except Exception as e:
+            if self.__debug:
+                raise e
+            raise e
+            
+            return [Diagnostics.VFS_NOT_INITIALIZED]
+        
+        return [Diagnostics.NOERROR]
+    
+    def __burn_wire_boot(self) -> list[int]:
         """burn_wire_boot: Boot sequence for the burn wires
         """
         try:
@@ -690,7 +721,7 @@ class ArgusV1(CubeSat):
         
         return [Diagnostics.NOERROR]
     
-    def _jetson_boot(self) -> list[int]:
+    def __jetson_boot(self) -> list[int]:
         """jetson_boot: Boot sequence for the Jetson
         """
         try:

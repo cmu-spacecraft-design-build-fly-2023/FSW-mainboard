@@ -104,8 +104,10 @@ class Diagnostics:
     DIAGNOSTICS_ERROR_BURN_WIRES                    = const(60)
     DIAGNOSTICS_ERROR_UNKNOWN                       = const(61)
 
+    VFS_NOT_INITIALIZED                             = const(62)
+
     __ERROR_MIN                                     = const(0)
-    __ERROR_MAX                                     = const(61)
+    __ERROR_MAX                                     = const(62)
 
     RESET_DELAY                                     = 0.01
 

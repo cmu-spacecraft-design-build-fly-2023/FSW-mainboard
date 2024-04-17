@@ -184,3 +184,12 @@ class jetson_fatal_exception(Exception):
     
     def __str__(self):
         return f"{type(self.exception).__name__}: {self.exception}"
+    
+class vfs_fatal_exception(Exception):
+    """vfs_fatal_exception: Exception for fatal VFS errors"""
+    def __init__(self, exception: Exception):
+        self.exception = exception
+        super().__init__()
+    
+    def __str__(self):
+        return f"{type(self.exception).__name__}: {self.exception}"

@@ -46,6 +46,7 @@ class CubeSat:
         self._sd_card           = None
         self._burn_wires        = None
         self._jetson            = None
+        self._vfs               = None
 
         # Debugging
         self._neopixel          = None
@@ -252,3 +253,10 @@ class CubeSat:
         :return: object or None
         """
         return self._jetson
+    
+    @property
+    def VFS(self):
+        """VFS: Returns the VFS object
+        :return: object or None
+        """
+        return self._vfs
