@@ -154,24 +154,24 @@ class ArgusV1(CubeSat):
 
         self.__state_flags_boot() # Does not require error checking
 
-        error_list += [self.__rtc_boot()]
-        error_list += [self.__gps_boot()]
-        error_list += [self.__battery_power_monitor_boot()]
-        error_list += [self.__jetson_power_monitor_boot()]
-        error_list += [self.__imu_boot()]
-        error_list += [self.__charger_boot()]
+        error_list += self.__rtc_boot()
+        error_list += self.__gps_boot()
+        error_list += self.__battery_power_monitor_boot()
+        error_list += self.__jetson_power_monitor_boot()
+        error_list += self.__imu_boot()
+        error_list += self.__charger_boot()
         error_list += self.__torque_interface_boot()
-        error_list += [self.__sun_sensor_xp_boot()]
-        error_list += [self.__sun_sensor_xm_boot()]
-        error_list += [self.__sun_sensor_yp_boot()]
-        error_list += [self.__sun_sensor_ym_boot()]
-        error_list += [self.__sun_sensor_zp_boot()]
-        error_list += [self.__sun_sensor_zm_boot()]
-        error_list += [self.__radio_boot()]
-        error_list += [self.__neopixel_boot()]
-        error_list += [self.__sd_card_boot()]
-        error_list += [self._burn_wire_boot()]
-        error_list += [self._jetson_boot()]
+        error_list += self.__sun_sensor_xp_boot()
+        error_list += self.__sun_sensor_xm_boot()
+        error_list += self.__sun_sensor_yp_boot()
+        error_list += self.__sun_sensor_ym_boot()
+        error_list += self.__sun_sensor_zp_boot()
+        error_list += self.__sun_sensor_zm_boot()
+        error_list += self.__radio_boot()
+        error_list += self.__neopixel_boot()
+        error_list += self.__sd_card_boot()
+        error_list += self._burn_wire_boot()
+        error_list += self._jetson_boot()
 
         error_list = [error for error in error_list if error != Diagnostics.NOERROR]
 
@@ -191,7 +191,7 @@ class ArgusV1(CubeSat):
         """
         self._state_flags = stateflags.StateFlags()
     
-    def __gps_boot(self) -> int:
+    def __gps_boot(self) -> list[int]:
         """GPS_boot: Boot sequence for the GPS
 
         :return: Error code if the GPS failed to initialize
@@ -209,11 +209,11 @@ class ArgusV1(CubeSat):
             if self.__debug:
                 raise e
 
-            return Diagnostics.GPS_NOT_INITIALIZED
+            return [Diagnostics.GPS_NOT_INITIALIZED]
         
-        return Diagnostics.NOERROR
+        return [Diagnostics.NOERROR]
     
-    def __battery_power_monitor_boot(self) -> int:
+    def __battery_power_monitor_boot(self) -> list[int]:
         """battery_power_monitor_boot: Boot sequence for the battery power monitor
 
         :return: Error code if the battery power monitor failed to initialize
@@ -231,11 +231,11 @@ class ArgusV1(CubeSat):
             if self.__debug:
                 raise e
 
-            return Diagnostics.ADM1176_NOT_INITIALIZED
+            return [Diagnostics.ADM1176_NOT_INITIALIZED]
         
-        return Diagnostics.NOERROR
+        return [Diagnostics.NOERROR]
     
-    def __jetson_power_monitor_boot(self) -> int:
+    def __jetson_power_monitor_boot(self) -> list[int]:
         """jetson_power_monitor_boot: Boot sequence for the Jetson power monitor
 
         :return: Error code if the Jetson power monitor failed to initialize
@@ -253,11 +253,11 @@ class ArgusV1(CubeSat):
             if self.__debug:
                 raise e
                 
-            return Diagnostics.ADM1176_NOT_INITIALIZED
+            return [Diagnostics.ADM1176_NOT_INITIALIZED]
         
-        return Diagnostics.NOERROR
+        return [Diagnostics.NOERROR]
     
-    def __imu_boot(self) -> int:
+    def __imu_boot(self) -> list[int]:
         """imu_boot: Boot sequence for the IMU
 
         :return: Error code if the IMU failed to initialize
@@ -276,11 +276,11 @@ class ArgusV1(CubeSat):
             if self.__debug:
                 raise e
                 
-            return Diagnostics.BMX160_NOT_INITIALIZED
+            return [Diagnostics.BMX160_NOT_INITIALIZED]
         
-        return Diagnostics.NOERROR
+        return [Diagnostics.NOERROR]
     
-    def __charger_boot(self) -> int:
+    def __charger_boot(self) -> list[int]:
         """charger_boot: Boot sequence for the charger
 
         :return: Error code if the charger failed to initialize
@@ -298,11 +298,11 @@ class ArgusV1(CubeSat):
             if self.__debug:
                 raise e
                 
-            return Diagnostics.BQ25883_NOT_INITIALIZED
+            return [Diagnostics.BQ25883_NOT_INITIALIZED]
         
-        return Diagnostics.NOERROR
+        return [Diagnostics.NOERROR]
     
-    def __torque_xp_boot(self) -> int:
+    def __torque_xp_boot(self) -> list[int]:
         """torque_xp_boot: Boot sequence for the torque driver in the x+ direction
 
         :return: Error code if the torque driver failed to initialize
@@ -320,11 +320,11 @@ class ArgusV1(CubeSat):
             if self.__debug:
                 raise e
                 
-            return Diagnostics.DRV8830_NOT_INITIALIZED
+            return [Diagnostics.DRV8830_NOT_INITIALIZED]
         
-        return Diagnostics.NOERROR
+        return [Diagnostics.NOERROR]
     
-    def __torque_xm_boot(self) -> int:
+    def __torque_xm_boot(self) -> list[int]:
         """torque_xm_boot: Boot sequence for the torque driver in the x- direction
 
         :return: Error code if the torque driver failed to initialize
@@ -342,11 +342,11 @@ class ArgusV1(CubeSat):
             if self.__debug:
                 raise e
                 
-            return Diagnostics.DRV8830_NOT_INITIALIZED
+            return [Diagnostics.DRV8830_NOT_INITIALIZED]
         
-        return Diagnostics.NOERROR
+        return [Diagnostics.NOERROR]
     
-    def __torque_yp_boot(self) -> int:
+    def __torque_yp_boot(self) -> list[int]:
         """torque_yp_boot: Boot sequence for the torque driver in the y+ direction
 
         :return: Error code if the torque driver failed to initialize
@@ -364,11 +364,11 @@ class ArgusV1(CubeSat):
             if self.__debug:
                 raise e
                 
-            return Diagnostics.DRV8830_NOT_INITIALIZED
+            return [Diagnostics.DRV8830_NOT_INITIALIZED]
         
-        return Diagnostics.NOERROR
+        return [Diagnostics.NOERROR]
     
-    def __torque_ym_boot(self) -> int:
+    def __torque_ym_boot(self) -> list[int]:
         """torque_ym_boot: Boot sequence for the torque driver in the y- direction
 
         :return: Error code if the torque driver failed to initialize
@@ -386,11 +386,11 @@ class ArgusV1(CubeSat):
             if self.__debug:
                 raise e
                 
-            return Diagnostics.DRV8830_NOT_INITIALIZED
+            return [Diagnostics.DRV8830_NOT_INITIALIZED]
         
-        return Diagnostics.NOERROR
+        return [Diagnostics.NOERROR]
     
-    def __torque_z_boot(self) -> int:
+    def __torque_z_boot(self) -> list[int]:
         """torque_z_boot: Boot sequence for the torque driver in the z direction
 
         :return: Error code if the torque driver failed to initialize
@@ -408,9 +408,9 @@ class ArgusV1(CubeSat):
             if self.__debug:
                 raise e
                 
-            return Diagnostics.DRV8830_NOT_INITIALIZED
+            return [Diagnostics.DRV8830_NOT_INITIALIZED]
         
-        return Diagnostics.NOERROR
+        return [Diagnostics.NOERROR]
     
     def __torque_interface_boot(self) -> list[int]:
         """torque_interface_boot: Boot sequence for the torque interface
@@ -451,7 +451,7 @@ class ArgusV1(CubeSat):
         
         return error_list
     
-    def __sun_sensor_xp_boot(self) -> int:
+    def __sun_sensor_xp_boot(self) -> list[int]:
         """sun_sensor_xp_boot: Boot sequence for the sun sensor in the x+ direction
 
         :return: Error code if the sun sensor failed to initialize
@@ -469,11 +469,11 @@ class ArgusV1(CubeSat):
             if self.__debug:
                 raise e
                 
-            return Diagnostics.OPT4001_NOT_INITIALIZED
+            return [Diagnostics.OPT4001_NOT_INITIALIZED]
         
-        return Diagnostics.NOERROR
+        return [Diagnostics.NOERROR]
     
-    def __sun_sensor_xm_boot(self) -> int:
+    def __sun_sensor_xm_boot(self) -> list[int]:
         """sun_sensor_xm_boot: Boot sequence for the sun sensor in the x- direction
 
         :return: Error code if the sun sensor failed to initialize
@@ -491,11 +491,11 @@ class ArgusV1(CubeSat):
             if self.__debug:
                 raise e
                 
-            return Diagnostics.OPT4001_NOT_INITIALIZED
+            return [Diagnostics.OPT4001_NOT_INITIALIZED]
         
-        return Diagnostics.NOERROR
+        return [Diagnostics.NOERROR]
     
-    def __sun_sensor_yp_boot(self) -> int:
+    def __sun_sensor_yp_boot(self) -> list[int]:
         """sun_sensor_yp_boot: Boot sequence for the sun sensor in the y+ direction
 
         :return: Error code if the sun sensor failed to initialize
@@ -513,11 +513,11 @@ class ArgusV1(CubeSat):
             if self.__debug:
                 raise e
                 
-            return Diagnostics.OPT4001_NOT_INITIALIZED
+            return [Diagnostics.OPT4001_NOT_INITIALIZED]
         
-        return Diagnostics.NOERROR
+        return [Diagnostics.NOERROR]
     
-    def __sun_sensor_ym_boot(self) -> int:
+    def __sun_sensor_ym_boot(self) -> list[int]:
         """sun_sensor_ym_boot: Boot sequence for the sun sensor in the y- direction
 
         :return: Error code if the sun sensor failed to initialize
@@ -535,11 +535,11 @@ class ArgusV1(CubeSat):
             if self.__debug:
                 raise e
                 
-            return Diagnostics.OPT4001_NOT_INITIALIZED
+            return [Diagnostics.OPT4001_NOT_INITIALIZED]
         
-        return Diagnostics.NOERROR
+        return [Diagnostics.NOERROR]
     
-    def __sun_sensor_zp_boot(self) -> int:
+    def __sun_sensor_zp_boot(self) -> list[int]:
         """sun_sensor_zp_boot: Boot sequence for the sun sensor in the z+ direction
 
         :return: Error code if the sun sensor failed to initialize
@@ -557,11 +557,11 @@ class ArgusV1(CubeSat):
             if self.__debug:
                 raise e
                 
-            return Diagnostics.OPT4001_NOT_INITIALIZED
+            return [Diagnostics.OPT4001_NOT_INITIALIZED]
         
-        return Diagnostics.NOERROR
+        return [Diagnostics.NOERROR]
     
-    def __sun_sensor_zm_boot(self) -> int:
+    def __sun_sensor_zm_boot(self) -> list[int]:
         """sun_sensor_zm_boot: Boot sequence for the sun sensor in the z- direction
 
         :return: Error code if the sun sensor failed to initialize
@@ -579,11 +579,11 @@ class ArgusV1(CubeSat):
             if self.__debug:
                 raise e
                 
-            return Diagnostics.OPT4001_NOT_INITIALIZED
+            return [Diagnostics.OPT4001_NOT_INITIALIZED]
         
-        return Diagnostics.NOERROR
+        return [Diagnostics.NOERROR]
     
-    def __radio_boot(self) -> int:
+    def __radio_boot(self) -> list[int]:
         """radio_boot: Boot sequence for the radio
 
         :return: Error code if the radio failed to initialize
@@ -605,11 +605,11 @@ class ArgusV1(CubeSat):
             if self.__debug:
                 raise e
                 
-            return Diagnostics.RFM9X_NOT_INITIALIZED
+            return [Diagnostics.RFM9X_NOT_INITIALIZED]
     
-        return Diagnostics.NOERROR
+        return [Diagnostics.NOERROR]
     
-    def __rtc_boot(self) -> int:
+    def __rtc_boot(self) -> list[int]:
         """rtc_boot: Boot sequence for the RTC
 
         :return: Error code if the RTC failed to initialize
@@ -627,11 +627,11 @@ class ArgusV1(CubeSat):
             if self.__debug:
                 raise e
                 
-            return Diagnostics.PCF8523_NOT_INITIALIZED
+            return [Diagnostics.PCF8523_NOT_INITIALIZED]
         
-        return Diagnostics.NOERROR
+        return [Diagnostics.NOERROR]
     
-    def __neopixel_boot(self) -> int:
+    def __neopixel_boot(self) -> list[int]:
         """neopixel_boot: Boot sequence for the neopixel
         """
         try:
@@ -646,11 +646,11 @@ class ArgusV1(CubeSat):
             if self.__debug:
                 raise e
                 
-            return Diagnostics.NEOPIXEL_NOT_INITIALIZED
+            return [Diagnostics.NEOPIXEL_NOT_INITIALIZED]
         
-        return Diagnostics.NOERROR
+        return [Diagnostics.NOERROR]
     
-    def __sd_card_boot(self) -> int:
+    def __sd_card_boot(self) -> list[int]:
         """sd_card_boot: Boot sequence for the SD card
         """
         try:
@@ -663,11 +663,11 @@ class ArgusV1(CubeSat):
             if self.__debug:
                 raise e
                 
-            return Diagnostics.SDCARD_NOT_INITIALIZED
+            return [Diagnostics.SDCARD_NOT_INITIALIZED]
         
-        return Diagnostics.NOERROR
+        return [Diagnostics.NOERROR]
     
-    def _burn_wire_boot(self) -> int:
+    def _burn_wire_boot(self) -> list[int]:
         """burn_wire_boot: Boot sequence for the burn wires
         """
         try:
@@ -686,11 +686,11 @@ class ArgusV1(CubeSat):
             if self.__debug:
                 raise e
                 
-            return Diagnostics.BURNWIRES_NOT_INITIALIZED
+            return [Diagnostics.BURNWIRES_NOT_INITIALIZED]
         
-        return Diagnostics.NOERROR
+        return [Diagnostics.NOERROR]
     
-    def _jetson_boot(self) -> int:
+    def _jetson_boot(self) -> list[int]:
         """jetson_boot: Boot sequence for the Jetson
         """
         try:
@@ -701,12 +701,12 @@ class ArgusV1(CubeSat):
             if self.__debug:
                 raise e
                 
-            return Diagnostics.JETSON_NOT_INITIALIZED
+            return [Diagnostics.JETSON_NOT_INITIALIZED]
         
-        return Diagnostics.NOERROR
+        return [Diagnostics.NOERROR]
 
     ######################## DIAGNOSTICS ########################
-    def __get_device_diagnostic_error(self, device) -> int:
+    def __get_device_diagnostic_error(self, device) -> list[int]:
         """__get_device_diagnostic_error: Get the error code for a device that failed to initialize
         """
         if isinstance(device, Middleware): # Convert device to the wrapped instance
