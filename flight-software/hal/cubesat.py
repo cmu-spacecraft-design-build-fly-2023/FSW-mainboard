@@ -11,7 +11,7 @@ class CubeSat:
 
     def __init__(self):
         # List of successfully initialized devices
-        self._device_list: list[Diagnostics] = []
+        self.__device_list: list[Diagnostics] = []
 
         # List of errors from most recent system diagnostic test
         self._recent_errors: list[int] = [Diagnostics.NOERROR]
@@ -20,36 +20,34 @@ class CubeSat:
         self._state_flags = None
 
         # Interfaces
-        self._uart1 = None
-        self._uart2 = None
-        self._spi = None
-        self._i2c1 = None
-        self._i2c2 = None
+        self._uart1             = None
+        self._uart2             = None
+        self._spi               = None
+        self._i2c1              = None
+        self._i2c2              = None
 
         # Devices
-        self._gps = None
-        self._battery_monitor = None
-        self._jetson_monitor = None
-        self._imu = None
-        self._charger = None
-        self._torque_xp = None
-        self._torque_xm = None
-        self._torque_yp = None
-        self._torque_ym = None
-        self._torque_z = None
-        self._sun_sensor_xp = None
-        self._sun_sensor_xm = None
-        self._sun_sensor_yp = None
-        self._sun_sensor_ym = None
-        self._sun_sensor_zp = None
-        self._sun_sensor_zm = None
-        self._rtc = None
-        self._radio = None
-        self._sd_card = None
-        self._burn_wires = None
+        self._gps               = None
+        self._battery_monitor   = None
+        self._jetson_monitor    = None
+        self._imu               = None
+        self._charger           = None
+        self._torque_x          = None
+        self._torque_y          = None
+        self._torque_z          = None
+        self._sun_sensor_xp     = None
+        self._sun_sensor_xm     = None
+        self._sun_sensor_yp     = None
+        self._sun_sensor_ym     = None
+        self._sun_sensor_zp     = None
+        self._sun_sensor_zm     = None
+        self._rtc               = None
+        self._radio             = None
+        self._sd_card           = None
+        self._burn_wires        = None
 
         # Debugging
-        self._neopixel = None
+        self._neopixel          = None
     
     ## ABSTRACT METHOD ##
     def boot_sequence(self) -> list[int]:
@@ -72,12 +70,12 @@ class CubeSat:
     def device_list(self):
         """device_list: Get the list of successfully initialized devices
         """
-        return self._device_list
+        return self.__device_list
     
     def append_device(self, device):
         """append_device: Append a device to the device list
         """
-        self._device_list.append(device)
+        self.__device_list.append(device)
     
     ######################### STATE FLAGS ########################
     @property
@@ -157,32 +155,18 @@ class CubeSat:
         return self._charger
     
     @property
-    def TORQUE_XP(self):
-        """TORQUE_XP: Returns the torque driver in the x+ direction
+    def TORQUE_X(self):
+        """TORQUE_X: Returns the torque driver in the x direction
         :return: object or None
         """
-        return self._torque_xp
+        return self._torque_x
     
     @property
-    def TORQUE_XM(self):
-        """TORQUE_XM: Returns the torque driver in the x- direction
+    def TORQUE_Y(self):
+        """TORQUE_Y: Returns the torque driver in the y direction
         :return: object or None
         """
-        return self._torque_xm
-    
-    @property
-    def TORQUE_YP(self):
-        """TORQUE_YP: Returns the torque driver in the y+ direction
-        :return: object or None
-        """
-        return self._torque_yp
-    
-    @property
-    def TORQUE_YM(self):
-        """TORQUE_YM: Returns the torque driver in the y- direction
-        :return: object or None
-        """
-        return self._torque_ym
+        return self._torque_y
     
     @property
     def TORQUE_Z(self):

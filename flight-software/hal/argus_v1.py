@@ -11,7 +11,7 @@ import sdcardio
 
 import neopixel
 from hal.drivers.diagnostics.diagnostics import Diagnostics
-from hal.drivers import pcf8523, rfm9x, adm1176, bq25883, opt4001, gps, bmx160, drv8830, burnwire, stateflags
+from hal.drivers import pcf8523, rfm9x, adm1176, bq25883, opt4001, gps, bmx160, drv8830, burnwire, stateflags, torque_coil
 from hal.drivers.middleware.middleware import *
 from hal.drivers.middleware.exceptions import *
 
@@ -141,29 +141,32 @@ class ArgusV1(CubeSat):
         """
         error_list: list[int] = []
 
+        # Create individual torque coil driver instances
+        self.__torque_xp_driver  = None
+        self.__torque_xm_driver  = None
+        self.__torque_yp_driver  = None
+        self.__torque_ym_driver  = None
+        self.__torque_z_driver   = None
+
         self.__state_flags_boot() # Does not require error checking
 
-        error_list.append(self.__rtc_boot())
-        error_list.append(self.__gps_boot())
-        error_list.append(self.__battery_power_monitor_boot())
-        error_list.append(self.__jetson_power_monitor_boot())
-        # error_list.append(self.__imu_boot())
-        error_list.append(self.__charger_boot())
-        error_list.append(self.__torque_xp_boot())
-        error_list.append(self.__torque_xm_boot())
-        error_list.append(self.__torque_yp_boot())
-        error_list.append(self.__torque_ym_boot())
-        error_list.append(self.__torque_z_boot())
-        error_list.append(self.__sun_sensor_xp_boot())
-        error_list.append(self.__sun_sensor_xm_boot())
-        error_list.append(self.__sun_sensor_yp_boot())
-        error_list.append(self.__sun_sensor_ym_boot())
-        error_list.append(self.__sun_sensor_zp_boot())
-        error_list.append(self.__sun_sensor_zm_boot())
-        error_list.append(self.__radio_boot())
-        error_list.append(self.__neopixel_boot())
-        error_list.append(self.__sd_card_boot())
-        error_list.append(self._burn_wire_boot())
+        error_list += self.__rtc_boot()
+        error_list += self.__gps_boot()
+        error_list += self.__battery_power_monitor_boot()
+        error_list += self.__jetson_power_monitor_boot()
+        error_list += self.__imu_boot()
+        error_list += self.__charger_boot()
+        error_list += self.__torque_interface_boot()
+        error_list += self.__sun_sensor_xp_boot()
+        error_list += self.__sun_sensor_xm_boot()
+        error_list += self.__sun_sensor_yp_boot()
+        error_list += self.__sun_sensor_ym_boot()
+        error_list += self.__sun_sensor_zp_boot()
+        error_list += self.__sun_sensor_zm_boot()
+        error_list += self.__radio_boot()
+        error_list += self.__neopixel_boot()
+        error_list += self.__sd_card_boot()
+        error_list += self._burn_wire_boot()
 
         error_list = [error for error in error_list if error != Diagnostics.NOERROR]
 
@@ -196,7 +199,7 @@ class ArgusV1(CubeSat):
                 gps1 = Middleware(gps1, gps_fatal_exception)
 
             self._gps = gps1
-            self._device_list.append(gps1)
+            self.__device_list.append(gps1)
         except Exception as e:
             if not self.__middleware_enabled:
                 raise e
@@ -220,7 +223,7 @@ class ArgusV1(CubeSat):
                 battery_monitor = Middleware(battery_monitor, battery_power_monitor_fatal_exception)
 
             self._battery_monitor = battery_monitor
-            self._device_list.append(battery_monitor)
+            self.__device_list.append(battery_monitor)
         except Exception as e:
             if not self.__middleware_enabled:
                 raise e
@@ -244,7 +247,7 @@ class ArgusV1(CubeSat):
                 jetson_monitor = Middleware(jetson_monitor, jetson_power_monitor_fatal_exception)
             
             self._jetson_monitor = jetson_monitor
-            self._device_list.append(jetson_monitor)
+            self.__device_list.append(jetson_monitor)
         except Exception as e:
             if not self.__middleware_enabled:
                 raise e
@@ -269,7 +272,7 @@ class ArgusV1(CubeSat):
                 imu = Middleware(imu, imu_fatal_exception)
             
             self._imu = imu
-            self._device_list.append(imu)
+            self.__device_list.append(imu)
         except Exception as e:
             if not self.__middleware_enabled:
                 raise e
@@ -293,7 +296,7 @@ class ArgusV1(CubeSat):
                 charger = Middleware(charger, charger_fatal_exception)
             
             self._charger = charger
-            self._device_list.append(charger)
+            self.__device_list.append(charger)
         except Exception as e:
             if not self.__middleware_enabled:
                 raise e
@@ -316,8 +319,8 @@ class ArgusV1(CubeSat):
             if self.__middleware_enabled:
                 torque_xp = Middleware(torque_xp, torque_xp_fatal_exception)
             
-            self._torque_xp = torque_xp
-            self._device_list.append(torque_xp)
+            self.__torque_xp_driver = torque_xp
+            self.__device_list.append(torque_xp)
         except Exception as e:
             if not self.__middleware_enabled:
                 raise e
@@ -340,8 +343,8 @@ class ArgusV1(CubeSat):
             if self.__middleware_enabled:
                 torque_xm = Middleware(torque_xm, torque_xm_fatal_exception)
             
-            self._torque_xm = torque_xm
-            self._device_list.append(torque_xm)
+            self.__torque_xm_driver = torque_xm
+            self.__device_list.append(torque_xm)
         except Exception as e:
             if not self.__middleware_enabled:
                 raise e
@@ -364,8 +367,8 @@ class ArgusV1(CubeSat):
             if self.__middleware_enabled:
                 torque_yp = Middleware(torque_yp, torque_yp_fatal_exception)
             
-            self._torque_yp = torque_yp
-            self._device_list.append(torque_yp)
+            self.__torque_yp_driver = torque_yp
+            self.__device_list.append(torque_yp)
         except Exception as e:
             if not self.__middleware_enabled:
                 raise e
@@ -388,8 +391,8 @@ class ArgusV1(CubeSat):
             if self.__middleware_enabled:
                 torque_ym = Middleware(torque_ym, torque_ym_fatal_exception)
             
-            self._torque_ym = torque_ym
-            self._device_list.append(torque_ym)
+            self.__torque_ym_driver = torque_ym
+            self.__device_list.append(torque_ym)
         except Exception as e:
             if not self.__middleware_enabled:
                 raise e
@@ -412,8 +415,8 @@ class ArgusV1(CubeSat):
             if self.__middleware_enabled:
                 torque_z = Middleware(torque_z, torque_z_fatal_exception)
             
-            self._torque_z = torque_z
-            self._device_list.append(torque_z)
+            self.__torque_z_driver = torque_z
+            self.__device_list.append(torque_z)
         except Exception as e:
             if not self.__middleware_enabled:
                 raise e
@@ -423,6 +426,51 @@ class ArgusV1(CubeSat):
             return Diagnostics.DRV8830_NOT_INITIALIZED
         
         return Diagnostics.NOERROR
+    
+    def __torque_interface_boot(self) -> int:
+        """torque_interface_boot: Boot sequence for the torque interface
+
+        :return: Error code if the torque interface failed to initialize
+        """
+        error_list: list[int] = []
+
+        error_list += self.__torque_xp_boot()
+        error_list += self.__torque_xm_boot()
+        error_list += self.__torque_yp_boot()
+        error_list += self.__torque_ym_boot()
+        error_list += self.__torque_z_boot()
+
+        # X direction
+        try:
+            torque_interface = torque_coil.TorqueInterface(self._torque_xp, self._torque_xm)
+            self._torque_x = torque_interface
+        except Exception as e:
+            if not self.__middleware_enabled:
+                raise e
+            if self.__debug:
+                print(e)
+
+        # Y direction
+        try:
+            torque_interface = torque_coil.TorqueInterface(self._torque_yp, self._torque_ym)
+            self._torque_y = torque_interface
+        except Exception as e:
+            if not self.__middleware_enabled:
+                raise e
+            if self.__debug:
+                print(e)
+        
+        # Z direction
+        try:
+            torque_interface = torque_coil.TorqueInterface(self._torque_z)
+            self._torque_z = torque_interface
+        except Exception as e:
+            if not self.__middleware_enabled:
+                raise e
+            if self.__debug:
+                print(e)
+        
+        return error_list
     
     def __sun_sensor_xp_boot(self) -> int:
         """sun_sensor_xp_boot: Boot sequence for the sun sensor in the x+ direction
@@ -437,7 +485,7 @@ class ArgusV1(CubeSat):
                 sun_sensor_xp = Middleware(sun_sensor_xp, sun_sensor_xp_fatal_exception)
             
             self._sun_sensor_xp = sun_sensor_xp
-            self._device_list.append(sun_sensor_xp)
+            self.__device_list.append(sun_sensor_xp)
         except Exception as e:
             if not self.__middleware_enabled:
                 raise e
@@ -461,7 +509,7 @@ class ArgusV1(CubeSat):
                 sun_sensor_xm = Middleware(sun_sensor_xm, sun_sensor_xm_fatal_exception)
             
             self._sun_sensor_xm = sun_sensor_xm
-            self._device_list.append(sun_sensor_xm)
+            self.__device_list.append(sun_sensor_xm)
         except Exception as e:
             if not self.__middleware_enabled:
                 raise e
@@ -485,7 +533,7 @@ class ArgusV1(CubeSat):
                 sun_sensor_yp = Middleware(sun_sensor_yp, sun_sensor_yp_fatal_exception)
             
             self._sun_sensor_yp = sun_sensor_yp
-            self._device_list.append(sun_sensor_yp)
+            self.__device_list.append(sun_sensor_yp)
         except Exception as e:
             if not self.__middleware_enabled:
                 raise e
@@ -509,7 +557,7 @@ class ArgusV1(CubeSat):
                 sun_sensor_ym = Middleware(sun_sensor_ym, sun_sensor_ym_fatal_exception)
             
             self._sun_sensor_ym = sun_sensor_ym
-            self._device_list.append(sun_sensor_ym)
+            self.__device_list.append(sun_sensor_ym)
         except Exception as e:
             if not self.__middleware_enabled:
                 raise e
@@ -533,7 +581,7 @@ class ArgusV1(CubeSat):
                 sun_sensor_zp = Middleware(sun_sensor_zp, sun_sensor_zp_fatal_exception)
             
             self._sun_sensor_zp = sun_sensor_zp
-            self._device_list.append(sun_sensor_zp)
+            self.__device_list.append(sun_sensor_zp)
         except Exception as e:
             if not self.__middleware_enabled:
                 raise e
@@ -557,7 +605,7 @@ class ArgusV1(CubeSat):
                 sun_sensor_zm = Middleware(sun_sensor_zm, sun_sensor_zm_fatal_exception)
             
             self._sun_sensor_zm = sun_sensor_zm
-            self._device_list.append(sun_sensor_zm)
+            self.__device_list.append(sun_sensor_zm)
         except Exception as e:
             if not self.__middleware_enabled:
                 raise e
@@ -585,7 +633,7 @@ class ArgusV1(CubeSat):
                 radio = Middleware(radio, radio_fatal_exception)
             
             self._radio = radio
-            self._device_list.append(radio)
+            self.__device_list.append(radio)
         except Exception as e:
             if not self.__middleware_enabled:
                 raise e
@@ -609,7 +657,7 @@ class ArgusV1(CubeSat):
                 rtc = Middleware(rtc, rtc_fatal_exception)
             
             self._rtc = rtc
-            self._device_list.append(rtc)
+            self.__device_list.append(rtc)
         except Exception as e:
             if not self.__middleware_enabled:
                 raise e
@@ -629,7 +677,7 @@ class ArgusV1(CubeSat):
                                brightness=ArgusV1Components.NEOPIXEL_BRIGHTNESS,
                                pixel_order=neopixel.GRB)
             self._neopixel = np
-            self._device_list.append(neopixel)
+            self.__device_list.append(neopixel)
             self.append_device(neopixel)
         except Exception as e:
             if not self.__middleware_enabled:
