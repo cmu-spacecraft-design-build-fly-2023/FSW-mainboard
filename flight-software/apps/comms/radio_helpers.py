@@ -27,6 +27,7 @@ class SATELLITE_RADIO:
     def __init__(self, sat: CubeSat):
         self.sat = sat
         
+        # request_TM_path for getting file path of image
         self.image_strs = ['/sd/IMAGES/ohio.jpg','/sd/IMAGES/tokyo_small.jpg','/sd/IMAGES/oregon_small.jpg']
         self.image_num = 0
 
@@ -174,7 +175,7 @@ class SATELLITE_RADIO:
     '''
     def receive_message(self):
         while (self.gs_req_ack == 0):
-            my_packet = self.sat.RADIO.receive(timeout = 5)
+            my_packet = self.sat.RADIO.receive(timeout = 1)
             if my_packet is None:
                 self.heartbeat_sent = False
                 self.gs_req_message_ID = 0x00

@@ -25,12 +25,10 @@ print()
 from apps.data_handler import DataHandler as DH
 DH.delete_all_files()
 """
-import comms_test
 
 try:
     # Run forever
-    # state_manager.start("STARTUP")
-    
+    state_manager.start("STARTUP")
     # import obdh_sd_test
     pass
 except Exception as e:
