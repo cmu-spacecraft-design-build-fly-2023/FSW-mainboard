@@ -63,14 +63,14 @@ def construct_message(lora_tx_message_ID):
 
     if(lora_tx_message_ID == SAT_HEARTBEAT_BATT):
         # Construct SAT heartbeat 
-        lora_tx_message = [REQ_ACK_NUM | SAT_HEARTBEAT_BATT, 0x00, 0x00, 0x12]
+        lora_tx_message = [REQ_ACK_NUM | SAT_HEARTBEAT_BATT, 0x00, 0x00, 0x0B]
 
         # Generate LoRa payload for SAT heartbeat 
         # Add system status
         lora_tx_message += [0x00, 0x00]
 
-        # Add battery SOCs, 1 byte for each battery 
-        lora_tx_message += [0x53, 0x51, 0x47, 0x61, 0x52, 0x51]
+        # Add battery SOCs, just one byte containing avg voltage (?)
+        lora_tx_message += [0x53]
 
         # Add current as uint16_t
         lora_tx_message += [0x03, 0x7B]
