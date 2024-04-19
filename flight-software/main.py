@@ -35,16 +35,13 @@ DH.delete_all_files()
 gc.collect()
 print(str(gc.mem_free()) + " bytes free")
 
-print('sdfh')
-state_manager.start("STARTUP")
 
-# try:
+try:
     # Run forever
-    # print('sdfh')
-    # state_manager.start("STARTUP")
+    state_manager.start("STARTUP")
     
-    # import obdh_sd_test
-#     pass
-# except Exception as e:
-#     print(e)
-#     # TODO Log the error
+    import obdh_sd_test
+    pass
+except Exception as e:
+    print(e)
+    # TODO Log the error
