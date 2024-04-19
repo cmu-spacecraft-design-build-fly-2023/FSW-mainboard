@@ -1,7 +1,3 @@
-import board
-import time
-import digitalio
-
 from micropython import const
 from hal.drivers.diagnostics.diagnostics import Diagnostics
 

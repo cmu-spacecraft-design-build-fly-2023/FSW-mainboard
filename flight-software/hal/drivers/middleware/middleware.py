@@ -12,17 +12,7 @@ Author: Harry Rosmann
 
 """
 from ..diagnostics.diagnostics import Diagnostics
-from .exceptions import *
 from micropython import const
-from hal.drivers.gps import GPS
-from hal.drivers.adm1176 import ADM1176
-from hal.drivers.bmx160 import BMX160
-from hal.drivers.bq25883 import BQ25883
-from hal.drivers.burnwire import BurnWires
-from hal.drivers.pcf8523 import PCF8523
-from hal.drivers.drv8830 import DRV8830
-from hal.drivers.opt4001 import OPT4001
-from hal.drivers.rfm9x import RFM9x
 
 # The default number of retries for the middleware
 # NOTE: Keep this value low to prevent loss of timing

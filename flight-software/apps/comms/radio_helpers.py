@@ -11,7 +11,6 @@ Authors: DJ Morvay, Akshat Sahay
 # Common CircuitPython Libs 
 import os
 import time
-import sys
 
 # PyCubed Board Lib
 from hal.cubesat import CubeSat

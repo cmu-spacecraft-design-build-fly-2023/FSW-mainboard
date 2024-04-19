@@ -10,9 +10,10 @@ CircuitPython Version: 7.0.0 alpha
 Library Repo: https://github.com/pycubed/library_pycubed.py
 * Edits by: Max Holliday
 """
-import time, math
+import math
+from time import sleep, monotonic
 from random import random
-import digitalio
+from digitalio import DigitalInOut, Pull
 from micropython import const
 import adafruit_bus_device.spi_device as spidev
 from .diagnostics.diagnostics import Diagnostics
@@ -248,14 +249,14 @@ class RFM9x(Diagnostics):
         self.high_power = high_power
         self.max_output=max_output
 
-        self.dio0 = digitalio.DigitalInOut(dio0)
+        self.dio0 = DigitalInOut(dio0)
         self.dio0.switch_to_input()
         self.dio0=False
 
-        self.__cs = digitalio.DigitalInOut(cs)
+        self.__cs = DigitalInOut(cs)
         self.__cs.switch_to_output(value=True)
 
-        self.__enable = digitalio.DigitalInOut(enable)
+        self.__enable = DigitalInOut(enable)
         self.__enable.switch_to_output(value=True)
 
         # Device support SPI mode 0 (polarity & phase = 0) up to a max of 10mhz.
@@ -265,8 +266,8 @@ class RFM9x(Diagnostics):
         # to the datasheet).  This line is pulled low as an output quickly to
         # trigger a reset.  Note that reset MUST be done like this and set as
         # a high impedence input or else the chip cannot change modes (trust me!).
-        self._rst = digitalio.DigitalInOut(rst)
-        self._rst.switch_to_input(pull=digitalio.Pull.UP)
+        self._rst = DigitalInOut(rst)
+        self._rst.switch_to_input(pull=Pull.UP)
         self.reset()
         # No device type check!  Catch an error from the very first request and
         # throw a nicer message to indicate possible wiring problems.
@@ -279,12 +280,12 @@ class RFM9x(Diagnostics):
         # Set sleep mode, wait 10ms and confirm in sleep mode (basic device check).
         # Also set long range mode (LoRa mode) as it can only be done in sleep.
         self.idle()
-        time.sleep(0.01)
+        sleep(0.01)
         self.osc_calibration = True
-        time.sleep(1)
+        sleep(1)
 
         self.sleep()
-        time.sleep(0.01)
+        sleep(0.01)
         self.long_range_mode = True
         if self.operation_mode != SLEEP_MODE or not self.long_range_mode:
             raise RuntimeError("Failed to configure radio for LoRa mode, check wiring!")
@@ -394,7 +395,7 @@ class RFM9x(Diagnostics):
             ]
 
         self.operation_mode = SLEEP_MODE
-        time.sleep(0.01)
+        sleep(0.01)
         self.long_range_mode = False  # FSK/OOK Mode
         self.modulation_type = 1  # OOK
         self.modulation_shaping = 2
@@ -410,13 +411,13 @@ class RFM9x(Diagnostics):
         self._write_u8(0x35, len(msg) - 1)
         self._write_from(_RH_RF95_REG_00_FIFO, bytearray(msg))
 
-        _t = time.monotonic() + 10
+        _t = monotonic() + 10
         self.operation_mode = TX_MODE
-        while time.monotonic() < _t:
+        while monotonic() < _t:
             a = self._read_u8(0x3F)
             # print(a,end=' ')
             if (a >> 6) & 1:
-                time.sleep(0.01)
+                sleep(0.01)
                 success = True
                 break
         if not (a >> 6) & 1:
@@ -424,7 +425,7 @@ class RFM9x(Diagnostics):
         self.idle()
         if cache:
             self.operation_mode = SLEEP_MODE
-            time.sleep(0.01)
+            sleep(0.01)
             self.long_range_mode = True
             self._write_u8(_RH_RF95_REG_0E_FIFO_TX_BASE_ADDR, 0x00)
             self._write_u8(_RH_RF95_REG_0F_FIFO_RX_BASE_ADDR, 0x00)
@@ -489,9 +490,9 @@ class RFM9x(Diagnostics):
         """Perform a reset of the chip."""
         # See section 7.2.2 of the datasheet for reset description.
         self._rst.switch_to_output(value=False)
-        time.sleep(0.0001)  # 100 us
-        self._rst.switch_to_input(pull=digitalio.Pull.UP)
-        time.sleep(0.005)  # 5 ms
+        sleep(0.0001)  # 100 us
+        self._rst.switch_to_input(pull=Pull.UP)
+        sleep(0.005)  # 5 ms
 
     def idle(self):
         """Enter idle standby mode."""
@@ -746,9 +747,9 @@ class RFM9x(Diagnostics):
             return (self._read_u8(_RH_RF95_REG_12_IRQ_FLAGS) & 0x40) >> 6
 
     async def await_rx(self, timeout=60):
-        _t = time.monotonic() + timeout
+        _t = monotonic() + timeout
         while not self.rx_done():
-            if time.monotonic() < _t:
+            if monotonic() < _t:
                 yield
             else:
                 # Timed out
@@ -843,10 +844,10 @@ class RFM9x(Diagnostics):
         self.transmit()
         # Wait for tx done interrupt with explicit polling (not ideal but
         # best that can be done right now without interrupts).
-        start = time.monotonic()
+        start = monotonic()
         timed_out = False
         while not timed_out and not self.tx_done():
-            if (time.monotonic() - start) >= self.xmit_timeout:
+            if (monotonic() - start) >= self.xmit_timeout:
                 timed_out = True
 
         if hasattr(self, "txrx"):  # RX
@@ -897,7 +898,7 @@ class RFM9x(Diagnostics):
                 self.retry_counter += 1  # ADDED FOR PYCUBED
                 print("no uhf ack, sending again...")
                 # delay by random amount before next try
-                time.sleep(self.ack_wait + self.ack_wait * random())
+                sleep(self.ack_wait + self.ack_wait * random())
             retries_remaining = retries_remaining - 1
             # set retry flag in packet header
             self.flags |= _RH_FLAGS_RETRY
@@ -943,10 +944,10 @@ class RFM9x(Diagnostics):
             # interrupt supports.
             # Make sure we are listening for packets.
             self.listen()
-            start = time.monotonic()
+            start = monotonic()
             timed_out = False
             while not timed_out and not self.rx_done():
-                if (time.monotonic() - start) >= timeout:
+                if (monotonic() - start) >= timeout:
                     timed_out = True
         # Payload ready is set, a packet is in the FIFO.
         packet = None
@@ -993,7 +994,7 @@ class RFM9x(Diagnostics):
                     ):
                         # delay before sending Ack to give receiver a chance to get ready
                         if self.ack_delay is not None:
-                            time.sleep(self.ack_delay)
+                            sleep(self.ack_delay)
                         # send ACK packet to sender (data is b'!')
                         self.send(
                             b"!",
@@ -1109,8 +1110,8 @@ class RFM9x(Diagnostics):
         self.transmit()
         # Wait for tx done interrupt with explicit polling (not ideal but
         # best that can be done right now without interrupts).
-        _t = time.monotonic() + 5
-        while time.monotonic() < _t and not self.tx_done():
+        _t = monotonic() + 5
+        while monotonic() < _t and not self.tx_done():
             pass
         self.idle()
         # Clear interrupt.

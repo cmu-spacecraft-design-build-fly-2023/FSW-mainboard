@@ -32,8 +32,7 @@ to the GPIO pins for signaling
 """
 from diagnostics.diagnostics import Diagnostics
 from micropython import const
-import board, Pin
-import digitalio
+from digitalio import DigitalInOut
 from struct import pack, unpack 
 
 MAX_PACKETS             = const(0xFFFF) # 65535 packets
@@ -196,12 +195,12 @@ class Message:
     
 # TODO: Add comments
 class JetsonComm(Diagnostics):
-    def __init__(self, uart, enable_pin: Pin = None):
+    def __init__(self, uart, enable_pin = None):
         self.uart = uart
 
         self._enable = None
         if enable_pin is not None:
-            self._enable = digitalio.DigitalInOut(enable_pin)
+            self._enable = DigitalInOut(enable_pin)
             self._enable.switch_to_output()
             self.enable()
 

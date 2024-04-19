@@ -9,7 +9,7 @@ Authors: Gordonson Yan, Harry Rosmann
 
 
 from .drv8830 import DRV8830
-from .middleware.middleware import Middleware
+from .middleware import Middleware
 
 # TorqueCoil Management Class
 class TorqueInterface:

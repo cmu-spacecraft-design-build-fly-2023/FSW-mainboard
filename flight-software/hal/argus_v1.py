@@ -3,18 +3,46 @@ File: argus_v1.py
 Author: Harry
 Description: This file contains the definition of the ArgusV1 class and its associated interfaces and components.
 """
-import busio
+from busio import I2C, SPI, UART
 from hal.cubesat import CubeSat
 from micropython import const
 import board
-import sdcardio, sys, os
-from storage import mount, umount, remount, VfsFat
+from sdcardio import SDCard
+from sys import path
+from storage import mount, VfsFat
+
+import gc
 
 import neopixel
+gc.collect()
 from hal.drivers.diagnostics.diagnostics import Diagnostics
-from hal.drivers import pcf8523, rfm9x, adm1176, bq25883, opt4001, gps, bmx160, drv8830, burnwire, stateflags, torque_coil
-from hal.drivers.middleware.middleware import *
+gc.collect()
+from hal.drivers.adm1176 import ADM1176
+gc.collect()
+from hal.drivers.bq25883 import BQ25883
+gc.collect()
+from hal.drivers.bmx160 import BMX160
+gc.collect()
+from hal.drivers.pcf8523 import PCF8523
+gc.collect()
+from hal.drivers.rfm9x import RFM9x
+gc.collect()
+from hal.drivers.opt4001 import OPT4001
+gc.collect()
+from hal.drivers.gps import GPS
+gc.collect()
+from hal.drivers.drv8830 import DRV8830
+gc.collect()
+from hal.drivers.burnwire import BurnWires
+gc.collect()
+from hal.drivers.stateflags import StateFlags
+gc.collect()
+from hal.drivers.torque_coil import TorqueInterface
+gc.collect()
+from hal.drivers.middleware.middleware import Middleware
+gc.collect() 
 from hal.drivers.middleware.exceptions import *
+gc.collect()
 
 class ArgusV1Interfaces:
     """
@@ -23,26 +51,26 @@ class ArgusV1Interfaces:
     
     I2C1_SDA    = board.SDA
     I2C1_SCL    = board.SCL
-    I2C1        = busio.I2C(I2C1_SCL, I2C1_SDA)
+    I2C1        = I2C(I2C1_SCL, I2C1_SDA)
 
     I2C2_SDA    = board.SDA2
     I2C2_SCL    = board.SCL2
-    I2C2        = busio.I2C(I2C2_SCL, I2C2_SDA)
+    I2C2        = I2C(I2C2_SCL, I2C2_SDA)
 
     SPI_SCK     = board.SCK
     SPI_MOSI    = board.MOSI
     SPI_MISO    = board.MISO
-    SPI         = busio.SPI(SPI_SCK, MOSI=SPI_MOSI, MISO=SPI_MISO)
+    SPI         = SPI(SPI_SCK, MOSI=SPI_MOSI, MISO=SPI_MISO)
 
     UART_BAUD   = const(9600)
 
     UART1_TX    = board.TX
     UART1_RX    = board.RX
-    UART1       = busio.UART(UART1_TX, UART1_RX, baudrate=UART_BAUD)
+    UART1       = UART(UART1_TX, UART1_RX, baudrate=UART_BAUD)
 
     UART2_TX    = board.JET_TX
     UART2_RX    = board.JET_RX
-    UART2       = busio.UART(UART2_TX, UART2_RX, baudrate=UART_BAUD)
+    UART2       = UART(UART2_TX, UART2_RX, baudrate=UART_BAUD)
 
 class ArgusV1Components:
     """
@@ -158,26 +186,46 @@ class ArgusV1(CubeSat):
         self.__torque_z_driver   = None
 
         self.__state_flags_boot() # Does not require error checking
+        gc.collect()
 
-        error_list += self.__rtc_boot()
-        error_list += self.__gps_boot()
-        error_list += self.__battery_power_monitor_boot()
-        error_list += self.__jetson_power_monitor_boot()
-        error_list += self.__imu_boot()
-        error_list += self.__charger_boot()
-        error_list += self.__torque_interface_boot()
-        error_list += self.__sun_sensor_xp_boot()
-        error_list += self.__sun_sensor_xm_boot()
-        error_list += self.__sun_sensor_yp_boot()
-        error_list += self.__sun_sensor_ym_boot()
-        error_list += self.__sun_sensor_zp_boot()
-        error_list += self.__sun_sensor_zm_boot()
-        error_list += self.__radio_boot()
-        error_list += self.__neopixel_boot()
         error_list += self.__sd_card_boot()
+        gc.collect()
         error_list += self.__vfs_boot()
+        gc.collect()
+        error_list += self.__rtc_boot()
+        gc.collect()
+        error_list += self.__gps_boot()
+        gc.collect()
+        error_list += self.__battery_power_monitor_boot()
+        gc.collect()
+        error_list += self.__jetson_power_monitor_boot()
+        gc.collect()
+        error_list += self.__imu_boot()
+        gc.collect()
+        error_list += self.__charger_boot()
+        gc.collect()
+        error_list += self.__torque_interface_boot()
+        gc.collect()
+        error_list += self.__sun_sensor_xp_boot()
+        gc.collect()
+        error_list += self.__sun_sensor_xm_boot()
+        gc.collect()
+        error_list += self.__sun_sensor_yp_boot()
+        gc.collect()
+        error_list += self.__sun_sensor_ym_boot()
+        gc.collect()
+        error_list += self.__sun_sensor_zp_boot()
+        gc.collect()
+        error_list += self.__sun_sensor_zm_boot()
+        gc.collect()
+        error_list += self.__radio_boot()
+        gc.collect()
+        error_list += self.__neopixel_boot()
+        gc.collect()
         error_list += self.__burn_wire_boot()
+        gc.collect()
         error_list += self.__jetson_boot()
+        gc.collect()
 
         error_list = [error for error in error_list if error != Diagnostics.NOERROR]
 
@@ -195,7 +243,7 @@ class ArgusV1(CubeSat):
     def __state_flags_boot(self) -> None:
         """state_flags_boot: Boot sequence for the state flags
         """
-        self._state_flags = stateflags.StateFlags()
+        self._state_flags = StateFlags()
     
     def __gps_boot(self) -> list[int]:
         """GPS_boot: Boot sequence for the GPS
@@ -203,7 +251,7 @@ class ArgusV1(CubeSat):
         :return: Error code if the GPS failed to initialize
         """
         try:
-            gps1 = gps.GPS(ArgusV1Components.GPS_UART,
+            gps1 = GPS(ArgusV1Components.GPS_UART,
                            ArgusV1Components.GPS_ENABLE)
             
             if self.__middleware_enabled:
@@ -225,7 +273,7 @@ class ArgusV1(CubeSat):
         :return: Error code if the battery power monitor failed to initialize
         """
         try:
-            battery_monitor = adm1176.ADM1176(ArgusV1Components.BATTERY_POWER_MONITOR_I2C,
+            battery_monitor = ADM1176(ArgusV1Components.BATTERY_POWER_MONITOR_I2C,
                                               ArgusV1Components.BATTERY_POWER_MONITOR_I2C_ADDRESS)
             
             if self.__middleware_enabled:
@@ -247,7 +295,7 @@ class ArgusV1(CubeSat):
         :return: Error code if the Jetson power monitor failed to initialize
         """
         try:
-            jetson_monitor = adm1176.ADM1176(ArgusV1Components.JETSON_POWER_MONITOR_I2C,
+            jetson_monitor = ADM1176(ArgusV1Components.JETSON_POWER_MONITOR_I2C,
                                              ArgusV1Components.JETSON_POWER_MONITOR_I2C_ADDRESS)
             
             if self.__middleware_enabled:
@@ -269,7 +317,7 @@ class ArgusV1(CubeSat):
         :return: Error code if the IMU failed to initialize
         """
         try:
-            imu = bmx160.BMX160(ArgusV1Components.IMU_I2C,
+            imu = BMX160(ArgusV1Components.IMU_I2C,
                                 ArgusV1Components.IMU_I2C_ADDRESS,
                                 ArgusV1Components.IMU_ENABLE)
             
@@ -292,7 +340,7 @@ class ArgusV1(CubeSat):
         :return: Error code if the charger failed to initialize
         """
         try:
-            charger = bq25883.BQ25883(ArgusV1Components.CHARGER_I2C,
+            charger = BQ25883(ArgusV1Components.CHARGER_I2C,
                                       ArgusV1Components.CHARGER_I2C_ADDRESS)
             
             if self.__middleware_enabled:
@@ -314,7 +362,7 @@ class ArgusV1(CubeSat):
         :return: Error code if the torque driver failed to initialize
         """
         try:
-            torque_xp = drv8830.DRV8830(ArgusV1Components.TORQUE_COILS_I2C,
+            torque_xp = DRV8830(ArgusV1Components.TORQUE_COILS_I2C,
                                         ArgusV1Components.TORQUE_XP_I2C_ADDRESS)
             
             if self.__middleware_enabled:
@@ -336,7 +384,7 @@ class ArgusV1(CubeSat):
         :return: Error code if the torque driver failed to initialize
         """
         try:
-            torque_xm = drv8830.DRV8830(ArgusV1Components.TORQUE_COILS_I2C,
+            torque_xm = DRV8830(ArgusV1Components.TORQUE_COILS_I2C,
                                         ArgusV1Components.TORQUE_XM_I2C_ADDRESS)
             
             if self.__middleware_enabled:
@@ -358,7 +406,7 @@ class ArgusV1(CubeSat):
         :return: Error code if the torque driver failed to initialize
         """
         try:
-            torque_yp = drv8830.DRV8830(ArgusV1Components.TORQUE_COILS_I2C,
+            torque_yp = DRV8830(ArgusV1Components.TORQUE_COILS_I2C,
                                         ArgusV1Components.TORQUE_YP_I2C_ADDRESS)
             
             if self.__middleware_enabled:
@@ -380,7 +428,7 @@ class ArgusV1(CubeSat):
         :return: Error code if the torque driver failed to initialize
         """
         try:
-            torque_ym = drv8830.DRV8830(ArgusV1Components.TORQUE_COILS_I2C,
+            torque_ym = DRV8830(ArgusV1Components.TORQUE_COILS_I2C,
                                         ArgusV1Components.TORQUE_YM_I2C_ADDRESS)
             
             if self.__middleware_enabled:
@@ -402,7 +450,7 @@ class ArgusV1(CubeSat):
         :return: Error code if the torque driver failed to initialize
         """
         try:
-            torque_z = drv8830.DRV8830(ArgusV1Components.TORQUE_COILS_I2C,
+            torque_z = DRV8830(ArgusV1Components.TORQUE_COILS_I2C,
                                        ArgusV1Components.TORQUE_Z_I2C_ADDRESS)
             
             if self.__middleware_enabled:
@@ -433,7 +481,7 @@ class ArgusV1(CubeSat):
 
         # X direction
         try:
-            torque_interface = torque_coil.TorqueInterface(self._torque_xp, self._torque_xm)
+            torque_interface = TorqueInterface(self._torque_xp, self._torque_xm)
             self._torque_x = torque_interface
         except Exception as e:
             if self.__debug:
@@ -441,7 +489,7 @@ class ArgusV1(CubeSat):
 
         # Y direction
         try:
-            torque_interface = torque_coil.TorqueInterface(self._torque_yp, self._torque_ym)
+            torque_interface = TorqueInterface(self._torque_yp, self._torque_ym)
             self._torque_y = torque_interface
         except Exception as e:
             if self.__debug:
@@ -449,7 +497,7 @@ class ArgusV1(CubeSat):
         
         # Z direction
         try:
-            torque_interface = torque_coil.TorqueInterface(self._torque_z)
+            torque_interface = TorqueInterface(self._torque_z)
             self._torque_z = torque_interface
         except Exception as e:
             if self.__debug:
@@ -463,7 +511,7 @@ class ArgusV1(CubeSat):
         :return: Error code if the sun sensor failed to initialize
         """
         try:
-            sun_sensor_xp = opt4001.OPT4001(ArgusV1Components.SUN_SENSORS_I2C,
+            sun_sensor_xp = OPT4001(ArgusV1Components.SUN_SENSORS_I2C,
                                             ArgusV1Components.SUN_SENSOR_XP_I2C_ADDRESS)
             
             if self.__middleware_enabled:
@@ -485,7 +533,7 @@ class ArgusV1(CubeSat):
         :return: Error code if the sun sensor failed to initialize
         """
         try:
-            sun_sensor_xm = opt4001.OPT4001(ArgusV1Components.SUN_SENSORS_I2C,
+            sun_sensor_xm = OPT4001(ArgusV1Components.SUN_SENSORS_I2C,
                                             ArgusV1Components.SUN_SENSOR_XM_I2C_ADDRESS)
             
             if self.__middleware_enabled:
@@ -507,7 +555,7 @@ class ArgusV1(CubeSat):
         :return: Error code if the sun sensor failed to initialize
         """
         try:
-            sun_sensor_yp = opt4001.OPT4001(ArgusV1Components.SUN_SENSORS_I2C, 
+            sun_sensor_yp = OPT4001(ArgusV1Components.SUN_SENSORS_I2C, 
                                             ArgusV1Components.SUN_SENSOR_YP_I2C_ADDRESS)
             
             if self.__middleware_enabled:
@@ -529,7 +577,7 @@ class ArgusV1(CubeSat):
         :return: Error code if the sun sensor failed to initialize
         """
         try:
-            sun_sensor_ym = opt4001.OPT4001(ArgusV1Components.SUN_SENSORS_I2C, 
+            sun_sensor_ym = OPT4001(ArgusV1Components.SUN_SENSORS_I2C, 
                                             ArgusV1Components.SUN_SENSOR_YM_I2C_ADDRESS)
             
             if self.__middleware_enabled:
@@ -551,7 +599,7 @@ class ArgusV1(CubeSat):
         :return: Error code if the sun sensor failed to initialize
         """
         try:
-            sun_sensor_zp = opt4001.OPT4001(ArgusV1Components.SUN_SENSORS_I2C, 
+            sun_sensor_zp = OPT4001(ArgusV1Components.SUN_SENSORS_I2C, 
                                             ArgusV1Components.SUN_SENSOR_ZP_I2C_ADDRESS)
             
             if self.__middleware_enabled:
@@ -573,7 +621,7 @@ class ArgusV1(CubeSat):
         :return: Error code if the sun sensor failed to initialize
         """
         try:
-            sun_sensor_zm = opt4001.OPT4001(ArgusV1Components.SUN_SENSORS_I2C, 
+            sun_sensor_zm = OPT4001(ArgusV1Components.SUN_SENSORS_I2C, 
                                             ArgusV1Components.SUN_SENSOR_ZM_I2C_ADDRESS)
             
             if self.__middleware_enabled:
@@ -595,7 +643,7 @@ class ArgusV1(CubeSat):
         :return: Error code if the radio failed to initialize
         """
         try:
-            radio = rfm9x.RFM9x(ArgusV1Components.RADIO_SPI, 
+            radio = RFM9x(ArgusV1Components.RADIO_SPI, 
                                 ArgusV1Components.RADIO_CS,
                                 ArgusV1Components.RADIO_DIO0,
                                 ArgusV1Components.RADIO_RESET, 
@@ -621,7 +669,7 @@ class ArgusV1(CubeSat):
         :return: Error code if the RTC failed to initialize
         """
         try:
-            rtc = pcf8523.PCF8523(ArgusV1Components.RTC_I2C, 
+            rtc = PCF8523(ArgusV1Components.RTC_I2C, 
                                   ArgusV1Components.RTC_I2C_ADDRESS)
             
             if self.__middleware_enabled:
@@ -660,7 +708,7 @@ class ArgusV1(CubeSat):
         """sd_card_boot: Boot sequence for the SD card
         """
         try:
-            sd_card = sdcardio.SDCard(ArgusV1Components.SD_CARD_SPI,
+            sd_card = SDCard(ArgusV1Components.SD_CARD_SPI,
                                       ArgusV1Components.SD_CARD_CS,
                                       ArgusV1Components.SD_BAUD)
             self._sd_card = sd_card
@@ -683,11 +731,9 @@ class ArgusV1(CubeSat):
             vfs = VfsFat(self._sd_card)
             
             mount(vfs, ArgusV1Components.VFS_MOUNT_POINT)
+            path.append(ArgusV1Components.VFS_MOUNT_POINT)
 
-            if not "sd" in os.listdir('/'):
-                os.mkdir("/sd")
-
-            sys.path.append(ArgusV1Components.VFS_MOUNT_POINT)
+            path.append(ArgusV1Components.VFS_MOUNT_POINT)
             self._vfs = vfs
         except Exception as e:
             if self.__debug:
@@ -702,7 +748,7 @@ class ArgusV1(CubeSat):
         """burn_wire_boot: Boot sequence for the burn wires
         """
         try:
-            burn_wires = burnwire.BurnWires(ArgusV1Components.BURN_WIRE_ENABLE,
+            burn_wires = BurnWires(ArgusV1Components.BURN_WIRE_ENABLE,
                                             ArgusV1Components.BURN_WIRE_XP,
                                             ArgusV1Components.BURN_WIRE_XM,
                                             ArgusV1Components.BURN_WIRE_YP,
@@ -816,4 +862,4 @@ class ArgusV1(CubeSat):
 
         return error_list
     
-
+gc.collect()

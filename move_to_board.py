@@ -3,8 +3,14 @@ import shutil
 import filecmp
 import argparse
 
+ARGUS_PATH = "D:\\"
 
 def copy_folder(source_folder, destination_folder, show_identical_files=True):
+    # In destination path creat SD folder
+    sd_folder = os.path.join(destination_folder, "SD")
+    if not os.path.exists(sd_folder):
+        os.makedirs(sd_folder)
+    
     for root, dirs, files in os.walk(source_folder):
         for file in files:
             source_path = os.path.join(root, file)
@@ -32,9 +38,9 @@ def copy_folder(source_folder, destination_folder, show_identical_files=True):
             relative_path = os.path.relpath(destination_path, destination_folder)
             source_path = os.path.join(source_folder, relative_path)
 
-            if not os.path.exists(source_path):
-                os.remove(destination_path)
-                print(f"Deleted {destination_path}")
+            # if not os.path.exists(source_path):
+                # os.remove(destination_path)
+                # print(f"Deleted {destination_path}")
 
 
 if __name__ == "__main__":
@@ -45,14 +51,14 @@ if __name__ == "__main__":
         "-s",
         "--source_folder",
         type=str,
-        default="flight-software",
+        default="flight-software/build",
         help="Source folder path",
     )
     parser.add_argument(
         "-d",
         "--destination_folder",
         type=str,
-        default="/media/ibrahima/PYCUBED",
+        default=ARGUS_PATH,
         help="Destination folder path",
     )
     args = parser.parse_args()
