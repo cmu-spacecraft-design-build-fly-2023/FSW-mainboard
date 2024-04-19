@@ -22,7 +22,7 @@ SM_CONFIGURATION = {
     },
     "NOMINAL": {
         "Tasks": {
-            "MONITOR": {"Frequency": 2, "Priority": 2, "ScheduleLater": False},
+            "MONITOR": {"Frequency": 0.1, "Priority": 2, "ScheduleLater": False},
             "TIMING": {"Frequency": 1.5, "Priority": 2, "ScheduleLater": False},
             "OBDH": {"Frequency": 1, "Priority": 3, "ScheduleLater": False},
             "IMU": {"Frequency": 1, "Priority": 5, "ScheduleLater": True},
@@ -33,7 +33,7 @@ SM_CONFIGURATION = {
     },
     "SAFE": {
         "Tasks": {
-            "Monitor": {"Frequency": 20, "Priority": 1, "ScheduleLater": False},
+            "Monitor": {"Frequency": 10, "Priority": 1, "ScheduleLater": False},
             "IMU": {"Frequency": 2, "Priority": 3, "ScheduleLater": False},
         },
         "MovesTo": ["NOMINAL"],

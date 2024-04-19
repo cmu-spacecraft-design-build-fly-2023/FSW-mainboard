@@ -6,7 +6,6 @@ for path in ["/hal", "/apps"]:
 
 
 print("initializing the board...")
-from hal.pycubed import hardware
 from state_manager import state_manager
 
 

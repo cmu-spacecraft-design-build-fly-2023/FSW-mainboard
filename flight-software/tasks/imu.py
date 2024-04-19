@@ -12,7 +12,7 @@ import time
 class Task(DebugTask):
 
     name = "IMU"
-    ID = 0x05
+    ID = 0x03
 
     data_keys = [
         "time",
