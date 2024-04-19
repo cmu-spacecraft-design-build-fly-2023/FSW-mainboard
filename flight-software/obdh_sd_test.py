@@ -1,5 +1,4 @@
 import time
-import board, microcontroller
 import random
 from collections import OrderedDict
 import time

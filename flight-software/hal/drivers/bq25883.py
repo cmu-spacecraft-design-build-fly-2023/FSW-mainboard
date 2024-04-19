@@ -14,9 +14,8 @@ Implementation Notes
 from micropython import const
 from adafruit_bus_device.i2c_device import I2CDevice
 
-from adafruit_register.i2c_struct import ROUnaryStruct, UnaryStruct
 from adafruit_register.i2c_bits import ROBits, RWBits
-from adafruit_register.i2c_bit import ROBit, RWBit
+from adafruit_register.i2c_bit import RWBit
 
 from .diagnostics.diagnostics import Diagnostics
 

@@ -42,11 +42,10 @@ Implementation Notes
   https://github.com/adafruit/circuitpython/releases
 
 """
-import time
+from time import struct_time
 from micropython import const
 from .diagnostics.diagnostics import Diagnostics
-import digitalio
-import time
+from digitalio import DigitalInOut
 
 __version__ = "3.5.1"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_GPS.git"
@@ -120,7 +119,7 @@ class GPS(Diagnostics):
         # Don't care to enable the GPS module during initialization
         self._enable = enable
         if self._enable is not None:
-            self._enable = digitalio.DigitalInOut(enable)
+            self._enable = DigitalInOut(enable)
             self._enable.switch_to_output()
             self._enable = False
 
@@ -281,10 +280,10 @@ class GPS(Diagnostics):
             secs = time_utc % 100
             # Set or update time to a friendly python time struct.
             if self.timestamp_utc is not None:
-                self.timestamp_utc = time.struct_time((
+                self.timestamp_utc = struct_time((
                     0, 0, 0, hours, mins, secs, 0, 0, -1))
             else:
-                self.timestamp_utc = time.struct_time((0, 0, 0, hours, mins,
+                self.timestamp_utc = struct_time((0, 0, 0, hours, mins,
                                                        secs, 0, 0, -1))
         # Parse data active or void
         self.isactivedata = _parse_str(data[5])
@@ -303,11 +302,11 @@ class GPS(Diagnostics):
             secs = time_utc % 100
             # Set or update time to a friendly python time struct.
             if self.timestamp_utc is not None:
-                self.timestamp_utc = time.struct_time((
+                self.timestamp_utc = struct_time((
                     self.timestamp_utc.tm_year, self.timestamp_utc.tm_mon,
                     self.timestamp_utc.tm_mday, hours, mins, secs, 0, 0, -1))
             else:
-                self.timestamp_utc = time.struct_time((0, 0, 0, hours, mins,
+                self.timestamp_utc = struct_time((0, 0, 0, hours, mins,
                                                        secs, 0, 0, -1))
         # Parse status (active/fixed or void).
         status = data[1]
@@ -336,7 +335,7 @@ class GPS(Diagnostics):
             if self.timestamp_utc is not None:
                 # Replace the timestamp with an updated one.
                 # (struct_time is immutable and can't be changed in place)
-                self.timestamp_utc = time.struct_time((year, month, day,
+                self.timestamp_utc = struct_time((year, month, day,
                                                        self.timestamp_utc.tm_hour,
                                                        self.timestamp_utc.tm_min,
                                                        self.timestamp_utc.tm_sec,
@@ -345,7 +344,7 @@ class GPS(Diagnostics):
                                                        -1))
             else:
                 # Time hasn't been set so create it.
-                self.timestamp_utc = time.struct_time((year, month, day, 0, 0,
+                self.timestamp_utc = struct_time((year, month, day, 0, 0,
                                                        0, 0, 0, -1))
 
     def _parse_gpgga(self, args):
@@ -362,11 +361,11 @@ class GPS(Diagnostics):
             secs = time_utc % 100
             # Set or update time to a friendly python time struct.
             if self.timestamp_utc is not None:
-                self.timestamp_utc = time.struct_time((
+                self.timestamp_utc = struct_time((
                     self.timestamp_utc.tm_year, self.timestamp_utc.tm_mon,
                     self.timestamp_utc.tm_mday, hours, mins, secs, 0, 0, -1))
             else:
-                self.timestamp_utc = time.struct_time((0, 0, 0, hours, mins,
+                self.timestamp_utc = struct_time((0, 0, 0, hours, mins,
                                                        secs, 0, 0, -1))
         # Parse latitude and longitude.
         self.latitude = _parse_degrees(data[1])

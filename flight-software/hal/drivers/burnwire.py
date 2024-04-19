@@ -8,9 +8,10 @@ Date: March 28, 2024
 """
 
 from .diagnostics.diagnostics import Diagnostics
-import digitalio, pwmio
+from digitalio import DigitalInOut, DriveMode
+from pwmio import PWMOut
 from micropython import const
-import time
+from time import sleep
 
 class BurnWires(Diagnostics):
     """
@@ -158,7 +159,7 @@ class BurnWires(Diagnostics):
         """
         Enables the burn wires through the relay.
         """
-        self.__enable.drive_mode = digitalio.DriveMode.PUSH_PULL
+        self.__enable.drive_mode = DriveMode.PUSH_PULL
         self.__enable.value = True
 
     def disable(self):
@@ -166,7 +167,7 @@ class BurnWires(Diagnostics):
         Disables the burn wires through the relay.
         """
         self.__enable.value = False
-        self.__enable.drive_mode = digitalio.DriveMode.OPEN_DRAIN
+        self.__enable.drive_mode = DriveMode.OPEN_DRAIN
 
     def __configure_enable(self, enable_pin):
         """
@@ -178,8 +179,8 @@ class BurnWires(Diagnostics):
         Returns:
             The configured enable pin.
         """
-        enable_pin = digitalio.DigitalInOut(enable_pin)
-        enable_pin.switch_to_output(drive_mode=digitalio.DriveMode.OPEN_DRAIN)
+        enable_pin = DigitalInOut(enable_pin)
+        enable_pin.switch_to_output(drive_mode=DriveMode.OPEN_DRAIN)
 
         return enable_pin
 
@@ -194,7 +195,7 @@ class BurnWires(Diagnostics):
             The configured burn pin.
         """
         # Set the duty cycle to 0 so it doesn't start burning
-        burn_wire = pwmio.PWMOut(burn_pin, frequency=self.frequency_hz, duty_cycle=self.DUTY_CYCLE_OFF)
+        burn_wire = PWMOut(burn_pin, frequency=self.frequency_hz, duty_cycle=self.DUTY_CYCLE_OFF)
 
         return burn_wire
     
@@ -206,7 +207,7 @@ class BurnWires(Diagnostics):
             burn_wire: The burn pin used for burning a wire.
         """
         self.duty_cycle_pct = self.duty_cycle_pct
-        time.sleep(self.duration_s)
+        sleep(self.duration_s)
         self.duty_cycle_pct = self.DUTY_CYCLE_OFF
 
     def burn_xp(self):

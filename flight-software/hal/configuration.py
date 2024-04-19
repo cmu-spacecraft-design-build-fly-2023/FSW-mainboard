@@ -1,6 +1,6 @@
 from micropython import const
 from hal.cubesat import CubeSat
-from hal.argus_v1 import ArgusV1
+from argus_v1 import ArgusV1
 # from hal.pycubed import PyCubed
 
 PYCUBED_V05 = const(0)

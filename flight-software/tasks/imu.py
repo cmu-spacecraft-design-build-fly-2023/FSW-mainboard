@@ -1,13 +1,10 @@
-from hal.pycubed import hardware
-
+#from hal.pycubed import hardware
+import gc
+# from hal.configuration import SATELLITE
 from tasks.template_task import DebugTask
-
 from state_manager import state_manager as SM
 from apps.data_handler import DataHandler as DH
-
-
 import time
-
 
 class Task(DebugTask):
 
@@ -44,11 +41,18 @@ class Task(DebugTask):
             prev_time = self.curr_time
             self.curr_time = time.monotonic_ns()
 
+            # readings = {
+            #     "time": time.time(),  # temporary fake time
+            #     "accel": hardware.acceleration,
+            #     "mag": hardware.magnetic,
+            #     "gyro": hardware.gyro,
+            # }
+
             readings = {
                 "time": time.time(),  # temporary fake time
-                "accel": hardware.acceleration,
-                "mag": hardware.magnetic,
-                "gyro": hardware.gyro,
+                "accel": SATELLITE.IMU.accel,
+                "mag": SATELLITE.IMU.mag,
+                "gyro": SATELLITE.IMU.gyro,
             }
 
             log_data = {

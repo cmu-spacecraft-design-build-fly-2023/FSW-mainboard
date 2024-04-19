@@ -11,7 +11,6 @@ This module provides the main interface for the onboard data handling system con
 
 Author: Ibrahima Sory Sow
 """
-
 import os
 import re
 import struct
@@ -23,7 +22,7 @@ from micropython import const
 
 _CLOSED = const(20)
 _OPEN = const(21)
-_IMG_SIZE_LIMIT = const(10000000)  # 10MB
+_IMG_SIZE_LIMIT = const(10000)  # 10KB
 
 
 _FORMAT = {

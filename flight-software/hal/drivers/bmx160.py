@@ -1,15 +1,15 @@
-import time
+from time import sleep
 from .diagnostics.diagnostics import Diagnostics
-import digitalio
+from digitalio import DigitalInOut
 
 
 from adafruit_bus_device.i2c_device import I2CDevice
 
 # from adafruit_bus_device.spi_device import SPIDevice
 from micropython import const
-from adafruit_register.i2c_struct import Struct, UnaryStruct
+from adafruit_register.i2c_struct import Struct
 from adafruit_register.i2c_bits import ROBits, RWBits
-from adafruit_register.i2c_bit import ROBit, RWBit
+from adafruit_register.i2c_bit import ROBit
 
 # Chip ID
 BMX160_CHIP_ID = const(0xD8)
@@ -398,7 +398,7 @@ class BMX160(Diagnostics):
 
     def __init__(self, i2c, i2c_address, enable_pin = None):
         if enable_pin is not None:
-            self._enable = digitalio.DigitalInOut(enable_pin)
+            self._enable = DigitalInOut(enable_pin)
             self._enable.switch_to_output()
             self.enable()
 
@@ -406,7 +406,7 @@ class BMX160(Diagnostics):
 
         # soft reset & reboot
         self.cmd = BMX160_SOFT_RESET_CMD
-        time.sleep(0.001)
+        sleep(0.001)
         # Check ID registers.
         ID = self.read_u8(BMX160_CHIP_ID_ADDR)
         if ID != BMX160_CHIP_ID:
@@ -578,7 +578,7 @@ class BMX160(Diagnostics):
 
         # NOTE: this delay is a worst case. If we need repeated switching
         # we can choose the delay on a case-by-case basis.
-        time.sleep(0.0081)
+        sleep(0.0081)
 
     ############## ACCELEROMETER SETTINGS  ##############
 
@@ -663,14 +663,14 @@ class BMX160(Diagnostics):
 
         # NOTE: this delay is a worst case. If we need repeated switching
         # we can choose the delay on a case-by-case basis.
-        time.sleep(0.005)
+        sleep(0.005)
 
     ############## MAGENTOMETER SETTINGS  ##############
 
     def init_mag(self):
         # see pg 25 of: https://ae-bst.resource.bosch.com/media/_tech/media/datasheets/BST-BMX160-DS000.pdf
         self.write_u8(BMX160_COMMAND_REG_ADDR, BMX160_MAG_NORMAL_MODE)
-        time.sleep(0.00065)  # datasheet says wait for 650microsec
+        sleep(0.00065)  # datasheet says wait for 650microsec
         self.write_u8(BMX160_MAG_IF_0_ADDR, 0x80)
         # put mag into sleep mode
         self.write_u8(BMX160_MAG_IF_3_ADDR, 0x01)
@@ -690,7 +690,7 @@ class BMX160(Diagnostics):
         self.write_u8(BMX160_MAG_IF_0_ADDR, 0x00)
         # put in low power mode.
         self.write_u8(BMX160_COMMAND_REG_ADDR, BMX160_MAG_LOWPOWER_MODE)
-        time.sleep(0.1)  # takes this long to warm up (empirically)
+        sleep(0.1)  # takes this long to warm up (empirically)
 
     @property
     def mag_powermode(self):
@@ -717,7 +717,7 @@ class BMX160(Diagnostics):
 
         # NOTE: this delay is a worst case. If we need repeated switching
         # we can choose the delay on a case-by-case basis.
-        time.sleep(0.001)
+        sleep(0.001)
 
     ## UTILS:
     def generic_setter(

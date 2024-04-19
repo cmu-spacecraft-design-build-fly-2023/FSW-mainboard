@@ -39,7 +39,7 @@ Thomas Damiani
     https://github.com/adafruit/Adafruit_CircuitPython_Register
 """
 
-import time
+from time import sleep, monotonic
 from micropython import const
 from adafruit_bus_device.i2c_device import I2CDevice
 from adafruit_register.i2c_bits import RWBits
@@ -357,11 +357,11 @@ class OPT4001(Diagnostics):
         """
 
         # wait for conversion to be ready
-        start_time = time.monotonic() + 1.1
-        while time.monotonic() < start_time:
+        start_time = monotonic() + 1.1
+        while monotonic() < start_time:
             if self.conversion_ready_flag:
                 break
-            time.sleep(0.001)
+            sleep(0.001)
 
         """
         15-12: EXPONENT
