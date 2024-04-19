@@ -2,11 +2,24 @@ from tasks.imu import Task as imu
 from tasks.monitor import Task as monitor
 from tasks.timing import Task as timing
 from tasks.obdh import Task as obdh
+from tasks.sun import Task as sun
 
 
-TASK_REGISTRY = {"MONITOR": monitor, "TIMING": timing, "OBDH": obdh, "IMU": imu}
+TASK_REGISTRY = {
+    "MONITOR": monitor,
+    "TIMING": timing,
+    "OBDH": obdh,
+    "IMU": imu,
+    "SUN": sun,
+}
 
-TASK_MAPPING_ID = {"MONITOR": 0x00, "TIMING": 0x01, "OBDH": 0x02, "IMU": 0x03}
+TASK_MAPPING_ID = {
+    "MONITOR": 0x00,
+    "TIMING": 0x01,
+    "OBDH": 0x02,
+    "IMU": 0x03,
+    "SUN": 0x11,
+}
 
 
 SM_CONFIGURATION = {
@@ -26,6 +39,7 @@ SM_CONFIGURATION = {
             "TIMING": {"Frequency": 1.5, "Priority": 2, "ScheduleLater": False},
             "OBDH": {"Frequency": 1, "Priority": 3, "ScheduleLater": False},
             "IMU": {"Frequency": 1, "Priority": 5, "ScheduleLater": True},
+            "SUN": {"Frequency": 1, "Priority": 5, "ScheduleLater": True},
         },
         "MovesTo": [
             "SAFE",

@@ -36,10 +36,10 @@ class Task(DebugTask):
 
             if DH.data_process_exists("imu") == False:
                 DH.register_data_process(
-                    "imu", self.data_keys, "ffffffffff", True, line_limit=20
+                    "imu", self.data_keys, "ffffffffff", True, line_limit=40
                 )
 
-            print(f"[{self.ID}][{self.name}] Reading BMX160.")
+            # print(f"[{self.ID}][{self.name}] Reading BMX160.")
 
             readings = {
                 "accel": hardware.acceleration,
@@ -48,7 +48,7 @@ class Task(DebugTask):
             }
 
             log_data = {
-                "time": time.time(),  
+                "time": time.time(),
                 "accel_x": readings["accel"][0],
                 "accel_y": readings["accel"][1],
                 "accel_z": readings["accel"][2],
@@ -60,7 +60,6 @@ class Task(DebugTask):
                 "gyro_z": readings["gyro"][2],
             }
 
-            # DH.log_data("imu", *log_data.values())
             DH.log_data("imu", log_data)
 
             print(f"[{self.ID}][{self.name}] Data: {readings}")

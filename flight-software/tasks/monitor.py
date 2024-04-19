@@ -1,6 +1,7 @@
 from tasks.template_task import DebugTask
 import gc
 
+
 class Task(DebugTask):
 
     name = "MONITOR"
