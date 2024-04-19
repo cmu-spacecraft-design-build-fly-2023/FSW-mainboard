@@ -6,6 +6,11 @@ import argparse
 ARGUS_PATH = "D:\\"
 
 def copy_folder(source_folder, destination_folder, show_identical_files=True):
+    # In destination path creat SD folder
+    sd_folder = os.path.join(destination_folder, "SD")
+    if not os.path.exists(sd_folder):
+        os.makedirs(sd_folder)
+    
     for root, dirs, files in os.walk(source_folder):
         for file in files:
             source_path = os.path.join(root, file)
@@ -46,7 +51,7 @@ if __name__ == "__main__":
         "-s",
         "--source_folder",
         type=str,
-        default="flight-software",
+        default="flight-software/build",
         help="Source folder path",
     )
     parser.add_argument(

@@ -1,6 +1,6 @@
 # Time distribution and handling task
 
-from hal.pycubed import hardware
+# from hal.pycubed import hardware
 from tasks.template_task import DebugTask
 
 

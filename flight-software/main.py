@@ -28,7 +28,7 @@ print()
 from apps.data_handler import DataHandler as DH
 DH.delete_all_files()
 """
-import comms_test
+# import comms_test
 # import obdh_sd_test
 
 
