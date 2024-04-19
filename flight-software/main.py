@@ -26,11 +26,16 @@ from apps.data_handler import DataHandler as DH
 DH.delete_all_files()
 """
 
+# Run forever
+print("Starting task management")
+state_manager.start("STARTUP")
+
 try:
     # Run forever
+    print("Starting task management")
     state_manager.start("STARTUP")
-    # import obdh_sd_test
+    
     pass
 except Exception as e:
-    print(e)
+    print("ERROR:", e)
     # TODO Log the error

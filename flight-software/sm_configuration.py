@@ -1,13 +1,12 @@
-from tasks.imu import Task as imu
 from tasks.monitor import Task as monitor
 from tasks.timing import Task as timing
 from tasks.obdh import Task as obdh
 from tasks.communication import Task as comms
 
 
-TASK_REGISTRY = {"MONITOR": monitor, "TIMING": timing, "OBDH": obdh, "IMU": imu, "COMMS": comms}
+TASK_REGISTRY = {"MONITOR": monitor, "TIMING": timing, "OBDH": obdh, "COMMS": comms}
 
-TASK_MAPPING_ID = {"MONITOR": 0x00, "TIMING": 0x01, "OBDH": 0x02, "IMU": 0x03, "COMMS": 0x04}
+TASK_MAPPING_ID = {"MONITOR": 0x00, "TIMING": 0x01, "OBDH": 0x02, "COMMS": 0x04}
 
 
 SM_CONFIGURATION = {
@@ -26,7 +25,6 @@ SM_CONFIGURATION = {
             "MONITOR": {"Frequency": 2, "Priority": 2, "ScheduleLater": False},
             "TIMING": {"Frequency": 1.5, "Priority": 2, "ScheduleLater": False},
             "OBDH": {"Frequency": 1, "Priority": 3, "ScheduleLater": False},
-            "IMU": {"Frequency": 1, "Priority": 5, "ScheduleLater": True},
             "COMMS": {"Frequency": 0.05, "Priority": 5, "ScheduleLater": True},
         },
         "MovesTo": [
@@ -36,7 +34,6 @@ SM_CONFIGURATION = {
     "SAFE": {
         "Tasks": {
             "Monitor": {"Frequency": 20, "Priority": 1, "ScheduleLater": False},
-            "IMU": {"Frequency": 2, "Priority": 3, "ScheduleLater": False},
         },
         "MovesTo": ["NOMINAL"],
         "Enters": ["print"],
