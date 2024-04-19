@@ -14,7 +14,7 @@ SM_CONFIGURATION = {
         "Tasks": {
             "MONITOR": {"Frequency": 1, "Priority": 1, "ScheduleLater": False},
             "TIMING": {"Frequency": 1, "Priority": 2, "ScheduleLater": False},
-            "OBDH": {"Frequency": 0.25, "Priority": 3, "ScheduleLater": False},
+            "OBDH": {"Frequency": 1, "Priority": 3, "ScheduleLater": False},
         },
         "MovesTo": [
             "NOMINAL",

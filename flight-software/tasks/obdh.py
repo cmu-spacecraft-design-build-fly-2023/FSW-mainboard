@@ -25,12 +25,13 @@ class Task(DebugTask):
             if self.SD_scanned == False:
                 DH.scan_SD_card()
                 self.SD_scanned = True
-        elif SM.current_state == "NOMINAL":
-            # DH.clean_up()
-            self.SD_stored_volume = DH.compute_total_size_files()
-            # print(DH.data_process_registry['imu'].request_TM_path())
 
-        print(f"[{self.ID}][{self.name}] OBDH running.")
-        print(
-            f"[{self.ID}][{self.name}] Stored files are taking {self.SD_stored_volume} bytes."
-        )
+            # TODO Temporarily start global state switch here
+            # TODO should have a verification checklist in monitor and switch from there
+            SM.switch_to("NOMINAL")
+        elif SM.current_state == "NOMINAL":
+            self.SD_stored_volume = DH.compute_total_size_files()
+
+
+        print(f"[{self.ID}][{self.name}] Stored files are taking {self.SD_stored_volume} bytes.")
+            
