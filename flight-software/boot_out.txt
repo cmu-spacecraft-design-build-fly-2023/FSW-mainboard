@@ -1,0 +1,1 @@
+Adafruit CircuitPython 7.0.0-alpha.4-64-ge7c5165ff-dirty on 2021-07-14; PyCubedv05 with samd51j19

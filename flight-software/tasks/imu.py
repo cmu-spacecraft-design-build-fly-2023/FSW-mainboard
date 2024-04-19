@@ -12,7 +12,7 @@ import time
 class Task(DebugTask):
 
     name = "IMU"
-    ID = 0x05
+    ID = 0x03
 
     data_keys = [
         "time",
@@ -36,23 +36,19 @@ class Task(DebugTask):
 
             if DH.data_process_exists("imu") == False:
                 DH.register_data_process(
-                    "imu", self.data_keys, "ffffffffff", True, line_limit=20
+                    "imu", self.data_keys, "ffffffffff", True, line_limit=40
                 )
 
-            print(f"[{self.ID}][{self.name}] Reading BMX160.")
-
-            prev_time = self.curr_time
-            self.curr_time = time.monotonic_ns()
+            # print(f"[{self.ID}][{self.name}] Reading BMX160.")
 
             readings = {
-                "time": time.time(),  # temporary fake time
                 "accel": hardware.acceleration,
                 "mag": hardware.magnetic,
                 "gyro": hardware.gyro,
             }
 
             log_data = {
-                "time": time.time(),  # temporary fake time
+                "time": time.time(),
                 "accel_x": readings["accel"][0],
                 "accel_y": readings["accel"][1],
                 "accel_z": readings["accel"][2],
@@ -64,11 +60,6 @@ class Task(DebugTask):
                 "gyro_z": readings["gyro"][2],
             }
 
-            # DH.log_data("imu", *log_data.values())
             DH.log_data("imu", log_data)
 
-            # Temp
-            print(
-                f"[{self.ID}][{self.name}] Frequency check: {self.curr_time - prev_time}"
-            )
             print(f"[{self.ID}][{self.name}] Data: {readings}")

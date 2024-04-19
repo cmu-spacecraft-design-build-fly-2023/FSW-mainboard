@@ -1,4 +1,5 @@
 from tasks.template_task import DebugTask
+import gc
 
 
 class Task(DebugTask):
@@ -7,4 +8,4 @@ class Task(DebugTask):
     ID = 0x00
 
     async def main_task(self):
-        print(f"[{self.ID}][{self.name}] I am supposed to monitor the system.")
+        print(f"[{self.ID}][{self.name}] {gc.mem_free()} free bytes in memory")
