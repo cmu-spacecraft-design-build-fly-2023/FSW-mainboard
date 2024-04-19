@@ -10,22 +10,9 @@ This module provides the main interface for the onboard data handling system con
 - Data processing and formatting for the flight software
 
 Author: Ibrahima Sory Sow
-"""
-import os
-import re
-import struct
-import time
-import json
-
-from micropython import const
 
 
-_CLOSED = const(20)
-_OPEN = const(21)
-_IMG_SIZE_LIMIT = const(10000)  # 10KB
-
-
-_FORMAT = {
+Data format (character: byte size):
     "b": 1,  # byte
     "B": 1,  # unsigned byte
     "h": 2,  # short
@@ -38,7 +25,21 @@ _FORMAT = {
     "Q": 8,  # unsigned long long
     "f": 4,  # float
     "d": 8,  # double
-}
+
+"""
+
+import os
+import re
+import struct
+import time
+import json
+
+from micropython import const
+
+
+_CLOSED = const(20)
+_OPEN = const(21)
+_IMG_SIZE_LIMIT = const(100000)  # 10MB
 
 
 _PROCESS_CONFIG_FILENAME = ".process_configuration.json"
@@ -449,6 +450,21 @@ class DataProcess:
         bytesize (int): The size of each new data line to be written to the file.
     """
 
+    _FORMAT = {
+        "b": 1,  # byte
+        "B": 1,  # unsigned byte
+        "h": 2,  # short
+        "H": 2,  # unsigned short
+        "i": 4,  # int
+        "I": 4,  # unsigned int
+        "l": 4,  # long
+        "L": 4,  # unsigned long
+        "q": 8,  # long long
+        "Q": 8,  # unsigned long long
+        "f": 4,  # float
+        "d": 8,  # double
+    }
+
     def __init__(
         self,
         tag_name: str,
@@ -535,9 +551,9 @@ class DataProcess:
         """
         b_size = 0
         for c in data_format[1:]:  # do not include the endianness character
-            if c not in _FORMAT:
+            if c not in self._FORMAT:
                 raise ValueError(f"Invalid format character '{c}'")
-            b_size += _FORMAT[c]
+            b_size += self._FORMAT[c]
         return b_size
 
     def log(self, data: dict) -> None:
