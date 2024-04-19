@@ -7,6 +7,7 @@ ARGUS_PATH = "D:\\"
 
 MPY_CROSS_PATH = f"{os.getcwd()}/mpy-cross"
 
+
 def check_directory_location(source_folder):
     if not os.path.exists(ARGUS_PATH):
         raise FileNotFoundError(f"Destination folder {ARGUS_PATH} not found")
@@ -16,7 +17,7 @@ def check_directory_location(source_folder):
 
     if not os.path.exists(f"./source_folder"):
         raise FileNotFoundError(f"Source folder {source_folder} not found")
-        
+
 
 def create_build(source_folder):
     build_folder = os.path.join(source_folder, "build/")
@@ -24,7 +25,7 @@ def create_build(source_folder):
         shutil.rmtree(build_folder)
 
     build_folder = os.path.join(build_folder, "lib/")
-    
+
     os.makedirs(build_folder)
 
     for root, dirs, files in os.walk(source_folder):
@@ -35,13 +36,15 @@ def create_build(source_folder):
 
             if file.endswith(".py"):
                 source_path = os.path.join(root, file)
-    
-                build_path = os.path.join(build_folder, os.path.relpath(source_path, source_folder))
+
+                build_path = os.path.join(
+                    build_folder, os.path.relpath(source_path, source_folder)
+                )
 
                 os.makedirs(os.path.dirname(build_path), exist_ok=True)
                 shutil.copy2(source_path, build_path)
                 print(f"Copied {source_path} to {build_path}")
-                
+
                 current_dir = os.getcwd()
 
                 # Change directory to the build path folder
@@ -69,6 +72,7 @@ def create_build(source_folder):
             f.write("import main_module\n")
 
     return build_folder
+
 
 def copy_folder(build_folder, destination_folder, show_identical_files=True):
     for root, dirs, files in os.walk(build_folder):

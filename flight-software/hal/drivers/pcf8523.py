@@ -64,6 +64,7 @@ except ImportError:
 STANDARD_BATTERY_SWITCHOVER_AND_DETECTION = 0b000
 BATTERY_SWITCHOVER_OFF = 0b111
 
+
 class PCF8523(Diagnostics):
     """Interface to the PCF8523 RTC.
 
@@ -103,7 +104,7 @@ class PCF8523(Diagnostics):
     """
 
     ## TODO: Convert all of these i2c bits to properties so that Middlware can catch them
-    
+
     lost_power = i2c_bit.RWBit(0x03, 7)
     """True if the device has lost power since the time was set."""
 
@@ -159,7 +160,7 @@ class PCF8523(Diagnostics):
     """Calibration offset to apply, from -64 to +63.  See the PCF8523 datasheet
     figure 18 for the offset calibration calculation workflow."""
 
-    def __init__(self, i2c_bus: I2C, i2c_addr = 0x68):
+    def __init__(self, i2c_bus: I2C, i2c_addr=0x68):
         self.i2c_device = I2CDevice(i2c_bus, i2c_addr)
 
         # Try and verify this is the RTC we expect by checking the timer B
@@ -172,7 +173,7 @@ class PCF8523(Diagnostics):
 
         # if (buf[1] & 0b00000111) != 0b00000111:
         #     raise ValueError("Unable to find PCF8523 at i2c address 0x68.")
-        
+
         super().__init__()
 
     @property
@@ -187,27 +188,26 @@ class PCF8523(Diagnostics):
         self.power_management = STANDARD_BATTERY_SWITCHOVER_AND_DETECTION
         self.datetime_register = value
 
-######################### DIAGNOSTICS #########################
-    
+    ######################### DIAGNOSTICS #########################
+
     def __check_lost_power(self) -> int:
         """_check_lost_power: Check if power was lost since the time was set.
-        
+
         :return: True if power was lost, otherwise true
         """
         if self.lost_power:
             return Diagnostics.PCF8523_LOST_POWER
-        
+
         return Diagnostics.NOERROR
-            
 
     def __check_battery_status(self) -> int:
         """_check_battery_status: Checks if the battery status is low.
-        
+
         :return: False if the battery is low, otherwise true
         """
         if self.battery_low:
             return Diagnostics.PCF8523_BATTERY_LOW
-        
+
         return Diagnostics.NOERROR
 
     def run_diagnostics(self) -> list[int] | None:

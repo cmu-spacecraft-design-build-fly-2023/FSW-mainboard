@@ -53,23 +53,24 @@ except ImportError:
     pass
 
 # Registers as descirbed in page 25 of datasheet
-RESULT_H        = const(0x00)
-RESULT_L        = const(0x01)
-FIFO_0_H        = const(0x02)
-FIFO_0_L        = const(0x03)
-FIFO_1_H        = const(0x04)
-FIFO_1_L        = const(0x05)
-FIFO_2_H        = const(0x06)
-FIFO_2_L        = const(0x07)
-THRESHOLD_L     = const(0x08)
-THRESHOLD_H     = const(0x09)
-CONFIGURATION   = const(0x0A)
-FLAGS           = const(0x0C)
-DEVICE_ID       = const(0x11)
+RESULT_H = const(0x00)
+RESULT_L = const(0x01)
+FIFO_0_H = const(0x02)
+FIFO_0_L = const(0x03)
+FIFO_1_H = const(0x04)
+FIFO_1_L = const(0x05)
+FIFO_2_H = const(0x06)
+FIFO_2_L = const(0x07)
+THRESHOLD_L = const(0x08)
+THRESHOLD_H = const(0x09)
+CONFIGURATION = const(0x0A)
+FLAGS = const(0x0C)
+DEVICE_ID = const(0x11)
 
 # package type
 SOT_5X3 = const(0)
 PICOSTAR = const(1)
+
 
 class OPT4001(Diagnostics):
     """
@@ -289,7 +290,7 @@ class OPT4001(Diagnostics):
         # check that the ID of the device matches what the datasheet says the ID should be
         if not self.check_id():
             raise RuntimeError("Could not read device id")
-        
+
         super().__init__()
 
     def read_u16(self, addr) -> None:
@@ -488,27 +489,27 @@ class OPT4001(Diagnostics):
         register_h, register_l = channels[id]
         return self.read_from_fifo(register_h, register_l, False)
 
-######################### DIAGNOSTICS #########################
-    
+    ######################### DIAGNOSTICS #########################
+
     def __check_id_test(self) -> int:
         """Checks the opt4001 id to ensure that we can interface with the devices
-        
+
         :return: True if read successful, otherwise false
         """
         if not self.check_id():
             return Diagnostics.OPT4001_ID_CHECK_FAILED
-        
+
         return Diagnostics.NOERROR
-    
+
     def __read_counter_crc_test(self) -> int:
         """_read_counter_crc_test: Checks if the crc counter functions properly
 
         :return: True if pass, otherwise false
         """
-        _, counter, _ = self.get_lsb_counter_crc(self.RESULT_L) #looking at register 1
+        _, counter, _ = self.get_lsb_counter_crc(self.RESULT_L)  # looking at register 1
         if not ((0 <= counter) and (counter <= 15)):
             return Diagnostics.OPT4001_CRC_COUNTER_TEST_FAILED
-        
+
         return Diagnostics.NOERROR
 
     def run_diagnostics(self) -> list[int] | None:

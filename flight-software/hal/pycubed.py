@@ -1,6 +1,6 @@
 """
-CircuitPython driver for the modified PyCubed satellite board for Argus-1.
-PyCubed Hardware Version: mainboard-v05 TODO - update this
+CircuitPython driver for the modified PyCubed satellite board 
+PyCubed Hardware Version: mainboard-v05 
 CircuitPython Version: 7.0.0 alpha
 """
 
@@ -12,14 +12,14 @@ from analogio import AnalogIn
 import digitalio, sdcardio, pwmio
 
 # Hardware Specific Libs
-from .drivers import rfm9x # Radio
-from .drivers import bmx160 # IMU
-import neopixel # RGB LED
-from .drivers import bq25883 # USB Charger
-from .drivers import adm1176 # Power Monitor
+from .drivers_PYC_V05 import rfm9x  # Radio
+from .drivers_PYC_V05 import bmx160  # IMU
+import neopixel  # RGB LED
+from .drivers_PYC_V05 import bq25883  # USB Charger
+from .drivers_PYC_V05 import adm1176  # Power Monitor
 
 # Common CircuitPython Libs
-from .drivers.bitflags import bitFlag,multiBitFlag,multiByte
+from .drivers_PYC_V05.bitflags import bitFlag, multiBitFlag, multiByte
 from micropython import const
 
 
@@ -438,5 +438,8 @@ class PyCubed:
         self._relayA.drive_mode = digitalio.DriveMode.OPEN_DRAIN
         return True
 
+    def boot_sequence(self) -> list[int]:
+        pass
 
-hardware = PyCubed()
+    def run_system_diagnostics(self) -> list[int]:
+        pass

@@ -1,16 +1,13 @@
 import os
+import subprocess
 import shutil
 import filecmp
 import argparse
+import platform
 
-ARGUS_PATH = "D:\\"
 
 def copy_folder(source_folder, destination_folder, show_identical_files=True):
-    # In destination path creat SD folder
-    sd_folder = os.path.join(destination_folder, "SD")
-    if not os.path.exists(sd_folder):
-        os.makedirs(sd_folder)
-    
+
     for root, dirs, files in os.walk(source_folder):
         for file in files:
             source_path = os.path.join(root, file)
@@ -39,11 +36,17 @@ def copy_folder(source_folder, destination_folder, show_identical_files=True):
             source_path = os.path.join(source_folder, relative_path)
 
             # if not os.path.exists(source_path):
-                # os.remove(destination_path)
-                # print(f"Deleted {destination_path}")
+            # os.remove(destination_path)
+            # print(f"Deleted {destination_path}")
 
 
 if __name__ == "__main__":
+
+    if platform.system() == "Windows":
+        BOARD_PATH = "D:\\"
+    elif platform.system() == "Linux":
+        username = subprocess.check_output("whoami", shell=True).decode().strip()
+        BOARD_PATH = f"/media/{username}/PYCUBED"
 
     # Parses command line arguments.
     parser = argparse.ArgumentParser()
@@ -51,14 +54,14 @@ if __name__ == "__main__":
         "-s",
         "--source_folder",
         type=str,
-        default="flight-software/build",
+        default="flight-software",
         help="Source folder path",
     )
     parser.add_argument(
         "-d",
         "--destination_folder",
         type=str,
-        default=ARGUS_PATH,
+        default=BOARD_PATH,
         help="Destination folder path",
     )
     args = parser.parse_args()

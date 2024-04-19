@@ -56,6 +56,7 @@ from .diagnostics.diagnostics import Diagnostics
 _CONTROL = 0x00  # Control Register      -W
 _FAULT = 0x01  # Fault Status Register R-
 
+
 class VoltageAdapter:
     """Output voltage calculator. Datasheet formula modified to match the
     datasheet's voltage table. The algorithm was inspired by Pimironi's original
@@ -79,6 +80,7 @@ class VoltageAdapter:
         offset = 0.01 if volts >= 1.29 else 0
         offset -= 0.01 if volts >= 3.86 else 0
         return int(offset + volts / 0.08)
+
 
 class BridgeControl:
     """H-bridge control states and descriptors. Bit order: IN2 IN1"""
@@ -271,32 +273,32 @@ class DRV8830(Diagnostics):
         self._vset = 0
         self._in_x = BridgeControl.STANDBY
 
-######################### DIAGNOSTICS #########################
+    ######################### DIAGNOSTICS #########################
     def __check_for_faults(self) -> list[int]:
         """_check_for_faults: Checks for any device faluts returned by fault function in DRV8830
 
         :return: List of errors that exist in the fault register
         """
         faults_flag, faults = self.fault
-        
+
         if not faults_flag:
             return [Diagnostics.NOERROR]
-        
+
         errors: list[int] = []
-        
-        if ("OCP" in faults):
+
+        if "OCP" in faults:
             errors.append(Diagnostics.DRV8830_OVERCURRENT_EVENT)
-        if ("UVLO" in faults):
+        if "UVLO" in faults:
             errors.append(Diagnostics.DRV8830_UNDERVOLTAGE_LOCKOUT)
-        if ("OTS" in faults):
+        if "OTS" in faults:
             errors.append(Diagnostics.DRV8830_OVERTEMPERATURE_CONDITION)
-        if ("ILIMIT" in faults):
+        if "ILIMIT" in faults:
             errors.append(Diagnostics.DRV8830_EXTENDED_CURRENT_LIMIT_EVENT)
 
         self.clear_faults()
-        
+
         return errors
-    
+
     def __throttle_tests(self) -> int:
         """_throttle_tests: Checks for any throttle errors in DRV8830, whether the returned reading is
         outside of the set range indicated in the driver file
@@ -307,18 +309,16 @@ class DRV8830(Diagnostics):
         if throttle_volts_val is not None:
             if (throttle_volts_val < -5.06) or (throttle_volts_val > 5.06):
                 return Diagnostics.DRV8830_THROTTLE_OUTSIDE_RANGE
-            
+
         throttle_raw_val = self.throttle_volts
         if throttle_raw_val is not None:
             if (throttle_raw_val < -63) or (throttle_raw_val > 63):
                 return Diagnostics.DRV8830_THROTTLE_OUTSIDE_RANGE
-        
+
         return Diagnostics.NOERROR
 
-
     def run_diagnostics(self) -> list[int] | None:
-        """run_diagnostic_test: Run all tests for the component
-        """
+        """run_diagnostic_test: Run all tests for the component"""
         error_list: list[int] = []
 
         error_list = self.__check_for_faults()
