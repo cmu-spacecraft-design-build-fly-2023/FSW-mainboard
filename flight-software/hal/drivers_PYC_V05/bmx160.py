@@ -1,15 +1,15 @@
-from time import sleep
-from .diagnostics.diagnostics import Diagnostics
-from digitalio import DigitalInOut
+import time
+
+import struct
 
 
 from adafruit_bus_device.i2c_device import I2CDevice
 
 # from adafruit_bus_device.spi_device import SPIDevice
 from micropython import const
-from adafruit_register.i2c_struct import Struct
+from adafruit_register.i2c_struct import Struct, UnaryStruct
 from adafruit_register.i2c_bits import ROBits, RWBits
-from adafruit_register.i2c_bit import ROBit
+from adafruit_register.i2c_bit import ROBit, RWBit
 
 # Chip ID
 BMX160_CHIP_ID = const(0xD8)
@@ -252,6 +252,9 @@ BMX160_FIFO_MA_LENGTH = const(14)
 BMX160_FIFO_MG_LENGTH = const(14)
 BMX160_FIFO_MGA_LENGTH = const(20)
 
+# I2C address
+BMX160_I2C_ADDR = const(0x68)
+BMX160_I2C_ALT_ADDR = const(0x69)  # alternate address
 # Interface settings
 BMX160_SPI_INTF = const(1)
 BMX160_I2C_INTF = const(0)
@@ -260,9 +263,7 @@ BMX160_SPI_WR_MASK = const(0x7F)
 
 # Error related
 BMX160_OK = const(0)
-BMX160_ERROR = -1
-
-BMX160_ERROR_CODES = [0x1, 0x2, 0x3, 0x6, 0x7]
+BMX160_ERROR = const(-1)
 
 # Each goes with a different sensitivity in decreasing order
 AccelSensitivity2Gravity_values = [
@@ -305,7 +306,7 @@ class _ScaledReadOnlyStruct(Struct):
 # scale factor can be changed as a function of range mode
 
 
-class BMX160(Diagnostics):
+class BMX160:
     """
     Driver for the BMX160 accelerometer, magnetometer, gyroscope.
 
@@ -396,49 +397,21 @@ class BMX160(Diagnostics):
     _mag_odr = 25  # Hz
     _mag_range = 250  # deg/sec
 
-    def __init__(self, i2c, i2c_address, enable_pin=None):
-        if enable_pin is not None:
-            self._enable = DigitalInOut(enable_pin)
-            self._enable.switch_to_output(value = True)
-        
-        super().__init__(self._enable)
-        
-
-        self.i2c_device = I2CDevice(i2c, i2c_address, probe=True)
-
+    def __init__(self):
         # soft reset & reboot
         self.cmd = BMX160_SOFT_RESET_CMD
-        sleep(0.001)
+        time.sleep(0.001)
         # Check ID registers.
         ID = self.read_u8(BMX160_CHIP_ID_ADDR)
         if ID != BMX160_CHIP_ID:
             raise RuntimeError("Could not find BMX160, check wiring!")
 
+        # print("status:", format_binary(self.status))
         # set the default settings
         self.init_mag()
         self.init_accel()
         self.init_gyro()
-
-    ######################## I2C HELPERS ########################
-    def read_u8(self, address):
-        with self.i2c_device as i2c:
-            self._BUFFER[0] = address & 0xFF
-            i2c.write_then_readinto(
-                self._BUFFER, self._BUFFER, out_end=1, in_start=1, in_end=2
-            )
-        return self._BUFFER[1]
-
-    def read_bytes(self, address, count, buf):
-        with self.i2c_device as i2c:
-            buf[0] = address & 0xFF
-            i2c.write_then_readinto(buf, buf, out_end=1, in_end=count)
-        return buf
-
-    def write_u8(self, address, val):
-        with self.i2c_device as i2c:
-            self._BUFFER[0] = address & 0xFF
-            self._BUFFER[1] = val & 0xFF
-            i2c.write(self._BUFFER, end=2)
+        # print("status:", format_binary(self.status))
 
     ######################## SENSOR API ########################
 
@@ -578,7 +551,7 @@ class BMX160(Diagnostics):
 
         # NOTE: this delay is a worst case. If we need repeated switching
         # we can choose the delay on a case-by-case basis.
-        sleep(0.0081)
+        time.sleep(0.0081)
 
     ############## ACCELEROMETER SETTINGS  ##############
 
@@ -663,14 +636,14 @@ class BMX160(Diagnostics):
 
         # NOTE: this delay is a worst case. If we need repeated switching
         # we can choose the delay on a case-by-case basis.
-        sleep(0.005)
+        time.sleep(0.005)
 
     ############## MAGENTOMETER SETTINGS  ##############
 
     def init_mag(self):
         # see pg 25 of: https://ae-bst.resource.bosch.com/media/_tech/media/datasheets/BST-BMX160-DS000.pdf
         self.write_u8(BMX160_COMMAND_REG_ADDR, BMX160_MAG_NORMAL_MODE)
-        sleep(0.00065)  # datasheet says wait for 650microsec
+        time.sleep(0.00065)  # datasheet says wait for 650microsec
         self.write_u8(BMX160_MAG_IF_0_ADDR, 0x80)
         # put mag into sleep mode
         self.write_u8(BMX160_MAG_IF_3_ADDR, 0x01)
@@ -690,7 +663,7 @@ class BMX160(Diagnostics):
         self.write_u8(BMX160_MAG_IF_0_ADDR, 0x00)
         # put in low power mode.
         self.write_u8(BMX160_COMMAND_REG_ADDR, BMX160_MAG_LOWPOWER_MODE)
-        sleep(0.1)  # takes this long to warm up (empirically)
+        time.sleep(0.1)  # takes this long to warm up (empirically)
 
     @property
     def mag_powermode(self):
@@ -717,7 +690,7 @@ class BMX160(Diagnostics):
 
         # NOTE: this delay is a worst case. If we need repeated switching
         # we can choose the delay on a case-by-case basis.
-        sleep(0.001)
+        time.sleep(0.001)
 
     ## UTILS:
     def generic_setter(
@@ -734,51 +707,68 @@ class BMX160(Diagnostics):
         else:
             settingswarning(warning_interp)
 
-    ######################### DIAGNOSTICS #########################
 
-    def __check_for_errors(self) -> list[int]:
-        """_check_for_errors: Checks for any device errors on BMX160
+class BMX160_I2C(BMX160):
+    """Driver for the BMX160 connect over I2C."""
 
-        :return: List of error conditions if present
-        """
-        NO_ERROR = const(0x00)
+    def __init__(self, i2c):
 
-        error_list = []
+        try:
+            self.i2c_device = I2CDevice(i2c, BMX160_I2C_ADDR, probe=False)
+        except:
+            self.i2c_device = I2CDevice(i2c, BMX160_I2C_ALT_ADDR, probe=False)
 
-        error_reg = self.query_error
-        if error_reg != NO_ERROR:
-            error_list.append(Diagnostics.BMX160_UNSPECIFIED_ERROR)
+        super().__init__()
 
-        if self.fatal_err != 0:
-            error_list.append(Diagnostics.BMX160_FATAL_ERROR)
+    def read_u8(self, address):
+        with self.i2c_device as i2c:
+            self._BUFFER[0] = address & 0xFF
+            i2c.write_then_readinto(
+                self._BUFFER, self._BUFFER, out_end=1, in_start=1, in_end=2
+            )
+        return self._BUFFER[1]
 
-        if self.error_code in self.BMX160_ERROR_CODES:
-            error_list.append(Diagnostics.BMX160_NON_FATAL_ERROR)
+    def read_bytes(self, address, count, buf):
+        with self.i2c_device as i2c:
+            buf[0] = address & 0xFF
+            i2c.write_then_readinto(buf, buf, out_end=1, in_end=count)
+        return buf
 
-        if self.drop_cmd_err != 0:
-            error_list.append(Diagnostics.BMX160_DROP_COMMAND_ERROR)
-
-        if error_list.count() == 0:
-            error_list.append(Diagnostics.NOERROR)
-
-    def run_diagnostics(self) -> list[int] | None:
-        """run_diagnostic_test: Run all tests for the component
-
-        :return: List of error codes
-        """
-        error_list = []
-
-        error_list = self.__check_for_errors()
-
-        error_list = list(set(error_list))
-
-        if not Diagnostics.NOERROR in error_list:
-            self.errors_present = True
-
-        return error_list
+    def write_u8(self, address, val):
+        with self.i2c_device as i2c:
+            self._BUFFER[0] = address & 0xFF
+            self._BUFFER[1] = val & 0xFF
+            i2c.write(self._BUFFER, end=2)
 
 
-######################### UTILS #########################
+# class BMX160_SPI(BMX160):
+#     """Driver for the BMX160 connect over SPI."""
+#     def __init__(self, spi, cs):
+#         self.i2c_device = SPIDevice(spi, cs)
+#         super().__init__()
+
+#     def read_u8(self, address):
+#         with self.i2c_device as spi:
+#             self._BUFFER[0] = (address | 0x80) & 0xFF
+#             spi.write(self._BUFFER, end=1)
+#             spi.readinto(self._BUFFER, end=1)
+#         return self._BUFFER[0]
+
+#     def read_bytes(self, address, count, buf):
+#         with self.i2c_device as spi:
+#             buf[0] = (address | 0x80) & 0xFF
+#             spi.write(buf, end=1)
+#             spi.readinto(buf, end=count)
+#         return buf
+
+#     def write_u8(self, address, val):
+#         with self.i2c_device as spi:
+#             self._BUFFER[0] = (address & 0x7F) & 0xFF
+#             self._BUFFER[1] = val & 0xFF
+#             spi.write(self._BUFFER, end=2)
+
+
+# GENERIC UTILS:
 
 
 def find_nearest_valid(desired, possible_values):

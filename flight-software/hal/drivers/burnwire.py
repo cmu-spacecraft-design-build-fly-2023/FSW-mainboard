@@ -1,5 +1,3 @@
-
-
 """
 This module contains the BurnWires class which provides functionality for controlling burn wires.
 
@@ -12,6 +10,7 @@ from digitalio import DigitalInOut, DriveMode
 from pwmio import PWMOut
 from micropython import const
 from time import sleep
+
 
 class BurnWires(Diagnostics):
     """
@@ -35,12 +34,12 @@ class BurnWires(Diagnostics):
     """
 
     # Initial values for the attributes
-    INITIAL_FREQUENCY_HZ    = const(1000)
-    INITIAL_DUTY_PCT        = const(50)
-    INITIAL_DURATION_S      = const(1)
+    INITIAL_FREQUENCY_HZ = const(1000)
+    INITIAL_DUTY_PCT = const(50)
+    INITIAL_DURATION_S = const(1)
 
     # Duty cycle value to turn off the burn wire
-    DUTY_CYCLE_OFF          = const(0)
+    DUTY_CYCLE_OFF = const(0)
 
     def __init__(self, enable_pin, burn_xp, burn_xm, burn_yp, burn_ym):
         """
@@ -72,7 +71,7 @@ class BurnWires(Diagnostics):
         Get the current frequency in Hz for the PWM signal.
         """
         return self.__pwm_frequency
-    
+
     @frequency_hz.setter
     def frequency_hz(self, frequency_hz):
         """
@@ -82,21 +81,21 @@ class BurnWires(Diagnostics):
             frequency_hz: The frequency in Hz for the PWM signal.
         """
         self.__pwm_frequency = frequency_hz
-    
+
     @frequency_hz.getter
     def frequency_hz(self):
         """
         Get the current frequency in Hz for the PWM signal.
         """
         return self.__pwm_frequency
-    
+
     @property
     def duty_cycle_pct(self):
         """
         Get the current duty cycle percentage for the PWM signal.
         """
         return self.__duty_cycle
-    
+
     @duty_cycle_pct.setter
     def duty_cycle_pct(self, duty_cycle_pct):
         """
@@ -120,7 +119,7 @@ class BurnWires(Diagnostics):
         Get the current duration in seconds for burning.
         """
         return self.__burn_duration
-    
+
     @duration_s.setter
     def duration_s(self, duration_s):
         """
@@ -137,15 +136,14 @@ class BurnWires(Diagnostics):
         Get the current duration in seconds for burning.
         """
         return self.__burn_duration
-    
+
     def __turn_off_all_burns(self) -> None:
-        """__turn_off_all_burns: turns off all the burn wires
-        """
+        """__turn_off_all_burns: turns off all the burn wires"""
         self.__burn_xp.duty_cycle = self.DUTY_CYCLE_OFF
         self.__burn_xm.duty_cycle = self.DUTY_CYCLE_OFF
         self.__burn_yp.duty_cycle = self.DUTY_CYCLE_OFF
         self.__burn_ym.duty_cycle = self.DUTY_CYCLE_OFF
-    
+
     def reset(self):
         """reset: Turns off an on the relay to turn off an on the burn wires.
 
@@ -195,10 +193,12 @@ class BurnWires(Diagnostics):
             The configured burn pin.
         """
         # Set the duty cycle to 0 so it doesn't start burning
-        burn_wire = PWMOut(burn_pin, frequency=self.frequency_hz, duty_cycle=self.DUTY_CYCLE_OFF)
+        burn_wire = PWMOut(
+            burn_pin, frequency=self.frequency_hz, duty_cycle=self.DUTY_CYCLE_OFF
+        )
 
         return burn_wire
-    
+
     def __burn(self, burn_wire):
         """
         Burns a wire using the specified burn pin.
@@ -215,7 +215,7 @@ class BurnWires(Diagnostics):
         Burns the positive X-axis wire.
         """
         self.__burn(self.__burn_xp)
-    
+
     def burn_xm(self):
         """
         Burns the negative X-axis wire.
@@ -233,5 +233,3 @@ class BurnWires(Diagnostics):
         Burns the negative Y-axis wire.
         """
         self.__burn(self.__burn_ym)
-
-    

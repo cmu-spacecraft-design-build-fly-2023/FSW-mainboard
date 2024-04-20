@@ -10,13 +10,11 @@ CircuitPython Version: 7.0.0 alpha
 Library Repo: https://github.com/pycubed/library_pycubed.py
 * Edits by: Max Holliday
 """
-import math
-from time import sleep, monotonic
+import time
 from random import random
-from digitalio import DigitalInOut, Pull
+import digitalio
 from micropython import const
 import adafruit_bus_device.spi_device as spidev
-from .diagnostics.diagnostics import Diagnostics
 
 # pylint: disable=bad-whitespace
 # Internal constants:
@@ -118,7 +116,7 @@ _bigbuffer = bytearray(256)
 bw_bins = (7800, 10400, 15600, 20800, 31250, 41700, 62500, 125000, 250000)
 
 
-class RFM9x(Diagnostics):
+class RFM9x:
     """Interface to a RFM95/6/7/8 LoRa radio module.  Allows sending and
     receivng bytes of data in long range LoRa mode at a support board frequency
     (433/915mhz).
@@ -237,59 +235,45 @@ class RFM9x(Diagnostics):
         self,
         spi,
         cs,
-        dio0,
-        rst,
-        enable,
+        reset,
         frequency,
         *,
         preamble_length=8,
         code_rate=5,
         high_power=True,
         baudrate=5000000,
-        max_output=False,
+        max_output=False
     ):
         self.high_power = high_power
         self.max_output = max_output
-
-        self.dio0 = DigitalInOut(dio0)
-        self.dio0.switch_to_input()
         self.dio0 = False
-
-        self.__cs = DigitalInOut(cs)
-        self.__cs.switch_to_output(value=True)
-
-        self.__enable = DigitalInOut(enable)
-        self.__enable.switch_to_output(value=True)
-
         # Device support SPI mode 0 (polarity & phase = 0) up to a max of 10mhz.
         # Set Default Baudrate to 5MHz to avoid problems
-        self._device = spidev.SPIDevice(
-            spi, self.__cs, baudrate=baudrate, polarity=0, phase=0
-        )
+        self._device = spidev.SPIDevice(spi, cs, baudrate=baudrate, polarity=0, phase=0)
         # Setup reset as a digital input (default state for reset line according
         # to the datasheet).  This line is pulled low as an output quickly to
         # trigger a reset.  Note that reset MUST be done like this and set as
         # a high impedence input or else the chip cannot change modes (trust me!).
-        self._rst = DigitalInOut(rst)
-        self._rst.switch_to_input(pull=Pull.UP)
+        self._reset = reset
+        self._reset.switch_to_input(pull=digitalio.Pull.UP)
         self.reset()
         # No device type check!  Catch an error from the very first request and
         # throw a nicer message to indicate possible wiring problems.
         version = self._read_u8(_RH_RF95_REG_42_VERSION)
         if version != 18:
             raise RuntimeError(
-                f"Failed to find rfm9x with expected version -- check wiring. Found {version}"
+                "Failed to find rfm9x with expected version -- check wiring"
             )
 
         # Set sleep mode, wait 10ms and confirm in sleep mode (basic device check).
         # Also set long range mode (LoRa mode) as it can only be done in sleep.
         self.idle()
-        sleep(0.01)
+        time.sleep(0.01)
         self.osc_calibration = True
-        sleep(1)
+        time.sleep(1)
 
         self.sleep()
-        sleep(0.01)
+        time.sleep(0.01)
         self.long_range_mode = True
         if self.operation_mode != SLEEP_MODE or not self.long_range_mode:
             raise RuntimeError("Failed to configure radio for LoRa mode, check wiring!")
@@ -375,13 +359,6 @@ class RFM9x(Diagnostics):
         self.pa_ramp = 0  # mode agnostic
         self.lna_boost = 3  # mode agnostic
 
-        self.enable_crc = True
-        self.ack_delay = 0.2
-
-        super().__init__(self.__enable)
-
-        self.sleep()
-
     def cw(self, msg=None):
         success = False
         if msg is None:
@@ -399,7 +376,7 @@ class RFM9x(Diagnostics):
             ]
 
         self.operation_mode = SLEEP_MODE
-        sleep(0.01)
+        time.sleep(0.01)
         self.long_range_mode = False  # FSK/OOK Mode
         self.modulation_type = 1  # OOK
         self.modulation_shaping = 2
@@ -415,13 +392,13 @@ class RFM9x(Diagnostics):
         self._write_u8(0x35, len(msg) - 1)
         self._write_from(_RH_RF95_REG_00_FIFO, bytearray(msg))
 
-        _t = monotonic() + 10
+        _t = time.monotonic() + 10
         self.operation_mode = TX_MODE
-        while monotonic() < _t:
+        while time.monotonic() < _t:
             a = self._read_u8(0x3F)
             # print(a,end=' ')
             if (a >> 6) & 1:
-                sleep(0.01)
+                time.sleep(0.01)
                 success = True
                 break
         if not (a >> 6) & 1:
@@ -429,7 +406,7 @@ class RFM9x(Diagnostics):
         self.idle()
         if cache:
             self.operation_mode = SLEEP_MODE
-            sleep(0.01)
+            time.sleep(0.01)
             self.long_range_mode = True
             self._write_u8(_RH_RF95_REG_0E_FIFO_TX_BASE_ADDR, 0x00)
             self._write_u8(_RH_RF95_REG_0F_FIFO_RX_BASE_ADDR, 0x00)
@@ -484,19 +461,13 @@ class RFM9x(Diagnostics):
             self._BUFFER[1] = val & 0xFF
             device.write(self._BUFFER, end=2)
 
-    def enable(self):
-        self.__enable.value = True
-
-    def disable(self):
-        self.__enable.value = False
-
     def reset(self):
         """Perform a reset of the chip."""
         # See section 7.2.2 of the datasheet for reset description.
-        self._rst.switch_to_output(value=False)
-        sleep(0.0001)  # 100 us
-        self._rst.switch_to_input(pull=Pull.UP)
-        sleep(0.005)  # 5 ms
+        self._reset.switch_to_output(value=False)
+        time.sleep(0.0001)  # 100 us
+        self._reset.switch_to_input(pull=digitalio.Pull.UP)
+        time.sleep(0.005)  # 5 ms
 
     def idle(self):
         """Enter idle standby mode."""
@@ -751,9 +722,9 @@ class RFM9x(Diagnostics):
             return (self._read_u8(_RH_RF95_REG_12_IRQ_FLAGS) & 0x40) >> 6
 
     async def await_rx(self, timeout=60):
-        _t = monotonic() + timeout
+        _t = time.monotonic() + timeout
         while not self.rx_done():
-            if monotonic() < _t:
+            if time.monotonic() < _t:
                 yield
             else:
                 # Timed out
@@ -773,7 +744,7 @@ class RFM9x(Diagnostics):
         destination=None,
         node=None,
         identifier=None,
-        flags=None,
+        flags=None
     ):
         """Send a string of data using the transmitter.
         You can only send 252 bytes at a time
@@ -848,10 +819,10 @@ class RFM9x(Diagnostics):
         self.transmit()
         # Wait for tx done interrupt with explicit polling (not ideal but
         # best that can be done right now without interrupts).
-        start = monotonic()
+        start = time.monotonic()
         timed_out = False
         while not timed_out and not self.tx_done():
-            if (monotonic() - start) >= self.xmit_timeout:
+            if (time.monotonic() - start) >= self.xmit_timeout:
                 timed_out = True
 
         if hasattr(self, "txrx"):  # RX
@@ -902,7 +873,7 @@ class RFM9x(Diagnostics):
                 self.retry_counter += 1  # ADDED FOR PYCUBED
                 print("no uhf ack, sending again...")
                 # delay by random amount before next try
-                sleep(self.ack_wait + self.ack_wait * random())
+                time.sleep(self.ack_wait + self.ack_wait * random())
             retries_remaining = retries_remaining - 1
             # set retry flag in packet header
             self.flags |= _RH_FLAGS_RETRY
@@ -918,7 +889,7 @@ class RFM9x(Diagnostics):
         with_ack=False,
         timeout=None,
         debug=False,
-        view=False,
+        view=False
     ):
         """Wait to receive a packet from the receiver. If a packet is found the payload bytes
         are returned, otherwise None is returned (which indicates the timeout elapsed with no
@@ -948,10 +919,10 @@ class RFM9x(Diagnostics):
             # interrupt supports.
             # Make sure we are listening for packets.
             self.listen()
-            start = monotonic()
+            start = time.monotonic()
             timed_out = False
             while not timed_out and not self.rx_done():
-                if (monotonic() - start) >= timeout:
+                if (time.monotonic() - start) >= timeout:
                     timed_out = True
         # Payload ready is set, a packet is in the FIFO.
         packet = None
@@ -998,7 +969,7 @@ class RFM9x(Diagnostics):
                     ):
                         # delay before sending Ack to give receiver a chance to get ready
                         if self.ack_delay is not None:
-                            sleep(self.ack_delay)
+                            time.sleep(self.ack_delay)
                         # send ACK packet to sender (data is b'!')
                         self.send(
                             b"!",
@@ -1114,33 +1085,10 @@ class RFM9x(Diagnostics):
         self.transmit()
         # Wait for tx done interrupt with explicit polling (not ideal but
         # best that can be done right now without interrupts).
-        _t = monotonic() + 5
-        while monotonic() < _t and not self.tx_done():
+        _t = time.monotonic() + 5
+        while time.monotonic() < _t and not self.tx_done():
             pass
         self.idle()
         # Clear interrupt.
         self._write_u8(_RH_RF95_REG_12_IRQ_FLAGS, 0xFF)
         return
-
-    ######################### DIAGNOSTICS #########################
-    def _read_frequency(self) -> bool:
-        frequency = self._device.frequency_mhz()
-        if math.isclose(frequency, 433, abs_tol=1) or math.isclose(
-            frequency, 915, abs_tol=1
-        ):
-            return True
-        else:
-            return False
-
-    def run_diagnostics(self) -> list[int] | None:
-        """run_diagnostic_test: Run all tests for the component"""
-        error_list: list[int] = []
-
-        error_list.append(self._read_frequency())
-
-        error_list = list(set(error_list))
-
-        if not Diagnostics.NOERROR in error_list:
-            self.errors_present = True
-
-        return error_list

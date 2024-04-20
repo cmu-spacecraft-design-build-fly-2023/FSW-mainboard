@@ -33,24 +33,24 @@ to the GPIO pins for signaling
 from diagnostics.diagnostics import Diagnostics
 from micropython import const
 from digitalio import DigitalInOut
-from struct import pack, unpack 
+from struct import pack, unpack
 
-MAX_PACKETS             = const(0xFFFF) # 65535 packets
+MAX_PACKETS = const(0xFFFF)  # 65535 packets
 
 # Packet types
-PKT_TYPE_HEADER         = const(0x00) 
-PKT_TYPE_DATA           = const(0x01)
-PKT_TYPE_ACK            = const(0x02)
-PKT_TYPE_NACK           = const(0x03)
-PKT_TYPE_RESET          = const(0x04)
+PKT_TYPE_HEADER = const(0x00)
+PKT_TYPE_DATA = const(0x01)
+PKT_TYPE_ACK = const(0x02)
+PKT_TYPE_NACK = const(0x03)
+PKT_TYPE_RESET = const(0x04)
 
 # Packet sizes
-PACKET_SIZE             = const(256)
-PKT_METADATA_SIZE       = const(4)
-HEADER_PAYLOAD_SIZE     = const(4)
-PAYLOAD_PER_PACKET      = PACKET_SIZE - PKT_METADATA_SIZE # 252 bytes
-HEADER_PADDING_SIZE     = PAYLOAD_PER_PACKET - HEADER_PAYLOAD_SIZE # 248 bytes
-ACK_PADDING_SIZE        = PAYLOAD_PER_PACKET
+PACKET_SIZE = const(256)
+PKT_METADATA_SIZE = const(4)
+HEADER_PAYLOAD_SIZE = const(4)
+PAYLOAD_PER_PACKET = PACKET_SIZE - PKT_METADATA_SIZE  # 252 bytes
+HEADER_PADDING_SIZE = PAYLOAD_PER_PACKET - HEADER_PAYLOAD_SIZE  # 248 bytes
+ACK_PADDING_SIZE = PAYLOAD_PER_PACKET
 
 """
 Header Packet
@@ -66,10 +66,12 @@ Data Packet (Including Ack)
 +-----------------+-----------------+-----------------+---------------+
 """
 
+
 class Message:
     """
     Message class to handle the creation of packets and headers
     """
+
     def __init__(self, message_type: int, data: bytearray):
         self.message_type = message_type
         self.data = data
@@ -77,69 +79,79 @@ class Message:
 
         # Add padding
         if self.data_len % PAYLOAD_PER_PACKET != 0:
-            self.data += bytearray(PAYLOAD_PER_PACKET - (self.data_len % PAYLOAD_PER_PACKET))
+            self.data += bytearray(
+                PAYLOAD_PER_PACKET - (self.data_len % PAYLOAD_PER_PACKET)
+            )
             self.data_len = len(self.data)
-    
+
         self.num_packets = self.data_len // PAYLOAD_PER_PACKET
 
         if self.message_type > 0xFF or self.message_type < 0x00:
             raise ValueError("Message type out of range")
         if self.num_packets > MAX_PACKETS:
             raise ValueError("Data too large to send")
-        
-        self.packets = [self.data[i*PAYLOAD_PER_PACKET:(i+1)*PAYLOAD_PER_PACKET] 
-                        for i in range(self.num_packets)]
-        
+
+        self.packets = [
+            self.data[i * PAYLOAD_PER_PACKET : (i + 1) * PAYLOAD_PER_PACKET]
+            for i in range(self.num_packets)
+        ]
+
     def create_header(self) -> bytearray:
         """create_header: creates the header packet for the entire message
-        
+
         Returns:
             bytearray: the header packet for the message
         """
 
         header_seq = 0x00
-        data = pack('@HBBBH', header_seq, PKT_TYPE_HEADER, HEADER_PAYLOAD_SIZE, 
-             self.message_type, self.num_packets) + bytearray(HEADER_PADDING_SIZE)
+        data = pack(
+            "@HBBBH",
+            header_seq,
+            PKT_TYPE_HEADER,
+            HEADER_PAYLOAD_SIZE,
+            self.message_type,
+            self.num_packets,
+        ) + bytearray(HEADER_PADDING_SIZE)
         return data
-    
+
     def create_packet(self, packet_seq: int) -> bytearray:
         """create_packet: creates a data packet for the message
-        
+
         Args:
             packet_seq (int): the sequence number of the packet to create
-        
+
         Returns:
             bytearray: the data packet for the message
         """
 
         if packet_seq > self.num_packets or packet_seq <= 0:
             raise ValueError("Packet number out of range")
-        
+
         if packet_seq == self.num_packets:
-            packet_payload_size = self.data_len % PAYLOAD_PER_PACKET 
+            packet_payload_size = self.data_len % PAYLOAD_PER_PACKET
             if packet_payload_size == 0:
                 packet_payload_size = PAYLOAD_PER_PACKET
         else:
             packet_payload_size = PAYLOAD_PER_PACKET
 
         # Pack the structure of the packet
-        metadata = pack('@HBB', packet_seq, PKT_TYPE_DATA, packet_payload_size)
+        metadata = pack("@HBB", packet_seq, PKT_TYPE_DATA, packet_payload_size)
         current_packet = self.packets[packet_seq - 1][:packet_payload_size]
         return metadata + current_packet
-    
+
     @staticmethod
     def create_ack(packet_seq: int) -> bytearray:
         """create_ack: creates an ack packet for the given sequence number
 
         Args:
             packet_seq (int): the sequence number to ack
-        
+
         Returns:
             bytearray: the ack packet
         """
         if packet_seq > MAX_PACKETS or packet_seq < 0:
             raise ValueError("Packet number out of range")
-        return pack('@HBB', packet_seq, PKT_TYPE_ACK, 0x00) 
+        return pack("@HBB", packet_seq, PKT_TYPE_ACK, 0x00)
 
     @staticmethod
     def create_nack(packet_seq: int) -> bytearray:
@@ -153,21 +165,21 @@ class Message:
         """
         if packet_seq > MAX_PACKETS or packet_seq < 0:
             raise ValueError("Packet number out of range")
-        return pack('@HBB', packet_seq, PKT_TYPE_NACK, 0x00) 
+        return pack("@HBB", packet_seq, PKT_TYPE_NACK, 0x00)
 
     @staticmethod
     def create_reset() -> bytearray:
         """create_reset: creates a reset packet to reset the sequence number
-        
+
         Returns:
             bytearray: the reset packet
         """
-        return pack('@HBB', 0x00, PKT_TYPE_RESET, 0x00) 
-    
+        return pack("@HBB", 0x00, PKT_TYPE_RESET, 0x00)
+
     @staticmethod
     def parse_packet_meta(metadata: bytearray) -> tuple[int, int, int]:
         """parse_packet_meta: parses the metadata of a packet
-        
+
         Args:
             metadata (bytearray): the metadata of the packet
 
@@ -175,12 +187,12 @@ class Message:
             tuple[int, int, int]: the sequence number, packet type, and payload size
         """
         try:
-            seq_num, packet_type, payload_size = unpack('@HBB', metadata)
+            seq_num, packet_type, payload_size = unpack("@HBB", metadata)
         except:
             raise ValueError("Invalid packet format")
         return seq_num, packet_type, payload_size
-    
-    @staticmethod                                                                                                                                    
+
+    @staticmethod
     def parse_header_payload(header_payload: bytearray) -> tuple[int, int]:
         """parse_header_payload: parses the payload of the header
 
@@ -190,12 +202,13 @@ class Message:
         Returns:
             tuple[int, int]: the message type and the number of packets
         """
-        message_type, num_packets = unpack('@BH', header_payload)
+        message_type, num_packets = unpack("@BH", header_payload)
         return message_type, num_packets
-    
+
+
 # TODO: Add comments
 class JetsonComm(Diagnostics):
-    def __init__(self, uart, enable_pin = None):
+    def __init__(self, uart, enable_pin=None):
         self.uart = uart
 
         self._enable = None
@@ -205,17 +218,17 @@ class JetsonComm(Diagnostics):
             self.enable()
 
         super().__init__(self._enable)
-        
+
     def send_message(self, message):
         done = False
         current_seq = 0
         total_packets = message.num_packets
-        while(not done):
+        while not done:
             if current_seq == 0:
                 self.uart.write(message.create_header())
             else:
                 self.uart.write(message.create_packet(current_seq))
-            while(self.uart.in_waiting < PKT_METADATA_SIZE):
+            while self.uart.in_waiting < PKT_METADATA_SIZE:
                 continue
             response = self.uart.read(PKT_METADATA_SIZE)
             (seq_num, packet_type, _) = Message.parse_packet_meta(response)
@@ -232,23 +245,28 @@ class JetsonComm(Diagnostics):
 
     def receive_message(self):
         expected_seq_num = 0
-        while(self.uart.in_waiting < PACKET_SIZE):
+        while self.uart.in_waiting < PACKET_SIZE:
             continue
         header = self.uart.read(PACKET_SIZE)
-        (seq_num, packet_type, payload_size) = Message.parse_packet_meta(header[:PKT_METADATA_SIZE])
+        (seq_num, packet_type, payload_size) = Message.parse_packet_meta(
+            header[:PKT_METADATA_SIZE]
+        )
         if packet_type != PKT_TYPE_HEADER:
             raise ValueError("Invalid header")
-        (message_type, num_packets) = Message.parse_header_payload(header[PKT_METADATA_SIZE:]
-                                                                   [:HEADER_PAYLOAD_SIZE])
+        (message_type, num_packets) = Message.parse_header_payload(
+            header[PKT_METADATA_SIZE:][:HEADER_PAYLOAD_SIZE]
+        )
         self.uart.write(Message.create_ack(seq_num))
         expected_seq_num = seq_num + 1
         message = bytearray()
         print(num_packets)
         for i in range(num_packets):
-            while(self.uart.in_waiting < PACKET_SIZE):
+            while self.uart.in_waiting < PACKET_SIZE:
                 continue
             packet = self.uart.read(PACKET_SIZE)
-            (seq_num, packet_type, payload_size) = Message.parse_packet_meta(packet[:PKT_METADATA_SIZE])
+            (seq_num, packet_type, payload_size) = Message.parse_packet_meta(
+                packet[:PKT_METADATA_SIZE]
+            )
             if packet_type != PKT_TYPE_DATA or seq_num != expected_seq_num:
                 raise ValueError("Incorrect seq num")
             # print(f'Received seq_num {seq_num}')
@@ -257,9 +275,8 @@ class JetsonComm(Diagnostics):
             expected_seq_num += 1
             # message += packet[PKT_METADATA_SIZE:][:payload_size]
         return message
-    
+
     def run_diagnostics(self) -> list[int] | None:
-        """run_diagnostic_test: Run all tests for the component
-        """
+        """run_diagnostic_test: Run all tests for the component"""
         # TODO: Implement simple comm test
         return [Diagnostics.NOERROR]

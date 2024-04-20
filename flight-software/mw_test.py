@@ -1,6 +1,7 @@
 """mw_test.py: Test the middleware system diagnostics.
 
 """
+
 from hal.configuration import SATELLITE
 from hal.cubesat import CubeSat
 

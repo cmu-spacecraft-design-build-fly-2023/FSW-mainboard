@@ -7,18 +7,18 @@ interface to set the torque level on the motor(s) and enable or disable the torq
 Authors: Gordonson Yan, Harry Rosmann
 """
 
-
 from .drv8830 import DRV8830
 from .middleware import Middleware
+
 
 # TorqueCoil Management Class
 class TorqueInterface:
     """Manage torque for dual or single DRV8830 motor controllers."""
-    
+
     def __init__(self, drv_p: DRV8830 | Middleware, drv_n: DRV8830 | Middleware = None):
         """
         Initialize the TorqueInterface with one or two DRV8830 instances.
-        
+
         :param drv1: The first DRV8830 instance in positive direction (required).
         :param drv2: The second DRV8830 instance in negative direction (optional).
         """
@@ -32,7 +32,7 @@ class TorqueInterface:
     def drv_p(self) -> DRV8830 | Middleware:
         """Get the positive direction DRV8830 instance."""
         return self.drv_p
-    
+
     @property
     def drv_n(self) -> DRV8830 | Middleware | None:
         """Get the negative direction DRV8830 instance."""
@@ -41,20 +41,20 @@ class TorqueInterface:
     def enable_throttle(self, throttle: float) -> None:
         """
         Enable or disable the torque coil. This effectively enables or disables the motor output.
-        
+
         :param throttle: Throttle value from -1.0 (full reverse) to +1.0 (full forward).
         """
         if throttle > 1.0 or throttle < -1.0:
             raise ValueError("Throttle must be between -1.0 and 1.0")
 
-        self.drv_p.throttle = throttle # Set to full speed forward for demonstration
+        self.drv_p.throttle = throttle  # Set to full speed forward for demonstration
         if self.drv_n is not None:
             self.drv_n.throttle = throttle
 
     def enable_volts(self, volts: float) -> None:
         """
         Enable or disable the torque coil. This effectively enables or disables the motor output.
-        
+
         :param volts: Voltage value from -5.1 (full reverse) to +5.1 (full forward).
         """
         if volts > 5.1 or volts < -5.1:
@@ -63,7 +63,7 @@ class TorqueInterface:
         self.drv_p.throttle_volts = volts
         if self.drv_n is not None:
             self.drv_n.throttle_volts = volts
-    
+
     def disable(self) -> None:
         """
         Disable the torque coil. This effectively disables the motor output.

@@ -13,9 +13,9 @@ def process_sun_vector(raw_readings, prev_sun_vec):
     new_y = prev_sun_vec[0] * math.sin(angle) + prev_sun_vec[1] * math.cos(angle)
     sun_vec = [new_x, new_y, prev_sun_vec[2]]
 
-    magnitude = math.sqrt(sum(component ** 2 for component in sun_vec))
+    magnitude = math.sqrt(sum(component**2 for component in sun_vec))
     sun_vec = [sun_vec[0] / magnitude, sun_vec[1] / magnitude, sun_vec[2] / magnitude]
-    
+
     return sun_vec, eclipse_state
 
 

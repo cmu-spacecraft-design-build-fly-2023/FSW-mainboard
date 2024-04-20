@@ -1,8 +1,8 @@
 from hal.drivers.burnwire import BurnWires
 from hal.argus_v1 import ArgusV1Components
 
-duty_cycle_pct      = 50
-frequency           = 1000
+duty_cycle_pct = 50
+frequency = 1000
 
 # Create a burn wires object
 burn_wires = BurnWires(
