@@ -3,7 +3,7 @@ from tasks.monitor import Task as monitor
 from tasks.timing import Task as timing
 from tasks.obdh import Task as obdh
 from tasks.sun import Task as sun
-
+from tasks.communication import Task as comms
 
 TASK_REGISTRY = {
     "MONITOR": monitor,
@@ -11,6 +11,7 @@ TASK_REGISTRY = {
     "OBDH": obdh,
     "IMU": imu,
     "SUN": sun,
+    "COMMS": comms, 
 }
 
 TASK_MAPPING_ID = {
@@ -19,6 +20,7 @@ TASK_MAPPING_ID = {
     "OBDH": 0x02,
     "IMU": 0x03,
     "SUN": 0x11,
+    "COMMS": 0x12,
 }
 
 
@@ -40,6 +42,7 @@ SM_CONFIGURATION = {
             "OBDH": {"Frequency": 1, "Priority": 3, "ScheduleLater": False},
             "IMU": {"Frequency": 1, "Priority": 5, "ScheduleLater": True},
             "SUN": {"Frequency": 1, "Priority": 5, "ScheduleLater": True},
+            "COMMS": {"Frequency": 0.05, "Priority": 5, "ScheduleLater": True},
         },
         "MovesTo": [
             "SAFE",
