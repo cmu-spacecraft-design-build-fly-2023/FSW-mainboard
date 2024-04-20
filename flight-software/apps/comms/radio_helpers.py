@@ -3,7 +3,7 @@
 ======================
 Satellite radio class for Argus-1 CubeSat. 
 Message packing/unpacking for telemetry/image TX
-and acknowledgement RX. 
+and acknowledgement RX. OLD VERSION!!!
 
 Authors: DJ Morvay, Akshat Sahay
 """
@@ -13,7 +13,7 @@ import os
 import time
 
 # PyCubed Board Lib
-from hal.cubesat import CubeSat
+from hal.configuration import SATELLITE
 
 # Argus-1 Lib
 from apps.comms.radio_protocol import *
@@ -25,7 +25,7 @@ class SATELLITE_RADIO:
     Description: Initialization of SATELLITE class
     """
 
-    def __init__(self, sat: CubeSat):
+    def __init__(self, sat: SATELLITE):
         self.sat = sat
 
         self.image_strs = [
@@ -35,7 +35,7 @@ class SATELLITE_RADIO:
         ]
         self.image_num = 0
 
-        self.image_get_info()
+        #self.image_get_info()
         self.send_mod = 10
         self.heartbeat_sent = False
         self.image_deleted = True
@@ -73,8 +73,8 @@ class SATELLITE_RADIO:
         if (self.sat_images.image_size % 196) > 0:
             self.sat_images.image_message_count += 1
 
-        print("Image size is", self.sat_images.image_size, "bytes")
-        print("This image requires", self.sat_images.image_message_count, "messages")
+        # print("Image size is", self.sat_images.image_size, "bytes")
+        # print("This image requires", self.sat_images.image_message_count, "messages")
 
         self.image_pack_images()
 
@@ -177,7 +177,7 @@ class SATELLITE_RADIO:
 
                 rec_bytes.close()
 
-                print(f"OTA file successfully uplinked!")
+                # print(f"OTA file successfully uplinked!")
                 self.ota_array.clear()
                 self.ota_sequence_count = 0
 
@@ -188,21 +188,21 @@ class SATELLITE_RADIO:
 
     def receive_message(self):
         while self.gs_req_ack == 0:
-            my_packet = self.sat.RADIO.receive(timeout=5)
+            my_packet = self.sat.RADIO.receive(timeout=1)
             if my_packet is None:
                 self.heartbeat_sent = False
                 self.gs_req_message_ID = 0x00
                 self.gs_req_ack = 1
             else:
-                print(f"Received (raw bytes): {my_packet}")
+                # print(f"Received (raw bytes): {my_packet}")
                 crc_check = self.sat.RADIO.crc_error()
-                print(f"CRC Status: {crc_check}")
+                # print(f"CRC Status: {crc_check}")
 
                 if crc_check > 0:
                     self.crc_count += 1
 
                 rssi = self.sat.RADIO.rssi(raw=True)
-                print(f"Received signal strength: {rssi} dBm")
+                # print(f"Received signal strength: {rssi} dBm")
                 self.unpack_message(my_packet)
         self.gs_req_ack = 0
 
@@ -303,8 +303,10 @@ class SATELLITE_RADIO:
             self.crc_count = 0
 
             # Debug output of message in bytes
-            print(
-                "Satellite sent message with ID:",
-                int.from_bytes(tx_message[0:1], "big") & 0b01111111,
-            )
-            print("\n")
+            # print(
+            #     "Satellite sent message with ID:",
+            #     int.from_bytes(tx_message[0:1], "big") & 0b01111111,
+            # )
+            # print("\n")
+
+            return (int.from_bytes(tx_message[0:1], "big") & 0b01111111)

@@ -36,7 +36,7 @@ gc.collect()
 print(str(gc.mem_free()) + " bytes free")
 
 try:
-    import comms_test
+    # import comms_test
     # import obdh_sd_test
 
     # Run forever

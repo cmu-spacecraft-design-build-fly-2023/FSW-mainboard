@@ -136,12 +136,12 @@ class PyCubed:
         _rf_cs1 = digitalio.DigitalInOut(board.RF1_CS)
         _rf_rst1 = digitalio.DigitalInOut(board.RF1_RST)
         self.enable_rf = digitalio.DigitalInOut(board.EN_RF)
-        self.radio1_DIO0 = digitalio.DigitalInOut(board.RF1_IO0)
+        self.RADIO_DIO0 = digitalio.DigitalInOut(board.RF1_IO0)
         # self.enable_rf.switch_to_output(value=False) # if U21
         self.enable_rf.switch_to_output(value=True)  # if U7
         _rf_cs1.switch_to_output(value=True)
         _rf_rst1.switch_to_output(value=True)
-        self.radio1_DIO0.switch_to_input()
+        self.RADIO_DIO0.switch_to_input()
 
         # If the same SPI bus is shared with other peripherals, the SD card must be initialized before accessing any other peripheral on the bus.
         # Failure to do so can prevent the SD card from being recognized until it is powered off or re-inserted.
@@ -208,15 +208,15 @@ class PyCubed:
 
         # Initialize radio #1 - UHF
         try:
-            self.radio1 = rfm9x.RFM9x(
+            self.RADIO = rfm9x.RFM9x(
                 self.spi, _rf_cs1, _rf_rst1, 915.6, code_rate=8, baudrate=1320000
             )
             # Default LoRa Modulation Settings
             # Frequency: 433 MHz, SF7, BW125kHz, CR4/8, Preamble=8, CRC=True
-            self.radio1.dio0 = self.radio1_DIO0
-            self.radio1.enable_crc = True
-            self.radio1.ack_delay = 0.2
-            self.radio1.sleep()
+            self.RADIO.dio0 = self.RADIO_DIO0
+            self.RADIO.enable_crc = True
+            self.RADIO.ack_delay = 0.2
+            self.RADIO.sleep()
             self.hardware["Radio1"] = True
         except Exception as e:
             if self.debug:
@@ -366,7 +366,7 @@ class PyCubed:
             self.RGB = (0, 0, 0)
             self.neopixel.brightness = 0
             if self.hardware["Radio1"]:
-                self.radio1.sleep()
+                self.RADIO.sleep()
             if self.hardware["Radio2"]:
                 self.radio2.sleep()
             self.enable_rf.value = False
