@@ -1,6 +1,7 @@
 """mw_test.py: Test the middleware system diagnostics.
 
 """
+
 from hal.configuration import SATELLITE
 from hal.cubesat import CubeSat
 
@@ -23,12 +24,3 @@ errors = satellite.run_system_diagnostics()
 print("System diagnostics complete")
 print("Errors:", errors)
 print()
-
-i = 0
-while (i < 12):
-    # Print IMU data
-    print("IMU data:")
-    print("Acceleration:", satellite.IMU.accel)
-    print("Angular velocity:", satellite.IMU.gyro)
-    print("Magnetic field:", satellite.IMU.mag)
-    print()

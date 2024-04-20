@@ -10,10 +10,12 @@ Implementation Notes
 --------------------
 
 """
+
 from micropython import const
 from adafruit_bus_device.i2c_device import I2CDevice
 
 from .diagnostics.diagnostics import Diagnostics
+
 
 def _to_signed(num):
     if num > 0x7FFF:
@@ -30,37 +32,38 @@ _STATUS = bytearray(1)
 
 
 # Voltage conversions
-VI_RESOLUTION   = const(4096)
-I_FULLSCALE     = 0.10584
-V_FULLSCALE     = 26.35
+VI_RESOLUTION = const(4096)
+I_FULLSCALE = 0.10584
+V_FULLSCALE = 26.35
 
-V_CONT_BIT      = const(0x1 << 0)
-V_ONCE_BIT      = const(0x1 << 1)
-I_CONT_BIT      = const(0x1 << 2)
-I_ONCE_BIT      = const(0x1 << 3)
-V_RANGE_BIT     = const(0x1 << 4)
+V_CONT_BIT = const(0x1 << 0)
+V_ONCE_BIT = const(0x1 << 1)
+I_CONT_BIT = const(0x1 << 2)
+I_ONCE_BIT = const(0x1 << 3)
+V_RANGE_BIT = const(0x1 << 4)
 
 # Status register
-STATUS_READ             = const(0x1 << 6)
-STATUS_ADC_OC           = const(0x1 << 0)
-STATUS_ADC_ALERT        = const(0x1 << 1)
-STATUS_HS_OC            = const(0x1 << 2)
-STATUS_HS_ALERT         = const(0x1 << 3)
-STATUS_OFF_STATUS       = const(0x1 << 4)
-STATUS_OFF_ALERT        = const(0x1 << 5)
+STATUS_READ = const(0x1 << 6)
+STATUS_ADC_OC = const(0x1 << 0)
+STATUS_ADC_ALERT = const(0x1 << 1)
+STATUS_HS_OC = const(0x1 << 2)
+STATUS_HS_ALERT = const(0x1 << 3)
+STATUS_OFF_STATUS = const(0x1 << 4)
+STATUS_OFF_ALERT = const(0x1 << 5)
 
 # Extended registers
-ALERT_EN_EXT_REG_ADDR   = const(0x81)
-ALERT_EN_EN_ADC_OC1     = const(0x1 << 0)
-ALERT_EN_EN_ADC_OC4     = const(0x1 << 1)
-ALERT_EN_EN_HS_ALERT    = const(0x1 << 2)
-ALERT_EN_EN_OFF_ALERT   = const(0x1 << 3)
-ALERT_EN_CLEAR          = const(0x1 << 4)
+ALERT_EN_EXT_REG_ADDR = const(0x81)
+ALERT_EN_EN_ADC_OC1 = const(0x1 << 0)
+ALERT_EN_EN_ADC_OC4 = const(0x1 << 1)
+ALERT_EN_EN_HS_ALERT = const(0x1 << 2)
+ALERT_EN_EN_OFF_ALERT = const(0x1 << 3)
+ALERT_EN_CLEAR = const(0x1 << 4)
 
-ALERT_TH_EN_REG_ADDR    = const(0x82)
+ALERT_TH_EN_REG_ADDR = const(0x82)
 
-CONTROL_REG_ADDR        = const(0x83)
-CONTROL_SWOFF           = const(0x1 << 0)
+CONTROL_REG_ADDR = const(0x83)
+CONTROL_SWOFF = const(0x1 << 0)
+
 
 class ADM1176(Diagnostics):
     def __init__(self, i2c_bus, addr=0x4A):
@@ -77,25 +80,25 @@ class ADM1176(Diagnostics):
     def config(self, value: str) -> None:
         """config: sets voltage current readout configuration.
 
-        :param value: Current and voltage register values 
+        :param value: Current and voltage register values
         based on string.
         """
         _cmd[0] = 0x00
-        if 'V_CONT' in value:
+        if "V_CONT" in value:
             _cmd[0] |= V_CONT_BIT
-        if 'V_ONCE' in value:
+        if "V_ONCE" in value:
             _cmd[0] |= V_ONCE_BIT
-        if 'I_CONT' in value:
+        if "I_CONT" in value:
             _cmd[0] |= I_CONT_BIT
-        if 'I_ONCE' in value:
+        if "I_ONCE" in value:
             _cmd[0] |= I_ONCE_BIT
-        if 'VRANGE' in value:
+        if "VRANGE" in value:
             _cmd[0] |= V_RANGE_BIT
         with self.i2c_device as i2c:
             i2c.write(_cmd)
 
     def read_voltage_current(self) -> tuple[float, float]:
-        """read_voltage current: gets the current voltage and current 
+        """read_voltage current: gets the current voltage and current
         (V, I) pair.
 
         :return: instantaneous (V,I) pair
@@ -104,13 +107,14 @@ class ADM1176(Diagnostics):
             i2c.readinto(_BUFFER)
         raw_voltage = ((_BUFFER[0] << 8) | (_BUFFER[2] & DATA_V_MASK)) >> 4
         raw_current = (_BUFFER[1] << 4) | (_BUFFER[2] & DATA_I_MASK)
-        _voltage = (V_FULLSCALE/VI_RESOLUTION) * raw_voltage # volts 
-        _current = ((I_FULLSCALE/VI_RESOLUTION) * raw_current) / self.sense_resistor # amperes
-        return (_voltage,_current)
+        _voltage = (V_FULLSCALE / VI_RESOLUTION) * raw_voltage  # volts
+        _current = (
+            (I_FULLSCALE / VI_RESOLUTION) * raw_current
+        ) / self.sense_resistor  # amperes
+        return (_voltage, _current)
 
     def __turn_off(self) -> None:
-        """OFF: Hot-swaps the device out.        
-        """
+        """OFF: Hot-swaps the device out."""
         _extcmd[0] = CONTROL_REG_ADDR
         _extcmd[1] |= CONTROL_SWOFF
         with self.i2c_device as i2c:
@@ -129,7 +133,7 @@ class ADM1176(Diagnostics):
     @property
     def device_on(self) -> bool:
         return self._on
-    
+
     @device_on.setter
     def device_on(self, turn_on: bool) -> None:
         if turn_on:
@@ -140,7 +144,6 @@ class ADM1176(Diagnostics):
     @device_on.getter
     def device_on(self) -> bool:
         return (self.status & STATUS_OFF_STATUS) != STATUS_OFF_STATUS
-        
 
     @property
     def overcurrent_level(self) -> int:
@@ -174,10 +177,9 @@ class ADM1176(Diagnostics):
 
     @property
     def clear(self) -> None:
-        """clear: Clears the alerts after status register read
-        """
+        """clear: Clears the alerts after status register read"""
         _extcmd[0] = ALERT_EN_EXT_REG_ADDR
-        temp=_extcmd[1]
+        temp = _extcmd[1]
         _extcmd[1] |= ALERT_EN_CLEAR
         with self.i2c_device as i2c:
             i2c.write(_extcmd)
@@ -186,7 +188,7 @@ class ADM1176(Diagnostics):
     @property
     def status(self) -> int:
         """status: Returns the status register values
-        
+
         Bit 0: ADC_OC - Overcurrent detected
         Bit 1: ADC_ALERT - Overcurrent alert
         Bit 2: HS_OC - Hot swap is off because of overcurrent
@@ -196,7 +198,7 @@ class ADM1176(Diagnostics):
 
         :return: The status bit to be parsed out
         """
-        _cmd[0] |= STATUS_READ # Read request
+        _cmd[0] |= STATUS_READ  # Read request
         with self.i2c_device as i2c:
             i2c.write(_cmd)
             i2c.readinto(_STATUS)
@@ -204,31 +206,38 @@ class ADM1176(Diagnostics):
         with self.i2c_device as i2c:
             i2c.write(_cmd)
         return _STATUS[0]
-    
-######################### DIAGNOSTICS #########################
-    
+
+    ######################### DIAGNOSTICS #########################
+
     def __simple_vi_read(self) -> int:
-        """_simple_volt_read: Reads the voltage ten times, ensures that it 
+        """_simple_volt_read: Reads the voltage ten times, ensures that it
         does not fluctuate too much.
-        
+
         :return: true if test passes, false if fails
         """
         V_MAX = 9.0
         V_MIN = 6.0
-        
+
         for i in range(10):
             (rVoltage, rCurrent) = self.read_voltage_current()
-            if (rVoltage == 0 or rCurrent == 0):
-                print("Error: Not connected to power!! Voltage: ", rVoltage, " Current: ", rCurrent)
+            if rVoltage == 0 or rCurrent == 0:
+                print(
+                    "Error: Not connected to power!! Voltage: ",
+                    rVoltage,
+                    " Current: ",
+                    rCurrent,
+                )
                 return Diagnostics.ADM1176_NOT_CONNECTED_TO_POWER
-            elif (rVoltage > V_MAX or rVoltage < V_MIN ):
-                print("Error: Voltage out of typical range!! Voltage Reading: ", rVoltage)
+            elif rVoltage > V_MAX or rVoltage < V_MIN:
+                print(
+                    "Error: Voltage out of typical range!! Voltage Reading: ", rVoltage
+                )
                 return Diagnostics.ADM1176_VOLTAGE_OUT_OF_RANGE
-        
+
         return Diagnostics.NOERROR
-    
+
     def __on_off_test(self) -> int:
-        """_on_off_test: Turns the device on, off, and on 
+        """_on_off_test: Turns the device on, off, and on
         again and ensures corresponding register set
 
         :return: true if test passes, false if fails
@@ -250,13 +259,13 @@ class ADM1176(Diagnostics):
         if not self.device_on:
             print("Error: Could not turn on device after turning off")
             return Diagnostics.ADM1176_COULD_NOT_TURN_ON
-        
+
         return Diagnostics.NOERROR
-    
+
     def __overcurrent_test(self) -> bool:
         """_overcurrent_test: Tests that the threshold is triggering
         correctly.
-        
+
         :return: true if test passes, false if fails
         """
         # Set the overcurrent threshold to max
@@ -264,10 +273,10 @@ class ADM1176(Diagnostics):
         self.clear
 
         status = self.status
-        if ((status & STATUS_ADC_OC) == STATUS_ADC_OC):
+        if (status & STATUS_ADC_OC) == STATUS_ADC_OC:
             print("Error: ADC OC was triggered at overcurrent max")
             return Diagnostics.ADM1176_ADC_OC_OVERCURRENT_MAX
-        elif ((status & STATUS_ADC_ALERT) ==  STATUS_ADC_ALERT):
+        elif (status & STATUS_ADC_ALERT) == STATUS_ADC_ALERT:
             print("Error: ADC Alert was triggered at overcurrent max")
             return Diagnostics.ADM1176_ADC_ALERT_OVERCURRENT_MAX
 

@@ -5,6 +5,7 @@ Comms PyCubed test bench.
 
 Authors: DJ Morvay, Akshat Sahay
 """
+
 from hal.configuration import SATELLITE
 
 # Argus-1 Radio Libs

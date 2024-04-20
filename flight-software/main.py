@@ -7,12 +7,13 @@ for path in ["/hal", "/apps"]:
         sys.path.append(path)
 
 import gc
+
 gc.collect()
 print(str(gc.mem_free()) + " bytes free")
 
-print("Booting Argus1...")
+print("Booting ARGUS-1...")
 boot_errors = SATELLITE.boot_sequence()
-print("Argus1 booted.")
+print("ARGUS-1 booted.")
 print()
 
 print("Boot Errors: ", boot_errors)
@@ -23,6 +24,7 @@ errors = SATELLITE.run_system_diagnostics()
 print("System diagnostics complete")
 print("Errors:", errors)
 print()
+
 
 """
 from apps.data_handler import DataHandler as DH
@@ -38,9 +40,10 @@ try:
     import comms_test
 
     # Run forever
-    # state_manager.start("STARTUP")
-    
-    import obdh_sd_test
+    state_manager.start("STARTUP")
+
+    # import obdh_sd_test
+
     pass
 except Exception as e:
     print(e)

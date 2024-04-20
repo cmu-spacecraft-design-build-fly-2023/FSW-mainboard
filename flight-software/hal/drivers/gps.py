@@ -50,6 +50,7 @@ from digitalio import DigitalInOut
 __version__ = "3.5.1"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_GPS.git"
 
+
 # Internal helper parsing functions.
 # These handle input that might be none or null and return none instead of
 # throwing errors.
@@ -61,32 +62,34 @@ def _parse_degrees(nmea_data):
     raw = float(nmea_data)
     deg = raw // 100
     minutes = raw % 100
-    return deg + minutes/60
+    return deg + minutes / 60
 
 
 def _parse_int(nmea_data):
-    if nmea_data is None or nmea_data == '':
+    if nmea_data is None or nmea_data == "":
         return None
     return int(nmea_data)
 
 
 def _parse_float(nmea_data):
-    if nmea_data is None or nmea_data == '':
+    if nmea_data is None or nmea_data == "":
         return None
     return float(nmea_data)
 
 
 def _parse_str(nmea_data):
-    if nmea_data is None or nmea_data == '':
+    if nmea_data is None or nmea_data == "":
         return None
     return str(nmea_data)
 
+
 # lint warning about too many attributes disabled
-#pylint: disable-msg=R0902
+# pylint: disable-msg=R0902
 class GPS(Diagnostics):
     """GPS parsing module.  Can parse simple NMEA data sentences from serial
     GPS modules to read latitude, longitude, and more.
     """
+
     def __init__(self, uart, enable=None, debug=False):
         self._uart = uart
         # Initialize null starting values for GPS attributes.
@@ -143,11 +146,14 @@ class GPS(Diagnostics):
         data_type, args = sentence
         data_type = bytes(data_type.upper(), "ascii")
         # return sentence
-        if data_type in (b'GPGLL', b'GNGGL'):       # GLL, Geographic Position â€“ Latitude/Longitude
+        if data_type in (
+            b"GPGLL",
+            b"GNGGL",
+        ):  # GLL, Geographic Position â€“ Latitude/Longitude
             self._parse_gpgll(args)
-        elif data_type in (b'GPRMC', b'GNRMC'):     # RMC, minimum location info
+        elif data_type in (b"GPRMC", b"GNRMC"):  # RMC, minimum location info
             self._parse_gprmc(args)
-        elif data_type in (b'GPGGA', b'GNGGA'):     # GGA, 3d location fix
+        elif data_type in (b"GPGGA", b"GNGGA"):  # GGA, 3d location fix
             self._parse_gpgga(args)
         return True
 
@@ -157,15 +163,15 @@ class GPS(Diagnostics):
         Note you should NOT add the leading $ and trailing * to the command
         as they will automatically be added!
         """
-        self.write(b'$')
+        self.write(b"$")
         self.write(command)
         if add_checksum:
             checksum = 0
             for char in command:
                 checksum ^= char
-            self.write(b'*')
-            self.write(bytes('{:02x}'.format(checksum).upper(), "ascii"))
-        self.write(b'\r\n')
+            self.write(b"*")
+            self.write(bytes("{:02x}".format(checksum).upper(), "ascii"))
+        self.write(b"\r\n")
 
     @property
     def has_fix(self):
@@ -219,18 +225,18 @@ class GPS(Diagnostics):
             return None
 
         sentence = self.readline()
-        if sentence is None or sentence == b'' or len(sentence) < 1:
+        if sentence is None or sentence == b"" or len(sentence) < 1:
             return None
         try:
-            sentence = str(sentence, 'ascii').strip()
+            sentence = str(sentence, "ascii").strip()
         except UnicodeError:
             return None
         # Look for a checksum and validate it if present.
-        if len(sentence) > 7 and sentence[-3] == '*':
+        if len(sentence) > 7 and sentence[-3] == "*":
             # Get included checksum, then calculate it and compare.
             expected = int(sentence[-2:], 16)
             actual = 0
-            for i in range(1, len(sentence)-3):
+            for i in range(1, len(sentence) - 3):
                 actual ^= ord(sentence[i])
             if actual != expected:
                 return None  # Failed to validate checksum.
@@ -253,25 +259,27 @@ class GPS(Diagnostics):
         sentence = sentence[:-3]
         # Parse out the type of sentence (first string after $ up to comma)
         # and then grab the rest as data within the sentence.
-        delimiter = sentence.find(',')
+        delimiter = sentence.find(",")
         if delimiter == -1:
             return None  # Invalid sentence, no comma after data type.
         data_type = sentence[1:delimiter]
-        return (data_type, sentence[delimiter+1:])
+        return (data_type, sentence[delimiter + 1 :])
 
     def _parse_gpgll(self, args):
-        data = args.split(',')
+        data = args.split(",")
         if data is None or data[0] is None:
             return  # Unexpected number of params.
 
         # Parse latitude and longitude.
         self.latitude = _parse_degrees(data[0])
-        if self.latitude is not None and \
-           data[1] is not None and data[1].lower() == 's':
+        if self.latitude is not None and data[1] is not None and data[1].lower() == "s":
             self.latitude *= -1.0
         self.longitude = _parse_degrees(data[2])
-        if self.longitude is not None and \
-           data[3] is not None and data[3].lower() == 'w':
+        if (
+            self.longitude is not None
+            and data[3] is not None
+            and data[3].lower() == "w"
+        ):
             self.longitude *= -1.0
         time_utc = int(_parse_int(float(data[4])))
         if time_utc is not None:
@@ -280,18 +288,16 @@ class GPS(Diagnostics):
             secs = time_utc % 100
             # Set or update time to a friendly python time struct.
             if self.timestamp_utc is not None:
-                self.timestamp_utc = struct_time((
-                    0, 0, 0, hours, mins, secs, 0, 0, -1))
+                self.timestamp_utc = struct_time((0, 0, 0, hours, mins, secs, 0, 0, -1))
             else:
-                self.timestamp_utc = struct_time((0, 0, 0, hours, mins,
-                                                       secs, 0, 0, -1))
+                self.timestamp_utc = struct_time((0, 0, 0, hours, mins, secs, 0, 0, -1))
         # Parse data active or void
         self.isactivedata = _parse_str(data[5])
 
     def _parse_gprmc(self, args):
         # Parse the arguments (everything after data type) for NMEA GPRMC
         # minimum location fix sentence.
-        data = args.split(',')
+        data = args.split(",")
         if data is None or len(data) < 11 or data[0] is None:
             return  # Unexpected number of params.
         # Parse fix time.
@@ -302,25 +308,36 @@ class GPS(Diagnostics):
             secs = time_utc % 100
             # Set or update time to a friendly python time struct.
             if self.timestamp_utc is not None:
-                self.timestamp_utc = struct_time((
-                    self.timestamp_utc.tm_year, self.timestamp_utc.tm_mon,
-                    self.timestamp_utc.tm_mday, hours, mins, secs, 0, 0, -1))
+                self.timestamp_utc = struct_time(
+                    (
+                        self.timestamp_utc.tm_year,
+                        self.timestamp_utc.tm_mon,
+                        self.timestamp_utc.tm_mday,
+                        hours,
+                        mins,
+                        secs,
+                        0,
+                        0,
+                        -1,
+                    )
+                )
             else:
-                self.timestamp_utc = struct_time((0, 0, 0, hours, mins,
-                                                       secs, 0, 0, -1))
+                self.timestamp_utc = struct_time((0, 0, 0, hours, mins, secs, 0, 0, -1))
         # Parse status (active/fixed or void).
         status = data[1]
         self.fix_quality = 0
-        if status is not None and status.lower() == 'a':
+        if status is not None and status.lower() == "a":
             self.fix_quality = 1
         # Parse latitude and longitude.
         self.latitude = _parse_degrees(data[2])
-        if self.latitude is not None and \
-           data[3] is not None and data[3].lower() == 's':
+        if self.latitude is not None and data[3] is not None and data[3].lower() == "s":
             self.latitude *= -1.0
         self.longitude = _parse_degrees(data[4])
-        if self.longitude is not None and \
-           data[5] is not None and data[5].lower() == 'w':
+        if (
+            self.longitude is not None
+            and data[5] is not None
+            and data[5].lower() == "w"
+        ):
             self.longitude *= -1.0
         # Parse out speed and other simple numeric values.
         self.speed_knots = _parse_float(data[6])
@@ -330,27 +347,32 @@ class GPS(Diagnostics):
             day = int(data[8][0:2])
             month = int(data[8][2:4])
             year = 2000 + int(data[8][4:6])  # Y2k bug, 2 digit year assumption.
-                                             # This is a problem with the NMEA
-                                             # spec and not this code.
+            # This is a problem with the NMEA
+            # spec and not this code.
             if self.timestamp_utc is not None:
                 # Replace the timestamp with an updated one.
                 # (struct_time is immutable and can't be changed in place)
-                self.timestamp_utc = struct_time((year, month, day,
-                                                       self.timestamp_utc.tm_hour,
-                                                       self.timestamp_utc.tm_min,
-                                                       self.timestamp_utc.tm_sec,
-                                                       0,
-                                                       0,
-                                                       -1))
+                self.timestamp_utc = struct_time(
+                    (
+                        year,
+                        month,
+                        day,
+                        self.timestamp_utc.tm_hour,
+                        self.timestamp_utc.tm_min,
+                        self.timestamp_utc.tm_sec,
+                        0,
+                        0,
+                        -1,
+                    )
+                )
             else:
                 # Time hasn't been set so create it.
-                self.timestamp_utc = struct_time((year, month, day, 0, 0,
-                                                       0, 0, 0, -1))
+                self.timestamp_utc = struct_time((year, month, day, 0, 0, 0, 0, 0, -1))
 
     def _parse_gpgga(self, args):
         # Parse the arguments (everything after data type) for NMEA GPGGA
         # 3D location fix sentence.
-        data = args.split(',')
+        data = args.split(",")
         if data is None or len(data) != 14:
             return  # Unexpected number of params.
         # Parse fix time.
@@ -361,20 +383,31 @@ class GPS(Diagnostics):
             secs = time_utc % 100
             # Set or update time to a friendly python time struct.
             if self.timestamp_utc is not None:
-                self.timestamp_utc = struct_time((
-                    self.timestamp_utc.tm_year, self.timestamp_utc.tm_mon,
-                    self.timestamp_utc.tm_mday, hours, mins, secs, 0, 0, -1))
+                self.timestamp_utc = struct_time(
+                    (
+                        self.timestamp_utc.tm_year,
+                        self.timestamp_utc.tm_mon,
+                        self.timestamp_utc.tm_mday,
+                        hours,
+                        mins,
+                        secs,
+                        0,
+                        0,
+                        -1,
+                    )
+                )
             else:
-                self.timestamp_utc = struct_time((0, 0, 0, hours, mins,
-                                                       secs, 0, 0, -1))
+                self.timestamp_utc = struct_time((0, 0, 0, hours, mins, secs, 0, 0, -1))
         # Parse latitude and longitude.
         self.latitude = _parse_degrees(data[1])
-        if self.latitude is not None and \
-           data[2] is not None and data[2].lower() == 's':
+        if self.latitude is not None and data[2] is not None and data[2].lower() == "s":
             self.latitude *= -1.0
         self.longitude = _parse_degrees(data[3])
-        if self.longitude is not None and \
-           data[4] is not None and data[4].lower() == 'w':
+        if (
+            self.longitude is not None
+            and data[4] is not None
+            and data[4].lower() == "w"
+        ):
             self.longitude *= -1.0
         # Parse out fix quality and other simple numeric values.
         self.fix_quality = _parse_int(data[5])
@@ -384,7 +417,7 @@ class GPS(Diagnostics):
         self.height_geoid = _parse_float(data[10])
 
     def _parse_gpgsa(self, args):
-        data = args.split(',')
+        data = args.split(",")
         if data is None:
             return  # Unexpected number of params
 
@@ -407,7 +440,7 @@ class GPS(Diagnostics):
     def _parse_gpgsv(self, args):
         # Parse the arguments (everything after data type) for NMEA GPGGA
         # 3D location fix sentence.
-        data = args.split(',')
+        data = args.split(",")
         if data is None:
             return  # Unexpected number of params.
 
@@ -424,13 +457,13 @@ class GPS(Diagnostics):
         sat_tup = data[3:]
 
         satdict = {}
-        for i in range(len(sat_tup)/4):
-            j = i*4
-            key = "gps{}".format(i+(4*(self.mess_num-1)))
-            satnum = _parse_int(sat_tup[0+j])  # Satellite number
-            satdeg = _parse_int(sat_tup[1+j])  # Elevation in degrees
-            satazim = _parse_int(sat_tup[2+j])  # Azimuth in degrees
-            satsnr = _parse_int(sat_tup[3+j])  # signal-to-noise ratio in dB
+        for i in range(len(sat_tup) / 4):
+            j = i * 4
+            key = "gps{}".format(i + (4 * (self.mess_num - 1)))
+            satnum = _parse_int(sat_tup[0 + j])  # Satellite number
+            satdeg = _parse_int(sat_tup[1 + j])  # Elevation in degrees
+            satazim = _parse_int(sat_tup[2 + j])  # Azimuth in degrees
+            satsnr = _parse_int(sat_tup[3 + j])  # signal-to-noise ratio in dB
             value = (satnum, satdeg, satazim, satsnr)
             satdict[key] = value
 
@@ -453,15 +486,13 @@ class GPS(Diagnostics):
         self.satellites_prev = self.satellites
 
     def enable(self) -> None:
-        """Enable the GPS module through the enable pin
-        """
+        """Enable the GPS module through the enable pin"""
         self.__enable = True
 
     def disable(self) -> None:
-        """Disable the GPS module through the enable pin
-        """
+        """Disable the GPS module through the enable pin"""
         self.__enable = False
-    
+
     ######################### DIAGNOSTICS #########################
 
     def __check_for_updates(self) -> int:
@@ -477,11 +508,11 @@ class GPS(Diagnostics):
             success = self.update()
             if success:
                 return Diagnostics.NOERROR
-            
+
             time.sleep(1)
 
         return Diagnostics.GPS_UPDATE_CHECK_FAILED
-    
+
     def run_diagnostics(self) -> list[int] | None:
         """run_diagnostic_test: Run all tests for the component
 
