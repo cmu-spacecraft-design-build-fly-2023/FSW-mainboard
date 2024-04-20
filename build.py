@@ -1,22 +1,31 @@
 import os
+import subprocess
 import shutil
 import filecmp
 import argparse
+import platform
 
-ARGUS_PATH = "D:\\"
+if platform.system() == "Windows":
+    BOARD_PATH = "D:\\"
+elif platform.system() == "Linux":
+    username = subprocess.check_output("whoami", shell=True).decode().strip()
+    BOARD_PATH = f"/media/{username}/ARGUS"
+    if not os.path.exists(BOARD_PATH):
+        BOARD_PATH = f"/media/{username}/PYCUBED"
 
 MPY_CROSS_PATH = f"{os.getcwd()}/mpy-cross"
 
 
 def check_directory_location(source_folder):
-    if not os.path.exists(ARGUS_PATH):
-        raise FileNotFoundError(f"Destination folder {ARGUS_PATH} not found")
+    if not os.path.exists(BOARD_PATH):
+        raise FileNotFoundError(f"Destination folder {BOARD_PATH} not found")
 
     if not os.path.exists(MPY_CROSS_PATH):
         raise FileNotFoundError(f"MPY_CROSS_PATH folder {MPY_CROSS_PATH} not found")
 
     if not os.path.exists(f"./source_folder"):
         raise FileNotFoundError(f"Source folder {source_folder} not found")
+
 
 
 def create_build(source_folder):
@@ -37,9 +46,7 @@ def create_build(source_folder):
             if file.endswith(".py"):
                 source_path = os.path.join(root, file)
 
-                build_path = os.path.join(
-                    build_folder, os.path.relpath(source_path, source_folder)
-                )
+                build_path = os.path.join(build_folder, os.path.relpath(source_path, source_folder))
 
                 os.makedirs(os.path.dirname(build_path), exist_ok=True)
                 shutil.copy2(source_path, build_path)
@@ -72,7 +79,6 @@ def create_build(source_folder):
             f.write("import main_module\n")
 
     return build_folder
-
 
 def copy_folder(build_folder, destination_folder, show_identical_files=True):
     for root, dirs, files in os.walk(build_folder):
@@ -111,26 +117,30 @@ if __name__ == "__main__":
 
     # Parses command line arguments.
     parser = argparse.ArgumentParser()
+
     parser.add_argument(
         "-s",
         "--source_folder",
         type=str,
         default="flight-software",
         help="Source folder path",
+        required=False
     )
     parser.add_argument(
         "-d",
         "--destination_folder",
         type=str,
-        default=ARGUS_PATH,
+        default=BOARD_PATH,
         help="Destination folder path",
+        required=False
     )
     args = parser.parse_args()
 
     source_folder = args.source_folder
     destination_folder = args.destination_folder
 
-    """source_folder = "flight-software"
-    destination_folder = '/media/ibrahima/PYCUBED'"""
-
     build_folder = create_build(source_folder)
+
+
+
+    

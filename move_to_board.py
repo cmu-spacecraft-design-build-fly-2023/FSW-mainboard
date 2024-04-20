@@ -5,6 +5,13 @@ import filecmp
 import argparse
 import platform
 
+if platform.system() == "Windows":
+    BOARD_PATH = "D:\\"
+elif platform.system() == "Linux":
+    username = subprocess.check_output("whoami", shell=True).decode().strip()
+    BOARD_PATH = f"/media/{username}/ARGUS"
+    if not os.path.exists(BOARD_PATH):
+        BOARD_PATH = f"/media/{username}/PYCUBED"
 
 def copy_folder(source_folder, destination_folder, show_identical_files=True):
 
@@ -35,27 +42,32 @@ def copy_folder(source_folder, destination_folder, show_identical_files=True):
             relative_path = os.path.relpath(destination_path, destination_folder)
             source_path = os.path.join(source_folder, relative_path)
 
-            # if not os.path.exists(source_path):
-            # os.remove(destination_path)
-            # print(f"Deleted {destination_path}")
+            """if not os.path.exists(source_path):
+                os.remove(destination_path)
+                print(f"Deleted {destination_path}")"""
 
 
 if __name__ == "__main__":
+
 
     if platform.system() == "Windows":
         BOARD_PATH = "D:\\"
     elif platform.system() == "Linux":
         username = subprocess.check_output("whoami", shell=True).decode().strip()
-        BOARD_PATH = f"/media/{username}/PYCUBED"
+        BOARD_PATH = f"/media/{username}/ARGUS"
+        if not os.path.exists(BOARD_PATH):
+            BOARD_PATH = f"/media/{username}/PYCUBED"
 
     # Parses command line arguments.
     parser = argparse.ArgumentParser()
+
     parser.add_argument(
         "-s",
         "--source_folder",
         type=str,
-        default="flight-software",
+        default="flight-software/build",
         help="Source folder path",
+        required=False
     )
     parser.add_argument(
         "-d",
@@ -63,13 +75,12 @@ if __name__ == "__main__":
         type=str,
         default=BOARD_PATH,
         help="Destination folder path",
+        required=False
     )
     args = parser.parse_args()
 
     source_folder = args.source_folder
     destination_folder = args.destination_folder
 
-    """source_folder = "flight-software"
-    destination_folder = '/media/ibrahima/PYCUBED'"""
 
     copy_folder(source_folder, destination_folder, show_identical_files=True)

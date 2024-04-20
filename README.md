@@ -10,5 +10,6 @@ The repository contains the current flight software stack for the **PyCubed Boar
 Moving the flight software code to the Argus board can be automated using the move_to_board.py script. It automatically updates all changes (including adding and deleting files).
 
 ```bash
+chmod +x mpy-cross
 python move_to_board.py -s <source_folder_path> -d <destination_folder_path>
 ```
