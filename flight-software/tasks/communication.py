@@ -11,8 +11,8 @@ from tasks.template_task import DebugTask
 from state_manager import state_manager as SM
 from apps.data_handler import DataHandler as DH
 
-# Satellite instance 
-from hal.pycubed import hardware as cubesat
+# PyCubed Board Lib
+from hal.configuration import SATELLITE
 
 # Argus-1 Radio Libs
 from apps.comms.radio_helpers import *
@@ -28,10 +28,12 @@ class Task(DebugTask):
 
     # Time for frequency checking 
     curr_time = time.monotonic_ns()
+    SAT_RADIO = SATELLITE_RADIO(SATELLITE)
+    tx_header = 0
 
     async def main_task(self):
-        SAT_RADIO = SATELLITE_RADIO(cubesat)
-        tx_header = 0
+        
+        
 
         # Only transmit if SAT in NOMINAL state 
         if SM.current_state == "NOMINAL":
@@ -53,16 +55,13 @@ class Task(DebugTask):
             Once transmitted, run receive_message, waits for 1s 
             """
 
-            # Transmit message 
-            if cubesat.hardware['Radio1']:
-                tx_header = SAT_RADIO.transmit_message()
+            self.tx_header = self.SAT_RADIO.transmit_message()
             
             # Debug message 
-            print(f"[{self.ID}][{self.name}] Sent message with ID:", tx_header)
+            print(f"[{self.ID}][{self.name}] Sent message with ID:", self.tx_header)
 
             # Receive message, blocking for 1s
-            if cubesat.hardware['Radio1']:
-                SAT_RADIO.receive_message()
+            self.SAT_RADIO.receive_message()
 
             # Time for frequency checking 
             prev_time = self.curr_time
