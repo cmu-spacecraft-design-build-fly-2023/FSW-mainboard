@@ -94,7 +94,7 @@ class ArgusV1Components:
 
     # IMU
     IMU_I2C                                 = ArgusV1Interfaces.I2C1
-    IMU_I2C_ADDRESS                         = const(0x68)
+    IMU_I2C_ADDRESS                         = const(0x69)
     IMU_ENABLE                              = board.EN_IMU
 
     # CHARGER
@@ -124,8 +124,8 @@ class ArgusV1Components:
     RADIO_RESET                             = board.RF1_RST
     RADIO_ENABLE                            = board.EN_RF
     RADIO_DIO0                              = board.RF1_IO0
-    # RADIO_FREQ                              = 433.0
-    RADIO_FREQ                              = 915.6
+    RADIO_FREQ                              = 433.0
+    # RADIO_FREQ                              = 915.6
 
     # SD CARD
     SD_CARD_SPI                             = ArgusV1Interfaces.SPI
@@ -192,6 +192,8 @@ class ArgusV1(CubeSat):
         gc.collect()
         error_list += self.__vfs_boot()
         gc.collect()
+        error_list += self.__imu_boot()
+        gc.collect()
         error_list += self.__rtc_boot()
         gc.collect()
         error_list += self.__gps_boot()
@@ -199,8 +201,6 @@ class ArgusV1(CubeSat):
         error_list += self.__battery_power_monitor_boot()
         gc.collect()
         error_list += self.__jetson_power_monitor_boot()
-        gc.collect()
-        error_list += self.__imu_boot()
         gc.collect()
         error_list += self.__charger_boot()
         gc.collect()
@@ -318,8 +318,12 @@ class ArgusV1(CubeSat):
         """
         try:
             imu = BMX160(ArgusV1Components.IMU_I2C,
-                                ArgusV1Components.IMU_I2C_ADDRESS,
-                                ArgusV1Components.IMU_ENABLE)
+                         ArgusV1Components.IMU_I2C_ADDRESS,
+                         ArgusV1Components.IMU_ENABLE)
+            
+            imu.init_accel()
+            imu.init_gyro()
+            imu.init_mag()
             
             if self.__middleware_enabled:
                 imu = Middleware(imu, imu_fatal_exception)
@@ -481,7 +485,7 @@ class ArgusV1(CubeSat):
 
         # X direction
         try:
-            torque_interface = TorqueInterface(self._torque_xp, self._torque_xm)
+            torque_interface = TorqueInterface(self.__torque_xp_driver, self.__torque_xm_driver)
             self._torque_x = torque_interface
         except Exception as e:
             if self.__debug:
@@ -489,7 +493,7 @@ class ArgusV1(CubeSat):
 
         # Y direction
         try:
-            torque_interface = TorqueInterface(self._torque_yp, self._torque_ym)
+            torque_interface = TorqueInterface(self.__torque_yp_driver, self.__torque_ym_driver)
             self._torque_y = torque_interface
         except Exception as e:
             if self.__debug:
@@ -497,7 +501,7 @@ class ArgusV1(CubeSat):
         
         # Z direction
         try:
-            torque_interface = TorqueInterface(self._torque_z)
+            torque_interface = TorqueInterface(self.__torque_z_driver)
             self._torque_z = torque_interface
         except Exception as e:
             if self.__debug:

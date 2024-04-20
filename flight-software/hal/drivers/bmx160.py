@@ -399,8 +399,10 @@ class BMX160(Diagnostics):
     def __init__(self, i2c, i2c_address, enable_pin = None):
         if enable_pin is not None:
             self._enable = DigitalInOut(enable_pin)
-            self._enable.switch_to_output()
-            self.enable()
+            self._enable.switch_to_output(value = True)
+        
+        super().__init__(self._enable)
+        
 
         self.i2c_device = I2CDevice(i2c, i2c_address, probe=True)
 
@@ -416,11 +418,6 @@ class BMX160(Diagnostics):
         self.init_mag()
         self.init_accel()
         self.init_gyro()
-
-        if enable_pin is not None:
-            self.disable()
-
-        super().__init__(self._enable)
 
     ######################## I2C HELPERS ########################
     def read_u8(self, address):

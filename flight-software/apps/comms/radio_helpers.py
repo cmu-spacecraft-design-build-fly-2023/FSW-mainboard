@@ -26,7 +26,7 @@ class SATELLITE_RADIO:
     def __init__(self, sat: CubeSat):
         self.sat = sat
         
-        self.image_strs = ['/sd/IMAGES/ohio.jpg','/sd/IMAGES/tokyo_small.jpg','/sd/IMAGES/oregon_small.jpg']
+        self.image_strs = ['IMAGES/ohio.jpg','IMAGES/tokyo_small.jpg','IMAGES/oregon_small.jpg']
         self.image_num = 0
 
         self.image_get_info()
