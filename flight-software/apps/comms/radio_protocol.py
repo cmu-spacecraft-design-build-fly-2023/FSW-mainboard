@@ -3,7 +3,7 @@
 ======================
 Python package containing protocol constants (IDs etc.). 
 Also contains functions for constructing/deconstructing 
-protocol messages. 
+protocol messages. OLD VERSION!!!
 
 Each message has the following header: 
 MESSAGE_ID : 1 byte 
