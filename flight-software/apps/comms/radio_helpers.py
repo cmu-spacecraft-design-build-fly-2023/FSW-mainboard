@@ -35,6 +35,8 @@ class SATELLITE_RADIO:
         ]
         self.image_num = 0
 
+        self.sat_images_sent = 0
+
         # self.image_get_info()
         self.send_mod = 10
         self.heartbeat_sent = False
@@ -59,10 +61,13 @@ class SATELLITE_RADIO:
     """
 
     def image_get_info(self):
+        print("Sat images sent: ", self.sat_images_sent)
         # Setup image class
         self.sat_images = IMAGES()
         # Setup initial image UIDs
-        self.sat_images.image_UID = 0x5
+        self.sat_images_sent += 1
+        self.sat_images.image_UID = self.sat_images_sent
+        print("New UID: ", self.sat_images.image_UID)
 
         ## ---------- Image Sizes and Message Counts ---------- ##
         # Get image #1 size and message count
@@ -114,6 +119,11 @@ class SATELLITE_RADIO:
             bytes_remaining -= 196
         # Close file when complete
         send_bytes.close()
+
+    def image_done_transmitting(self) -> bool:
+        return self.gs_req_message_ID == SAT_DEL_IMG1 or \
+                self.gs_req_message_ID == SAT_DEL_IMG2 or \
+                self.gs_req_message_ID == SAT_DEL_IMG3
 
     """
         Name: unpack_message
@@ -185,7 +195,7 @@ class SATELLITE_RADIO:
 
     def receive_message(self):
         while self.gs_req_ack == 0:
-            my_packet = self.sat.RADIO.receive(timeout=5)
+            my_packet = self.sat.RADIO.receive(timeout=1)
             if my_packet is None:
                 self.heartbeat_sent = False
                 self.gs_req_message_ID = 0x00

@@ -15,8 +15,9 @@ for path in ["/hal", "/apps"]:
 
 # Just for debug purposes - need initial SD card scan
 print("SD Card Directories: ", DH.list_directories())
-# DH.delete_all_files()
 DH.scan_SD_card()
+
+DH.delete_all_files()
 
 ## Put Jetson Code here 
 DH.register_image_process()
@@ -27,29 +28,38 @@ if SATELLITE is None:
 
 argus_comms = ArgusComm(SATELLITE.PAYLOADUART)
 
-print("Waiting on header...")
-
-tm_path = DH.request_TM_path("img")
-print(tm_path)
-
-argus_comms.receive_message()
-
-DH.notify_TM_path("img", tm_path)
-
 from apps.comms.radio_helpers import *
-
 SAT_RADIO = SATELLITE_RADIO(SATELLITE)
 
-SAT_RADIO.image_strs = [tm_path]
-SAT_RADIO.image_get_info()
-
 while True:
-    if SATELLITE.RADIO is not None:
-        SAT_RADIO.transmit_message()
+    DH.register_image_process()
 
-    if SATELLITE.RADIO is not None:
-        SAT_RADIO.receive_message()
+    print("Waiting on header...")
+    while (not argus_comms.receive_message()):
+        SATELLITE.PAYLOADUART.reset_input_buffer()
+        time.sleep(0.1)
 
+    DH.image_completed()
+
+    tm_path = DH.request_TM_path("img")
+    print("Image path: ", tm_path)
+
+    SAT_RADIO.image_strs = [tm_path]
+    SAT_RADIO.image_get_info()
+
+    while True:
+        if SATELLITE.RADIO is not None:
+            SAT_RADIO.transmit_message()
+
+        if SATELLITE.RADIO is not None:
+            SAT_RADIO.receive_message()
+
+        if SAT_RADIO.image_done_transmitting():
+            DH.notify_TM_path("img", tm_path)
+            DH.clean_up()
+            break
+
+    time.sleep(5)
 
 
     # Print out image contents from datahandler
