@@ -20,7 +20,7 @@ PKT_TYPE_ACK = const(0x02)
 PKT_TYPE_RESET = const(0x04)
 
 # Packet sizes
-PACKET_SIZE = const()
+PACKET_SIZE = const(64)
 PKT_METADATA_SIZE = const(4)
 PAYLOAD_PER_PACKET = PACKET_SIZE - PKT_METADATA_SIZE
 HEADER_PAYLOAD_SIZE = const(4)
@@ -155,5 +155,6 @@ class Message:
         Returns:
             tuple[int, int]: the message type and the number of packets
         """
+        print("Header payload: ", header_payload)
         message_type, num_packets = unpack("@BH", header_payload)
         return message_type, num_packets

@@ -12,6 +12,7 @@ TBD
 from .msg import *
 from ..data_handler import DataHandler as DH
 MAX_RETRIES = 3
+from time import sleep
 
 class ArgusComm:
     def __init__(self, uart):
@@ -45,15 +46,22 @@ class ArgusComm:
     def close_logger(self):
         DH.image_completed()
        
-    def receive_message(self):
+    def receive_message(self) -> bool:
+        timeout = 1000
         expected_seq_num = 0
         retries = 0
         reset = False
+
+        time = 0
         while(self.uart.in_waiting() < HEADER_PKT_SIZE):
-        #    print(f"{self.uart.in_waiting()} bytes in waiting")
-           continue
+            if time > timeout:
+                return False
+            time += 1
+            sleep(0.01)
+
         print("Received header")
-        header = self.uart.read(PACKET_SIZE)
+        header = self.uart.read(HEADER_PKT_SIZE)
+        self.uart.reset_input_buffer()
         (seq_num, packet_type, payload_size) = Message.parse_packet_meta(header)
         if packet_type != PKT_TYPE_HEADER:
             #clear uart buffer
@@ -74,13 +82,15 @@ class ArgusComm:
             if packet_type == PKT_TYPE_DATA and seq_num == expected_seq_num:
                 expected_seq_num += 1
                 retries = 0
-            else:
-                if (retries >= MAX_RETRIES):
-                    self.close_logger()
-                    raise RuntimeError("Unable to receive message")
+            # else:
+            #     if (retries >= MAX_RETRIES):
+            #         self.close_logger()
+            #         raise RuntimeError("Unable to receive message")
                 #clear uart buffer
                 retries += 1
             self.uart.write(Message.create_ack(expected_seq_num - 1))
             payload = packet[PKT_METADATA_SIZE:][:payload_size]
             self.log_data(payload)
         self.close_logger()
+
+        return True

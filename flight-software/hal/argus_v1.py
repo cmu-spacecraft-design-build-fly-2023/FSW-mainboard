@@ -54,7 +54,7 @@ class ArgusV1Interfaces:
     UART1_RX = board.RX
     UART1 = UART(UART1_TX, UART1_RX, baudrate=UART1_BAUD)
 
-    UART2_BAUD = const(230400)
+    UART2_BAUD = const(9600)
     UART2_TX = board.JET_TX
     UART2_RX = board.JET_RX
     UART2 = UART(UART2_TX, UART2_RX, baudrate=UART2_BAUD)
