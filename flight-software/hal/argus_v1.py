@@ -54,10 +54,11 @@ class ArgusV1Interfaces:
     UART1_RX = board.RX
     UART1 = UART(UART1_TX, UART1_RX, baudrate=UART1_BAUD)
 
-    UART2_BAUD = const(9600)
+    UART2_BAUD = const(57600)
+    UART2_RECEIVE_BUF_SIZE = const(256)
     UART2_TX = board.JET_TX
     UART2_RX = board.JET_RX
-    UART2 = UART(UART2_TX, UART2_RX, baudrate=UART2_BAUD)
+    UART2 = UART(UART2_TX, UART2_RX, baudrate=UART2_BAUD, receiver_buffer_size=UART2_RECEIVE_BUF_SIZE)
 
 
 class ArgusV1Components:

@@ -34,7 +34,6 @@ class SATELLITE_RADIO:
             "/sd/IMAGES/oregon_small.jpg",
         ]
         self.image_num = 0
-        self.sat_images.image_UID = 0x0
 
         # self.image_get_info()
         self.send_mod = 10
