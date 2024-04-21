@@ -37,8 +37,8 @@ SM_CONFIGURATION = {
     },
     "NOMINAL": {
         "Tasks": {
-            "MONITOR": {"Frequency": 0.5, "Priority": 2, "ScheduleLater": False},
-            "TIMING": {"Frequency": 1.5, "Priority": 2, "ScheduleLater": False},
+            "MONITOR": {"Frequency": 1, "Priority": 2, "ScheduleLater": False},
+            "TIMING": {"Frequency": 1, "Priority": 2, "ScheduleLater": False},
             "OBDH": {"Frequency": 1, "Priority": 3, "ScheduleLater": False},
             "IMU": {"Frequency": 1, "Priority": 5, "ScheduleLater": True},
             "SUN": {"Frequency": 1, "Priority": 5, "ScheduleLater": True},

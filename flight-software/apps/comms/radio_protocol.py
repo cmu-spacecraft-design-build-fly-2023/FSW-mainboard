@@ -71,17 +71,22 @@ def construct_message(lora_tx_message_ID):
         # Add system status
         lora_tx_message += [0x00, 0x00]
 
+        # Get latest values from sun vector task 
+        monitor_data = DH.get_latest_data("monitor")
+        print(monitor_data)
+
         # Add battery SOC
-        lora_tx_message += [0x53]
+        lora_tx_message += [monitor_data["batt_soc"] & 0xFF]
 
         # Add current as uint16_t
-        lora_tx_message += [0x03, 0x7B]
+        lora_tx_message += [(monitor_data["current"] >> 8) & 0xFF, monitor_data["current"] & 0xFF]
 
         # Add reboot count
         lora_tx_message += [0x00]
 
         # Add time reference as uint32_t
-        lora_tx_message += [0x65, 0xF9, 0xE8, 0x4A]
+        time = monitor_data["time"]
+        lora_tx_message += [(time >> 24) & 0xFF, (time >> 16) & 0xFF, (time >> 8) & 0xFF, time & 0xFF]
 
     elif lora_tx_message_ID == SAT_HEARTBEAT_SUN:
         # Construct SAT heartbeat

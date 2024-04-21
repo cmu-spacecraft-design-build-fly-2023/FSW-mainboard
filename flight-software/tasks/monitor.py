@@ -33,9 +33,9 @@ class Task(DebugTask):
 
     async def main_task(self):
         # If process not registered, register it 
-        if DH.data_process_exists("comms") == False:
+        if DH.data_process_exists("monitor") == False:
             DH.register_data_process(
-                "comms", self.data_keys, "fiiib", True, line_limit=50
+                "monitor", self.data_keys, "ffffb", True, line_limit=50
             )
 
         self.batt_soc = int((SATELLITE.battery_voltage / 8.4) * 100)
@@ -45,9 +45,11 @@ class Task(DebugTask):
             "time": time.time(),
             "system_status": 0,
             "batt_soc": self.batt_soc, 
-            "current": SATELLITE.current_draw * 1000, 
+            "current": int(SATELLITE.current_draw * 1000), 
             "reboot_cnt": 0,
         }
+
+        DH.log_data("monitor", readings)
 
         print(f"[{self.ID}][{self.name}] Data: {readings}")
         print(f"[{self.ID}][{self.name}] {gc.mem_free()} free bytes in memory")
