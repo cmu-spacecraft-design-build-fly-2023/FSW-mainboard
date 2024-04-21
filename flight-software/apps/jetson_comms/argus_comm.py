@@ -26,9 +26,9 @@ class ArgusComm:
                 self.uart.write(message.create_header())
             else:
                 self.uart.write(message.create_packet(current_seq))
-            while(self.uart.in_waiting != PACKET_SIZE):
+            while(self.uart.in_waiting != PKT_METADATA_SIZE):
                 continue
-            response = self.uart.read(PACKET_SIZE)
+            response = self.uart.read(PKT_METADATA_SIZE)
             (seq_num, packet_type, _) = Message.parse_packet_meta(response)
             if packet_type == PKT_TYPE_ACK:
                 current_seq = seq_num + 1
