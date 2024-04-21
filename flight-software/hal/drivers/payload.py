@@ -8,7 +8,7 @@ methods to send and receive data over the uart.
 Author(s): Harry Rosmann
 """
 
-from diagnostics.diagnostics import Diagnostics
+from .diagnostics.diagnostics import Diagnostics
 from digitalio import DigitalInOut
 
 class PayloadUART(Diagnostics):

@@ -35,13 +35,14 @@ DH.delete_all_files()
 gc.collect()
 print(str(gc.mem_free()) + " bytes free")
 
+import payload_com_test
+
 try:
-    import payload_com_test
     # import comms_test
     # import obdh_sd_test
 
     # Run forever
-    state_manager.start("STARTUP")
+    # state_manager.start("STARTUP")
 
     # import obdh_sd_test
 

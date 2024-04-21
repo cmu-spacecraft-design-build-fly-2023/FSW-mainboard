@@ -9,8 +9,8 @@ to the GPIO pins for signaling
 TBD
 
 """
-from message import *
-from apps.data_handler import DataHandler as DH
+from .msg import *
+from ..data_handler import DataHandler as DH
 MAX_RETRIES = 3
 
 class ArgusComm:
@@ -26,7 +26,7 @@ class ArgusComm:
                 self.uart.write(message.create_header())
             else:
                 self.uart.write(message.create_packet(current_seq))
-            while(self.uart.in_waiting != PKT_METADATA_SIZE):
+            while(self.uart.in_waiting() != PKT_METADATA_SIZE):
                 continue
             response = self.uart.read(PKT_METADATA_SIZE)
             (seq_num, packet_type, _) = Message.parse_packet_meta(response)
@@ -38,9 +38,6 @@ class ArgusComm:
                 current_seq = 0
             else:
                 current_seq = 0
-    
-    def start_img_logger(self):
-        DH.register_image_process()
 
     def log_data(self, payload):
         DH.log_image(payload)
@@ -52,8 +49,10 @@ class ArgusComm:
         expected_seq_num = 0
         retries = 0
         reset = False
-        while(self.uart.in_waiting != HEADER_PKT_SIZE):
+        while(self.uart.in_waiting() < HEADER_PKT_SIZE):
+        #    print(f"{self.uart.in_waiting()} bytes in waiting")
            continue
+        print("Received header")
         header = self.uart.read(PACKET_SIZE)
         (seq_num, packet_type, payload_size) = Message.parse_packet_meta(header)
         if packet_type != PKT_TYPE_HEADER:
@@ -61,13 +60,16 @@ class ArgusComm:
             raise RuntimeError("Invalid header")
         #do something with message type
         (message_type, num_packets) = Message.parse_header_payload(header[PKT_METADATA_SIZE:])
-        self.uart.write(Message.create_ack(seq_num))
+        msg = Message.create_ack(seq_num)
+        print(f"Sending ack {msg}")
+        self.uart.write(msg)
         expected_seq_num = seq_num + 1
-        self.start_img_logger() #only images
         while(expected_seq_num != num_packets + 1):
-            while(self.uart.in_waiting != PACKET_SIZE):
+            print(f"Waiting for packet {expected_seq_num}")
+            while(self.uart.in_waiting() < PACKET_SIZE):
                 continue
             packet = self.uart.read(PACKET_SIZE)
+            print(f"Received packet")
             (seq_num, packet_type, payload_size) = Message.parse_packet_meta(packet)
             if packet_type == PKT_TYPE_DATA and seq_num == expected_seq_num:
                 expected_seq_num += 1

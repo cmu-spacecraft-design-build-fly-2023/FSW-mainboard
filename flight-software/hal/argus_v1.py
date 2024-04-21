@@ -49,15 +49,15 @@ class ArgusV1Interfaces:
     SPI_MISO = board.MISO
     SPI = SPI(SPI_SCK, MOSI=SPI_MOSI, MISO=SPI_MISO)
 
-    UART_BAUD = const(9600)
-
+    UART1_BAUD = const(9600)
     UART1_TX = board.TX
     UART1_RX = board.RX
-    UART1 = UART(UART1_TX, UART1_RX, baudrate=UART_BAUD)
+    UART1 = UART(UART1_TX, UART1_RX, baudrate=UART1_BAUD)
 
+    UART2_BAUD = const(230400)
     UART2_TX = board.JET_TX
     UART2_RX = board.JET_RX
-    UART2 = UART(UART2_TX, UART2_RX, baudrate=UART_BAUD)
+    UART2 = UART(UART2_TX, UART2_RX, baudrate=UART2_BAUD)
 
 
 class ArgusV1Components:
@@ -81,9 +81,9 @@ class ArgusV1Components:
     JETSON_POWER_MONITOR_I2C_ADDRESS = const(0xCA)
 
     # IMU
-    IMU_I2C                                 = ArgusV1Interfaces.I2C1
-    IMU_I2C_ADDRESS                         = const(0x69)
-    IMU_ENABLE                              = board.EN_IMU
+    IMU_I2C = ArgusV1Interfaces.I2C1
+    IMU_I2C_ADDRESS = const(0x69)
+    IMU_ENABLE = board.EN_IMU
 
     # CHARGER
     CHARGER_I2C = ArgusV1Interfaces.I2C1

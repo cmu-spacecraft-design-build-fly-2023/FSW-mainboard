@@ -55,7 +55,10 @@ def create_build(source_folder):
 
                 relative_path = os.path.relpath(source_folder, build_path)
 
-                os.system(f"{relative_path}/mpy-cross {file_name} -O3")
+                try:
+                    os.system(f"{relative_path}/mpy-cross {file_name} -O3")
+                except Exception as e:
+                    print(f"Error occurred while compiling {file_name}: {str(e)}")
 
                 # Delete file python file once it has been compiled
                 os.remove(file_name)

@@ -6,7 +6,7 @@ import gc
 
 from apps.data_handler import DataHandler as DH
 
-from apps.jetson_comms.argus_comm import ArgusComm, Message
+from apps.jetson_comms.argus_comm import *
 from hal.configuration import SATELLITE
 
 for path in ["/hal", "/apps"]:
@@ -27,41 +27,37 @@ if SATELLITE is None:
 
 argus_comms = ArgusComm(SATELLITE.PAYLOADUART)
 
-# Define messages to send to the payload (for testing purposes) HERE
-end_img = False
+print("Waiting on header...")
+
+tm_path = DH.request_TM_path("img")
+print(tm_path)
+
+argus_comms.receive_message()
+
+DH.notify_TM_path("img", tm_path)
+
+from apps.comms.radio_helpers import *
+
+SAT_RADIO = SATELLITE_RADIO(SATELLITE)
+
+SAT_RADIO.image_strs = [tm_path]
+SAT_RADIO.image_get_info()
 
 while True:
-    try:
-        msg = argus_comms.receive_message()
-        print(msg)
-    except Exception as e:
-        time.sleep(5)
+    if SATELLITE.RADIO is not None:
+        SAT_RADIO.transmit_message()
+
+    if SATELLITE.RADIO is not None:
+        SAT_RADIO.receive_message()
 
 
 
+    # Print out image contents from datahandler
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    # try:
+    #     argus_comms.receive_message()
+    #     ack = Message.create_ack()
+    #     argus_comms.send_message(ack)
+    # except Exception as e:
+    #     print("No receive")
+    #     time.sleep(5)

@@ -1,5 +1,5 @@
 """
-`jetson_comm`
+`message`
 ====================================================
 
 Library for interfacing with the Jetson through UART. Also gives access
@@ -20,13 +20,11 @@ PKT_TYPE_ACK = const(0x02)
 PKT_TYPE_RESET = const(0x04)
 
 # Packet sizes
-PACKET_SIZE = const(256)
+PACKET_SIZE = const()
 PKT_METADATA_SIZE = const(4)
 PAYLOAD_PER_PACKET = PACKET_SIZE - PKT_METADATA_SIZE
 HEADER_PAYLOAD_SIZE = const(4)
 HEADER_PKT_SIZE = HEADER_PAYLOAD_SIZE + PKT_METADATA_SIZE
-
-MAX_PACKETS = const(0xFFFF)
 
 """
 Header Packet
@@ -135,7 +133,14 @@ class Message:
             tuple[int, int, int]: the sequence number, packet type, and payload size
         """
         try:
-            seq_num, packet_type, payload_size = unpack("@HBB", metadata)
+            # Ensure that metadata is at least 4 bytes
+            if len(metadata) < PKT_METADATA_SIZE:
+                raise ValueError("Invalid packet format")
+            
+            # Grab first 4 bytes of metadata
+            data = metadata[:PKT_METADATA_SIZE]
+
+            seq_num, packet_type, payload_size = unpack("@HBB", data)
         except:
             raise ValueError("Invalid packet format")
         return seq_num, packet_type, payload_size

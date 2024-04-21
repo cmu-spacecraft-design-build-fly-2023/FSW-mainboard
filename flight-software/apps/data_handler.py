@@ -85,18 +85,20 @@ class DataHandler:
 
                     if _IMG_TAG_NAME in config_data:
                         data_format: str = config_data.get(_IMG_TAG_NAME)
-                        cls.register_image_process(data_format)
+                        cls.register_image_process()
                         continue
-
                     data_format: str = config_data.get("data_format")
                     line_limit: int = config_data.get("line_limit")
+                    data_keys: List[str] = config_data.get("data_keys")
                     if data_format and line_limit:
                         cls.register_data_process(
-                            dir_name,
-                            data_format,
+                            tag_name=dir_name,
+                            data_keys=data_keys,
+                            data_format=data_format,
                             persistent=True,
                             line_limit=line_limit,
                         )
+                    print("HERE6")
 
         # print("SD Card Scanning complete - found ", cls.data_process_registry.keys())
 
@@ -136,12 +138,10 @@ class DataHandler:
         else:
             raise ValueError("Line limit must be a positive integer.")
 
+    @classmethod
     def register_image_process(cls) -> None:
         """
         Register an image process with the given data format.
-
-        Parameters:
-        - data_format (str): The format of the image data.
 
         Returns:
         - None
@@ -539,6 +539,7 @@ class DataProcess:
                 config_data = {
                     "data_format": self.data_format[1:],  # remove the < character
                     "line_limit": line_limit,
+                    "data_keys": data_keys,
                 }
                 with open(config_file_path, "w") as config_file:
                     json.dump(config_data, config_file)
@@ -550,7 +551,7 @@ class DataProcess:
         if not path_exist(self.dir_path):
             try:
                 os.mkdir(self.dir_path)
-                print("Folder created successfully.")
+                print(f"Folder {self.dir_path} created successfully.")
             except OSError as e:
                 print(f"Error creating folder: {e}")
         else:
@@ -780,11 +781,12 @@ class ImageProcess(DataProcess):
 
     def __init__(self, tag_name: str, home_path: str = "/sd"):
 
+        self.tag_name = tag_name
         self.file = None
 
         self.status = _CLOSED
 
-        self.dir_path = home_path + "/" + tag_name + "/"
+        self.dir_path = home_path + "/" + self.tag_name + "/"
         self.create_folder()
 
         self.size_limit = _IMG_SIZE_LIMIT
@@ -799,7 +801,7 @@ class ImageProcess(DataProcess):
             with open(config_file_path, "w") as config_file:
                 json.dump(config_data, config_file)
 
-    def log(self, data: List[bytes]) -> None:
+    def log(self, data: bytearray) -> None:
         """
         Logs the given image data.
 
@@ -811,15 +813,9 @@ class ImageProcess(DataProcess):
         """
         self.resolve_current_file()
         self.last_data = data
-
-        n = len(data)
-        if n == 0:
-            return
-        else: 
-            data_format = "<" + n * "b"
-            bin_data = struct.pack(data_format, *data)
-            self.file.write(bin_data)
-            self.file.flush()
+        
+        self.file.write(data)
+        self.file.flush()
 
     def image_completed(self):
         """
