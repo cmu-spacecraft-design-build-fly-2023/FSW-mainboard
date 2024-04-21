@@ -2,7 +2,6 @@ from micropython import const
 
 from hal.cubesat import CubeSat
 
-
 PYCUBED_V05 = const(0)
 ARGUS_V1 = const(1)
 

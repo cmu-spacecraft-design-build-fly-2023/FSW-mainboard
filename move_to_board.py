@@ -81,6 +81,5 @@ if __name__ == "__main__":
 
     source_folder = args.source_folder
     destination_folder = args.destination_folder
-
-
+    
     copy_folder(source_folder, destination_folder, show_identical_files=True)
