@@ -13,6 +13,8 @@ for path in ["/hal", "/apps"]:
     if path not in sys.path:
         sys.path.append(path)
 
+TIMEOUT = 1000
+
 # Just for debug purposes - need initial SD card scan
 print("SD Card Directories: ", DH.list_directories())
 DH.scan_SD_card()
@@ -32,12 +34,23 @@ from apps.comms.radio_helpers import *
 SAT_RADIO = SATELLITE_RADIO(SATELLITE)
 
 while True:
+    timed_out = False
+
     DH.register_image_process()
 
     print("Waiting on header...")
+    ticks = 0
     while (not argus_comms.receive_message()):
+        if ticks > TIMEOUT:
+            timed_out = True
+            break
+
         SATELLITE.PAYLOADUART.reset_input_buffer()
         time.sleep(0.1)
+
+    if timed_out:
+        print("Timed out waiting for header")
+        continue
 
     DH.image_completed()
 

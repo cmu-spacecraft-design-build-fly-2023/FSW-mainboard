@@ -34,8 +34,7 @@ class SATELLITE_RADIO:
             "/sd/IMAGES/oregon_small.jpg",
         ]
         self.image_num = 0
-
-        self.sat_images_sent = 0
+        self.sat_images.image_UID = 0x0
 
         # self.image_get_info()
         self.send_mod = 10
@@ -61,13 +60,10 @@ class SATELLITE_RADIO:
     """
 
     def image_get_info(self):
-        print("Sat images sent: ", self.sat_images_sent)
         # Setup image class
         self.sat_images = IMAGES()
         # Setup initial image UIDs
-        self.sat_images_sent += 1
-        self.sat_images.image_UID = self.sat_images_sent
-        print("New UID: ", self.sat_images.image_UID)
+        self.sat_images.image_UID = 0x1
 
         ## ---------- Image Sizes and Message Counts ---------- ##
         # Get image #1 size and message count
