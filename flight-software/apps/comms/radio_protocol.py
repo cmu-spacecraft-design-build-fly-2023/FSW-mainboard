@@ -3,7 +3,7 @@
 ======================
 Python package containing protocol constants (IDs etc.). 
 Also contains functions for constructing/deconstructing 
-protocol messages. OLD VERSION!!!
+protocol messages.
 
 Each message has the following header: 
 MESSAGE_ID : 1 byte 
@@ -42,15 +42,12 @@ QUEUE_2 = 0x02
 HEARTBEAT_SEQ = [
     SAT_HEARTBEAT_BATT,
     SAT_HEARTBEAT_SUN,
-    SAT_HEARTBEAT_IMU,
     SAT_HEARTBEAT_BATT,
-    SAT_HEARTBEAT_SUN,
-    SAT_HEARTBEAT_GPS,
+    SAT_HEARTBEAT_IMU,
 ]
 
 # Other constants
 REQ_ACK_NUM = 0x80
-
 
 class IMAGES:
     def __init__(self):
@@ -58,7 +55,6 @@ class IMAGES:
         self.image_UID = 0x0
         self.image_size = 0
         self.image_message_count = 0
-
 
 def construct_message(lora_tx_message_ID):
     """
@@ -78,14 +74,14 @@ def construct_message(lora_tx_message_ID):
         # Add system status
         lora_tx_message += [0x00, 0x00]
 
-        # Add battery SOCs, 1 byte for each battery
-        lora_tx_message += [0x53, 0x51, 0x47, 0x61, 0x52, 0x51]
+        # Add battery SOC
+        lora_tx_message += [0x53]
 
         # Add current as uint16_t
         lora_tx_message += [0x03, 0x7B]
 
-        # Add reboot count and payload status
-        lora_tx_message += [0x00, 0x00]
+        # Add reboot count
+        lora_tx_message += [0x00]
 
         # Add time reference as uint32_t
         lora_tx_message += [0x65, 0xF9, 0xE8, 0x4A]
@@ -148,6 +144,7 @@ def construct_message(lora_tx_message_ID):
         # Add time reference as uint32_t
         lora_tx_message += [0x65, 0xF9, 0xE8, 0x4A]
 
+    # GPS NOT IMPLEMENTED IN CURRENT VERSION!!!
     elif lora_tx_message_ID == SAT_HEARTBEAT_GPS:
         # Construct SAT heartbeat
         lora_tx_message = [REQ_ACK_NUM | SAT_HEARTBEAT_GPS, 0x00, 0x00, 0x36]

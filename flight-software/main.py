@@ -46,5 +46,5 @@ try:
 
     pass
 except Exception as e:
-    print(e)
+    print("ERROR:", e)
     # TODO Log the error

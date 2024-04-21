@@ -3,7 +3,7 @@
 ======================
 Satellite radio class for Argus-1 CubeSat. 
 Message packing/unpacking for telemetry/image TX
-and acknowledgement RX. OLD VERSION!!!
+and acknowledgement RX.
 
 Authors: DJ Morvay, Akshat Sahay
 """
@@ -135,11 +135,14 @@ class SATELLITE_RADIO:
         lora_rx_message[0] = lora_rx_message[0] & 0b01111111
         deconstruct_message(lora_rx_message)
 
+        # Acknowledgement, check for last image packet GS received 
         if self.rx_message_ID == GS_ACK:
+            # Store ACK info in comms class
             self.gs_rx_message_ID = int.from_bytes(packet[4:5], "big")
             self.gs_req_message_ID = int.from_bytes(packet[5:6], "big")
             self.gs_req_seq_count = int.from_bytes(packet[6:8], "big")
 
+            # Delete old image 
             if self.gs_req_message_ID == SAT_DEL_IMG1:
                 if self.image_num < 2:
                     self.image_num = self.image_num + 1
@@ -147,14 +150,18 @@ class SATELLITE_RADIO:
                     self.image_num = 0
                 self.image_get_info()
 
+        # OTA update packet, add to OTA update file 
         if self.rx_message_ID == GS_OTA_REQ:
             packets_remaining = int.from_bytes(packet[4:6], "big")
             self.gs_req_message_ID = SAT_OTA_RES
 
+            # Sequence counts match, append new packet to OTA file 
             if self.ota_sequence_count == self.rx_message_sequence_count:
                 self.ota_array.append(packet[6 : (6 + (self.rx_message_size - 2))])
                 self.ota_sequence_count += 1
                 self.ota_rec_success = 1
+
+            # Sequence count mismatch, remove OTA packets till match 
             elif self.ota_sequence_count > self.rx_message_sequence_count:
                 while self.ota_sequence_count > self.rx_message_sequence_count:
                     self.ota_sequence_count -= 1
@@ -163,13 +170,14 @@ class SATELLITE_RADIO:
                 self.ota_array.append(packet[6 : (self.rx_message_size - 2)])
                 self.ota_sequence_count += 1
                 self.ota_rec_success = 1
+
+            # OTA update failed 
             else:
                 self.ota_rec_success = 0
 
             if (packets_remaining <= 0) and (self.ota_rec_success == 1):
-                # Create file name
+                # Create file name, TEMP for simulating OTA updates
                 filename = f"/sd/IMAGES/OTA_SIM.jpg"
-
                 rec_bytes = open(filename, "wb")
 
                 for i in range(self.rx_message_sequence_count + 1):
