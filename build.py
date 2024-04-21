@@ -5,27 +5,15 @@ import filecmp
 import argparse
 import platform
 
-if platform.system() == "Windows":
-    BOARD_PATH = "D:\\"
-elif platform.system() == "Linux":
-    username = subprocess.check_output("whoami", shell=True).decode().strip()
-    BOARD_PATH = f"/media/{username}/ARGUS"
-    if not os.path.exists(BOARD_PATH):
-        BOARD_PATH = f"/media/{username}/PYCUBED"
-
 MPY_CROSS_PATH = f"{os.getcwd()}/mpy-cross"
 
 
 def check_directory_location(source_folder):
-    if not os.path.exists(BOARD_PATH):
-        raise FileNotFoundError(f"Destination folder {BOARD_PATH} not found")
-
     if not os.path.exists(MPY_CROSS_PATH):
         raise FileNotFoundError(f"MPY_CROSS_PATH folder {MPY_CROSS_PATH} not found")
 
-    if not os.path.exists(f"./source_folder"):
+    if not os.path.exists(f"{source_folder}"):
         raise FileNotFoundError(f"Source folder {source_folder} not found")
-
 
 
 def create_build(source_folder):
@@ -67,16 +55,23 @@ def create_build(source_folder):
 
                 relative_path = os.path.relpath(source_folder, build_path)
 
-                os.system(f"{relative_path}/mpy-cross {file_name}")
+                try:
+                    os.system(f"{relative_path}/mpy-cross {file_name} -O3")
+                except Exception as e:
+                    print(f"Error occurred while compiling {file_name}: {str(e)}")
 
                 # Delete file python file once it has been compiled
                 os.remove(file_name)
 
                 os.chdir(current_dir)
 
-        # Create main.py file with single import statement "import main_module"
-        with open(os.path.join(build_folder, "main.py"), "w") as f:
-            f.write("import main_module\n")
+    # Create main.py file with single import statement "import main_module"
+    build_folder = os.path.join(build_folder, "..")
+    with open(os.path.join(build_folder, "main.py"), "w") as f:
+        f.write("import main_module\n")
+
+    # Create SD folder
+    os.makedirs(os.path.join(build_folder, "sd/"), exist_ok=True)
 
     return build_folder
 
@@ -126,18 +121,9 @@ if __name__ == "__main__":
         help="Source folder path",
         required=False
     )
-    parser.add_argument(
-        "-d",
-        "--destination_folder",
-        type=str,
-        default=BOARD_PATH,
-        help="Destination folder path",
-        required=False
-    )
     args = parser.parse_args()
 
     source_folder = args.source_folder
-    destination_folder = args.destination_folder
 
     build_folder = create_build(source_folder)
 

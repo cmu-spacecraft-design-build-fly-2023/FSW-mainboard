@@ -3,7 +3,7 @@
 ======================
 Satellite radio class for Argus-1 CubeSat. 
 Message packing/unpacking for telemetry/image TX
-and acknowledgement RX.
+and acknowledgement RX. 
 
 Authors: DJ Morvay, Akshat Sahay
 """
@@ -13,7 +13,7 @@ import os
 import time
 
 # PyCubed Board Lib
-from hal.configuration import SATELLITE
+from hal.cubesat import CubeSat
 
 # Argus-1 Lib
 from apps.comms.radio_protocol import *
@@ -25,7 +25,7 @@ class SATELLITE_RADIO:
     Description: Initialization of SATELLITE class
     """
 
-    def __init__(self, sat: SATELLITE):
+    def __init__(self, sat: CubeSat):
         self.sat = sat
 
         self.image_strs = [
@@ -35,7 +35,7 @@ class SATELLITE_RADIO:
         ]
         self.image_num = 0
 
-        #self.image_get_info()
+        # self.image_get_info()
         self.send_mod = 10
         self.heartbeat_sent = False
         self.image_deleted = True
@@ -73,8 +73,8 @@ class SATELLITE_RADIO:
         if (self.sat_images.image_size % 196) > 0:
             self.sat_images.image_message_count += 1
 
-        # print("Image size is", self.sat_images.image_size, "bytes")
-        # print("This image requires", self.sat_images.image_message_count, "messages")
+        print("Image size is", self.sat_images.image_size, "bytes")
+        print("This image requires", self.sat_images.image_message_count, "messages")
 
         self.image_pack_images()
 
@@ -135,33 +135,23 @@ class SATELLITE_RADIO:
         lora_rx_message[0] = lora_rx_message[0] & 0b01111111
         deconstruct_message(lora_rx_message)
 
-        # Acknowledgement, check for last image packet GS received 
         if self.rx_message_ID == GS_ACK:
-            # Store ACK info in comms class
             self.gs_rx_message_ID = int.from_bytes(packet[4:5], "big")
             self.gs_req_message_ID = int.from_bytes(packet[5:6], "big")
             self.gs_req_seq_count = int.from_bytes(packet[6:8], "big")
 
-            # Delete old image 
             if self.gs_req_message_ID == SAT_DEL_IMG1:
-                if self.image_num < 2:
-                    self.image_num = self.image_num + 1
-                else:
-                    self.image_num = 0
+                self.image_num = (self.image_num + 1) % len(self.image_strs)
                 self.image_get_info()
 
-        # OTA update packet, add to OTA update file 
         if self.rx_message_ID == GS_OTA_REQ:
             packets_remaining = int.from_bytes(packet[4:6], "big")
             self.gs_req_message_ID = SAT_OTA_RES
 
-            # Sequence counts match, append new packet to OTA file 
             if self.ota_sequence_count == self.rx_message_sequence_count:
                 self.ota_array.append(packet[6 : (6 + (self.rx_message_size - 2))])
                 self.ota_sequence_count += 1
                 self.ota_rec_success = 1
-
-            # Sequence count mismatch, remove OTA packets till match 
             elif self.ota_sequence_count > self.rx_message_sequence_count:
                 while self.ota_sequence_count > self.rx_message_sequence_count:
                     self.ota_sequence_count -= 1
@@ -170,14 +160,13 @@ class SATELLITE_RADIO:
                 self.ota_array.append(packet[6 : (self.rx_message_size - 2)])
                 self.ota_sequence_count += 1
                 self.ota_rec_success = 1
-
-            # OTA update failed 
             else:
                 self.ota_rec_success = 0
 
             if (packets_remaining <= 0) and (self.ota_rec_success == 1):
-                # Create file name, TEMP for simulating OTA updates
+                # Create file name
                 filename = f"/sd/IMAGES/OTA_SIM.jpg"
+
                 rec_bytes = open(filename, "wb")
 
                 for i in range(self.rx_message_sequence_count + 1):
@@ -185,7 +174,7 @@ class SATELLITE_RADIO:
 
                 rec_bytes.close()
 
-                # print(f"OTA file successfully uplinked!")
+                print(f"OTA file successfully uplinked!")
                 self.ota_array.clear()
                 self.ota_sequence_count = 0
 
@@ -196,21 +185,21 @@ class SATELLITE_RADIO:
 
     def receive_message(self):
         while self.gs_req_ack == 0:
-            my_packet = self.sat.RADIO.receive(timeout=1)
+            my_packet = self.sat.RADIO.receive(timeout=5)
             if my_packet is None:
                 self.heartbeat_sent = False
                 self.gs_req_message_ID = 0x00
                 self.gs_req_ack = 1
             else:
-                # print(f"Received (raw bytes): {my_packet}")
+                print(f"Received (raw bytes): {my_packet}")
                 crc_check = self.sat.RADIO.crc_error()
-                # print(f"CRC Status: {crc_check}")
+                print(f"CRC Status: {crc_check}")
 
                 if crc_check > 0:
                     self.crc_count += 1
 
                 rssi = self.sat.RADIO.rssi(raw=True)
-                # print(f"Received signal strength: {rssi} dBm")
+                print(f"Received signal strength: {rssi} dBm")
                 self.unpack_message(my_packet)
         self.gs_req_ack = 0
 
@@ -227,13 +216,24 @@ class SATELLITE_RADIO:
         while send_multiple:
             time.sleep(0.15)
             # This code is practically the same as Ground Station function hold_receive_mode
-            if ((self.gs_req_message_ID == SAT_IMG1_CMD) and (self.crc_count == 0)):
+            if (self.gs_req_message_ID == SAT_IMG1_CMD) and (self.crc_count == 0):
                 target_sequence_count = self.sat_images.image_message_count
 
                 multiple_packet_count += 1
-                
-                if (((((self.gs_req_seq_count + multiple_packet_count) % self.send_mod) > 0) and ((self.gs_req_seq_count + multiple_packet_count) < (target_sequence_count - 1))) or \
-                    ((self.gs_req_seq_count + multiple_packet_count) == 0)):
+
+                if (
+                    (
+                        (
+                            (self.gs_req_seq_count + multiple_packet_count)
+                            % self.send_mod
+                        )
+                        > 0
+                    )
+                    and (
+                        (self.gs_req_seq_count + multiple_packet_count)
+                        < (target_sequence_count - 1)
+                    )
+                ) or ((self.gs_req_seq_count + multiple_packet_count) == 0):
                     send_multiple = True
                     self.sat_req_ack = 0x0
                 else:
@@ -300,10 +300,8 @@ class SATELLITE_RADIO:
             self.crc_count = 0
 
             # Debug output of message in bytes
-            # print(
-            #     "Satellite sent message with ID:",
-            #     int.from_bytes(tx_message[0:1], "big") & 0b01111111,
-            # )
-            # print("\n")
-
-            return (int.from_bytes(tx_message[0:1], "big") & 0b01111111)
+            print(
+                "Satellite sent message with ID:",
+                int.from_bytes(tx_message[0:1], "big") & 0b01111111,
+            )
+            print("\n")

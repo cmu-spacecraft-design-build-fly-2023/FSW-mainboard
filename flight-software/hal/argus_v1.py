@@ -12,53 +12,23 @@ from sdcardio import SDCard
 from sys import path
 from storage import mount, VfsFat
 
-import gc
-
 import neopixel
 
-gc.collect()
 from hal.drivers.diagnostics.diagnostics import Diagnostics
-
-gc.collect()
 from hal.drivers.adm1176 import ADM1176
-
-gc.collect()
 from hal.drivers.bq25883 import BQ25883
-
-gc.collect()
 from hal.drivers.bmx160 import BMX160
-
-gc.collect()
 from hal.drivers.pcf8523 import PCF8523
-
-gc.collect()
 from hal.drivers.rfm9x import RFM9x
-
-gc.collect()
 from hal.drivers.opt4001 import OPT4001
-
-gc.collect()
 from hal.drivers.gps import GPS
-
-gc.collect()
 from hal.drivers.drv8830 import DRV8830
-
-gc.collect()
 from hal.drivers.burnwire import BurnWires
-
-gc.collect()
 from hal.drivers.stateflags import StateFlags
-
-gc.collect()
 from hal.drivers.torque_coil import TorqueInterface
-
-gc.collect()
+from hal.drivers.payload import PayloadUART
 from hal.drivers.middleware.middleware import Middleware
-
-gc.collect()
 from hal.drivers.middleware.exceptions import *
-
-gc.collect()
 
 
 class ArgusV1Interfaces:
@@ -79,15 +49,15 @@ class ArgusV1Interfaces:
     SPI_MISO = board.MISO
     SPI = SPI(SPI_SCK, MOSI=SPI_MOSI, MISO=SPI_MISO)
 
-    UART_BAUD = const(9600)
-
+    UART1_BAUD = const(9600)
     UART1_TX = board.TX
     UART1_RX = board.RX
-    UART1 = UART(UART1_TX, UART1_RX, baudrate=UART_BAUD)
+    UART1 = UART(UART1_TX, UART1_RX, baudrate=UART1_BAUD)
 
+    UART2_BAUD = const(230400)
     UART2_TX = board.JET_TX
     UART2_RX = board.JET_RX
-    UART2 = UART(UART2_TX, UART2_RX, baudrate=UART_BAUD)
+    UART2 = UART(UART2_TX, UART2_RX, baudrate=UART2_BAUD)
 
 
 class ArgusV1Components:
@@ -111,9 +81,9 @@ class ArgusV1Components:
     JETSON_POWER_MONITOR_I2C_ADDRESS = const(0xCA)
 
     # IMU
-    IMU_I2C                                 = ArgusV1Interfaces.I2C1
-    IMU_I2C_ADDRESS                         = const(0x69)
-    IMU_ENABLE                              = board.EN_IMU
+    IMU_I2C = ArgusV1Interfaces.I2C1
+    IMU_I2C_ADDRESS = const(0x69)
+    IMU_ENABLE = board.EN_IMU
 
     # CHARGER
     CHARGER_I2C = ArgusV1Interfaces.I2C1
@@ -166,9 +136,9 @@ class ArgusV1Components:
     NEOPIXEL_N = const(1)  # Number of neopixels in chain
     NEOPIXEL_BRIGHTNESS = 0.2
 
-    # JETSON
-    JETSON_UART = ArgusV1Interfaces.UART2
-    JETSON_ENABLE = board.EN_JET
+    # PAYLOAD
+    PAYLOAD_UART = ArgusV1Interfaces.UART2
+    PAYLOAD_ENABLE = board.EN_JET
 
     # VFS
     VFS_MOUNT_POINT = "/sd"
@@ -201,46 +171,26 @@ class ArgusV1(CubeSat):
         self.__torque_z_driver = None
 
         self.__state_flags_boot()  # Does not require error checking
-        gc.collect()
 
         error_list += self.__sd_card_boot()
-        gc.collect()
         error_list += self.__vfs_boot()
-        gc.collect()
         error_list += self.__imu_boot()
-        gc.collect()
         error_list += self.__rtc_boot()
-        gc.collect()
         error_list += self.__gps_boot()
-        gc.collect()
         error_list += self.__battery_power_monitor_boot()
-        gc.collect()
         error_list += self.__jetson_power_monitor_boot()
-        gc.collect()
         error_list += self.__charger_boot()
-        gc.collect()
         error_list += self.__torque_interface_boot()
-        gc.collect()
         error_list += self.__sun_sensor_xp_boot()
-        gc.collect()
         error_list += self.__sun_sensor_xm_boot()
-        gc.collect()
         error_list += self.__sun_sensor_yp_boot()
-        gc.collect()
         error_list += self.__sun_sensor_ym_boot()
-        gc.collect()
         error_list += self.__sun_sensor_zp_boot()
-        gc.collect()
         error_list += self.__sun_sensor_zm_boot()
-        gc.collect()
         error_list += self.__radio_boot()
-        gc.collect()
         error_list += self.__neopixel_boot()
-        gc.collect()
         error_list += self.__burn_wire_boot()
-        gc.collect()
-        error_list += self.__jetson_boot()
-        gc.collect()
+        error_list += self.__payload_uart_boot()
 
         error_list = [error for error in error_list if error != Diagnostics.NOERROR]
 
@@ -251,13 +201,13 @@ class ArgusV1(CubeSat):
                 print(f"{Diagnostics.diagnostic_to_string(error)}")
             print()
 
-        self._recent_errors = error_list
+        self.__recent_errors = error_list
 
         return error_list
 
     def __state_flags_boot(self) -> None:
         """state_flags_boot: Boot sequence for the state flags"""
-        self._state_flags = StateFlags()
+        self.__state_flags = StateFlags()
 
     def __gps_boot(self) -> list[int]:
         """GPS_boot: Boot sequence for the GPS
@@ -270,7 +220,7 @@ class ArgusV1(CubeSat):
             if self.__middleware_enabled:
                 gps1 = Middleware(gps1, gps_fatal_exception)
 
-            self._gps = gps1
+            self.__gps = gps1
             self.__device_list.append(gps1)
         except Exception as e:
             if self.__debug:
@@ -296,7 +246,7 @@ class ArgusV1(CubeSat):
                     battery_monitor, battery_power_monitor_fatal_exception
                 )
 
-            self._battery_monitor = battery_monitor
+            self.__battery_monitor = battery_monitor
             self.__device_list.append(battery_monitor)
         except Exception as e:
             if self.__debug:
@@ -322,7 +272,7 @@ class ArgusV1(CubeSat):
                     jetson_monitor, jetson_power_monitor_fatal_exception
                 )
 
-            self._jetson_monitor = jetson_monitor
+            self.__jetson_monitor = jetson_monitor
             self.__device_list.append(jetson_monitor)
         except Exception as e:
             if self.__debug:
@@ -347,7 +297,7 @@ class ArgusV1(CubeSat):
             if self.__middleware_enabled:
                 imu = Middleware(imu, imu_fatal_exception)
 
-            self._imu = imu
+            self.__imu = imu
             self.__device_list.append(imu)
         except Exception as e:
             if self.__debug:
@@ -370,7 +320,7 @@ class ArgusV1(CubeSat):
             if self.__middleware_enabled:
                 charger = Middleware(charger, charger_fatal_exception)
 
-            self._charger = charger
+            self.__charger = charger
             self.__device_list.append(charger)
         except Exception as e:
             if self.__debug:
@@ -516,7 +466,7 @@ class ArgusV1(CubeSat):
         # X direction
         try:
             torque_interface = TorqueInterface(self.__torque_xp_driver, self.__torque_xm_driver)
-            self._torque_x = torque_interface
+            self.__torque_x = torque_interface
         except Exception as e:
             if self.__debug:
                 raise e
@@ -524,7 +474,7 @@ class ArgusV1(CubeSat):
         # Y direction
         try:
             torque_interface = TorqueInterface(self.__torque_yp_driver, self.__torque_ym_driver)
-            self._torque_y = torque_interface
+            self.__torque_y = torque_interface
         except Exception as e:
             if self.__debug:
                 raise e
@@ -532,7 +482,7 @@ class ArgusV1(CubeSat):
         # Z direction
         try:
             torque_interface = TorqueInterface(self.__torque_z_driver)
-            self._torque_z = torque_interface
+            self.__torque_z = torque_interface
         except Exception as e:
             if self.__debug:
                 raise e
@@ -553,7 +503,7 @@ class ArgusV1(CubeSat):
             if self.__middleware_enabled:
                 sun_sensor_xp = Middleware(sun_sensor_xp, sun_sensor_xp_fatal_exception)
 
-            self._sun_sensor_xp = sun_sensor_xp
+            self.__sun_sensor_xp = sun_sensor_xp
             self.__device_list.append(sun_sensor_xp)
         except Exception as e:
             if self.__debug:
@@ -577,7 +527,7 @@ class ArgusV1(CubeSat):
             if self.__middleware_enabled:
                 sun_sensor_xm = Middleware(sun_sensor_xm, sun_sensor_xm_fatal_exception)
 
-            self._sun_sensor_xm = sun_sensor_xm
+            self.__sun_sensor_xm = sun_sensor_xm
             self.__device_list.append(sun_sensor_xm)
         except Exception as e:
             if self.__debug:
@@ -601,7 +551,7 @@ class ArgusV1(CubeSat):
             if self.__middleware_enabled:
                 sun_sensor_yp = Middleware(sun_sensor_yp, sun_sensor_yp_fatal_exception)
 
-            self._sun_sensor_yp = sun_sensor_yp
+            self.__sun_sensor_yp = sun_sensor_yp
             self.__device_list.append(sun_sensor_yp)
         except Exception as e:
             if self.__debug:
@@ -625,7 +575,7 @@ class ArgusV1(CubeSat):
             if self.__middleware_enabled:
                 sun_sensor_ym = Middleware(sun_sensor_ym, sun_sensor_ym_fatal_exception)
 
-            self._sun_sensor_ym = sun_sensor_ym
+            self.__sun_sensor_ym = sun_sensor_ym
             self.__device_list.append(sun_sensor_ym)
         except Exception as e:
             if self.__debug:
@@ -649,7 +599,7 @@ class ArgusV1(CubeSat):
             if self.__middleware_enabled:
                 sun_sensor_zp = Middleware(sun_sensor_zp, sun_sensor_zp_fatal_exception)
 
-            self._sun_sensor_zp = sun_sensor_zp
+            self.__sun_sensor_zp = sun_sensor_zp
             self.__device_list.append(sun_sensor_zp)
         except Exception as e:
             if self.__debug:
@@ -673,7 +623,7 @@ class ArgusV1(CubeSat):
             if self.__middleware_enabled:
                 sun_sensor_zm = Middleware(sun_sensor_zm, sun_sensor_zm_fatal_exception)
 
-            self._sun_sensor_zm = sun_sensor_zm
+            self.__sun_sensor_zm = sun_sensor_zm
             self.__device_list.append(sun_sensor_zm)
         except Exception as e:
             if self.__debug:
@@ -701,7 +651,7 @@ class ArgusV1(CubeSat):
             if self.__middleware_enabled:
                 radio = Middleware(radio, radio_fatal_exception)
 
-            self._radio = radio
+            self.__radio = radio
             self.__device_list.append(radio)
         except Exception as e:
             if self.__debug:
@@ -722,7 +672,7 @@ class ArgusV1(CubeSat):
             if self.__middleware_enabled:
                 rtc = Middleware(rtc, rtc_fatal_exception)
 
-            self._rtc = rtc
+            self.__rtc = rtc
             self.__device_list.append(rtc)
         except Exception as e:
             if self.__debug:
@@ -741,7 +691,7 @@ class ArgusV1(CubeSat):
                 brightness=ArgusV1Components.NEOPIXEL_BRIGHTNESS,
                 pixel_order=neopixel.GRB,
             )
-            self._neopixel = np
+            self.__neopixel = np
             self.__device_list.append(neopixel)
             self.append_device(neopixel)
         except Exception as e:
@@ -760,7 +710,7 @@ class ArgusV1(CubeSat):
                 ArgusV1Components.SD_CARD_CS,
                 ArgusV1Components.SD_BAUD,
             )
-            self._sd_card = sd_card
+            self.__sd_card = sd_card
             self.append_device(sd_card)
         except Exception as e:
             if self.__debug:
@@ -772,17 +722,17 @@ class ArgusV1(CubeSat):
 
     def __vfs_boot(self) -> list[int]:
         """vfs_boot: Boot sequence for the VFS"""
-        if self._sd_card is None:
+        if self.__sd_card is None:
             return [Diagnostics.SDCARD_NOT_INITIALIZED]
 
         try:
-            vfs = VfsFat(self._sd_card)
+            vfs = VfsFat(self.__sd_card)
 
             mount(vfs, ArgusV1Components.VFS_MOUNT_POINT)
             path.append(ArgusV1Components.VFS_MOUNT_POINT)
 
             path.append(ArgusV1Components.VFS_MOUNT_POINT)
-            self._vfs = vfs
+            self.__vfs = vfs
         except Exception as e:
             if self.__debug:
                 raise e
@@ -806,7 +756,7 @@ class ArgusV1(CubeSat):
             if self.__middleware_enabled:
                 burn_wires = Middleware(burn_wires, burn_wire_fatal_exception)
 
-            self._burn_wires = burn_wires
+            self.__burn_wires = burn_wires
             self.append_device(burn_wires)
         except Exception as e:
             if self.__debug:
@@ -815,18 +765,22 @@ class ArgusV1(CubeSat):
             return [Diagnostics.BURNWIRES_NOT_INITIALIZED]
 
         return [Diagnostics.NOERROR]
-
-    def __jetson_boot(self) -> list[int]:
-        """jetson_boot: Boot sequence for the Jetson"""
+    
+    def __payload_uart_boot(self) -> list[int]:
+        """payload_uart_boot: Boot sequence for the Jetson UART"""
         try:
-            jetson = Middleware(ArgusV1Components.JETSON_UART, jetson_fatal_exception)
-            self._jetson = jetson
-            self.append_device(jetson)
+            payload_uart = PayloadUART(ArgusV1Components.PAYLOAD_UART, ArgusV1Components.PAYLOAD_ENABLE)
+
+            if self.__middleware_enabled:
+                payload_uart = Middleware(payload_uart, payload_uart_fatal_exception)
+
+            self.__payload_uart = payload_uart
+            self.__device_list.append(payload_uart)
         except Exception as e:
             if self.__debug:
                 raise e
 
-            return [Diagnostics.JETSON_NOT_INITIALIZED]
+            return [Diagnostics.PAYLOAD_UART_NOT_INITIALIZED]
 
         return [Diagnostics.NOERROR]
 
@@ -905,9 +859,6 @@ class ArgusV1(CubeSat):
         error_list = [err for err in error_list if err != Diagnostics.NOERROR]
         error_list = list(set(error_list))  # Remove duplicate errors
 
-        self._recent_errors = error_list
+        self.__recent_errors = error_list
 
         return error_list
-
-
-gc.collect()
