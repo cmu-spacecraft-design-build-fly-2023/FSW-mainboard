@@ -36,13 +36,11 @@ SAT_IMG1_CMD = 0x50
 SAT_IMG2_CMD = 0x51
 SAT_IMG3_CMD = 0x52
 
-QUEUE_0 = 0x01
-QUEUE_1 = 0x01
-QUEUE_2 = 0x02
-
 # Heartbeat sequence
 HEARTBEAT_SEQ = [
     SAT_HEARTBEAT_BATT,
+    SAT_HEARTBEAT_SUN,
+    SAT_HEARTBEAT_IMU,
 ]
 
 # Other constants
@@ -67,7 +65,7 @@ def construct_message(lora_tx_message_ID):
 
     if lora_tx_message_ID == SAT_HEARTBEAT_BATT:
         # Construct SAT heartbeat
-        lora_tx_message = [REQ_ACK_NUM | SAT_HEARTBEAT_BATT, 0x00, 0x00, 0x12]
+        lora_tx_message = [REQ_ACK_NUM | SAT_HEARTBEAT_BATT, 0x00, 0x00, 0x0A]
 
         # Generate LoRa payload for SAT heartbeat
         # Add system status
@@ -107,41 +105,28 @@ def construct_message(lora_tx_message_ID):
 
     elif lora_tx_message_ID == SAT_HEARTBEAT_IMU:
         # Construct SAT heartbeat
-        lora_tx_message = [REQ_ACK_NUM | SAT_HEARTBEAT_IMU, 0x00, 0x00, 0x2A]
+        lora_tx_message = [REQ_ACK_NUM | SAT_HEARTBEAT_IMU, 0x00, 0x00, 0x1E]
 
         # Generate LoRa payload for SAT heartbeat
         # Add system status
         lora_tx_message += [0x00, 0x00]
 
-        # Add x-axis acceleration
-        lora_tx_message += convert_fixed_point(1000.1)
+        # Get latest values from IMU task
+        imu_data = DH.get_latest_data("imu")
 
-        # Add y-axis acceleration
-        lora_tx_message += convert_fixed_point(1000.2)
+        # Add magnetometer values
+        lora_tx_message += convert_fixed_point(imu_data["mag_x"])
+        lora_tx_message += convert_fixed_point(imu_data["mag_y"])
+        lora_tx_message += convert_fixed_point(imu_data["mag_z"])
 
-        # Add z-axis acceleration
-        lora_tx_message += convert_fixed_point(1000.3)
-
-        # Add x-axis magnetometer value
-        lora_tx_message += convert_fixed_point(1001.1)
-
-        # Add y-axis magnetometer value
-        lora_tx_message += convert_fixed_point(1001.2)
-
-        # Add z-axis magnetometer value
-        lora_tx_message += convert_fixed_point(1001.3)
-
-        # Add x-axis gyroscope value
-        lora_tx_message += convert_fixed_point(1002.1)
-
-        # Add y-axis gyroscope value
-        lora_tx_message += convert_fixed_point(1002.2)
-
-        # Add z-axis gyroscope value
-        lora_tx_message += convert_fixed_point(1002.3)
+        # Add gyroscope values
+        lora_tx_message += convert_fixed_point(imu_data["gyro_x"])
+        lora_tx_message += convert_fixed_point(imu_data["gyro_y"])
+        lora_tx_message += convert_fixed_point(imu_data["gyro_z"])
 
         # Add time reference as uint32_t
-        lora_tx_message += [0x65, 0xF9, 0xE8, 0x4A]
+        time = imu_data["time"]
+        lora_tx_message += [(time >> 24) & 0xFF, (time >> 16) & 0xFF, (time >> 8) & 0xFF, time & 0xFF]
 
     # GPS NOT IMPLEMENTED IN CURRENT VERSION!!!
     elif lora_tx_message_ID == SAT_HEARTBEAT_GPS:

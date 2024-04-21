@@ -64,7 +64,7 @@ class SATELLITE_RADIO:
         ## ---------- Image Sizes and Message Counts ---------- ##
         if not self.image_strs:
             # No image in buffer
-            print("No image stored on satellite")
+            # print("No image stored on satellite")
 
             # Set all image attributes to 0 for SAT_IMAGES message 
             self.sat_images.image_UID = 0x00
@@ -80,8 +80,8 @@ class SATELLITE_RADIO:
             if (self.sat_images.image_size % 196) > 0:
                 self.sat_images.image_message_count += 1
 
-            print("Image size is", self.sat_images.image_size, "bytes")
-            print("This image requires", self.sat_images.image_message_count, "messages")
+            # print("Image size is", self.sat_images.image_size, "bytes")
+            # print("This image requires", self.sat_images.image_message_count, "messages")
 
             self.image_pack_images()
 
@@ -197,7 +197,7 @@ class SATELLITE_RADIO:
 
                 rec_bytes.close()
 
-                print(f"OTA file successfully uplinked!")
+                # print(f"OTA file successfully uplinked!")
                 self.ota_array.clear()
                 self.ota_sequence_count = 0
 
@@ -214,15 +214,15 @@ class SATELLITE_RADIO:
                 self.gs_req_message_ID = 0x00
                 self.gs_req_ack = 1
             else:
-                print(f"Received (raw bytes): {my_packet}")
+                # print(f"Received (raw bytes): {my_packet}")
                 crc_check = self.sat.RADIO.crc_error()
-                print(f"CRC Status: {crc_check}")
+                # print(f"CRC Status: {crc_check}")
 
                 if crc_check > 0:
                     self.crc_count += 1
 
                 rssi = self.sat.RADIO.rssi(raw=True)
-                print(f"Received signal strength: {rssi} dBm")
+                # print(f"Received signal strength: {rssi} dBm")
                 self.unpack_message(my_packet)
         self.gs_req_ack = 0
 
@@ -323,9 +323,11 @@ class SATELLITE_RADIO:
             self.sat.RADIO.send(tx_message)
             self.crc_count = 0
 
-            # Debug output of message in bytes
-            print(
-                "Satellite sent message with ID:",
-                int.from_bytes(tx_message[0:1], "big") & 0b01111111,
-            )
-            print("\n")
+            # # Debug output of message in bytes
+            # print(
+            #     "Satellite sent message with ID:",
+            #     int.from_bytes(tx_message[0:1], "big") & 0b01111111,
+            # )
+            # print("\n")
+
+            return int.from_bytes(tx_message[0:1], "big") & 0b01111111
