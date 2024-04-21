@@ -227,24 +227,13 @@ class SATELLITE_RADIO:
         while send_multiple:
             time.sleep(0.15)
             # This code is practically the same as Ground Station function hold_receive_mode
-            if (self.gs_req_message_ID == SAT_IMG1_CMD) and (self.crc_count == 0):
+            if ((self.gs_req_message_ID == SAT_IMG1_CMD) and (self.crc_count == 0)):
                 target_sequence_count = self.sat_images.image_message_count
 
                 multiple_packet_count += 1
-
-                if (
-                    (
-                        (
-                            (self.gs_req_seq_count + multiple_packet_count)
-                            % self.send_mod
-                        )
-                        > 0
-                    )
-                    and (
-                        (self.gs_req_seq_count + multiple_packet_count)
-                        < (target_sequence_count - 1)
-                    )
-                ) or ((self.gs_req_seq_count + multiple_packet_count) == 0):
+                
+                if (((((self.gs_req_seq_count + multiple_packet_count) % self.send_mod) > 0) and ((self.gs_req_seq_count + multiple_packet_count) < (target_sequence_count - 1))) or \
+                    ((self.gs_req_seq_count + multiple_packet_count) == 0)):
                     send_multiple = True
                     self.sat_req_ack = 0x0
                 else:

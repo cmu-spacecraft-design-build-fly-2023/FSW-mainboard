@@ -13,6 +13,8 @@ LENGTH     : 1 byte
 Authors: DJ Morvay, Akshat Sahay
 """
 
+from apps.data_handler import DataHandler as DH
+
 # Message ID definitions
 SAT_HEARTBEAT_BATT = 0x00
 SAT_HEARTBEAT_SUN = 0x01
@@ -40,10 +42,7 @@ QUEUE_2 = 0x02
 
 # Heartbeat sequence
 HEARTBEAT_SEQ = [
-    SAT_HEARTBEAT_BATT,
     SAT_HEARTBEAT_SUN,
-    SAT_HEARTBEAT_BATT,
-    SAT_HEARTBEAT_IMU,
 ]
 
 # Other constants
@@ -94,17 +93,17 @@ def construct_message(lora_tx_message_ID):
         # Add system status
         lora_tx_message += [0x00, 0x00]
 
-        # Add x-axis sun vector
-        lora_tx_message += convert_fixed_point_hp(0.1234567)
+        # Get latest values from sun vector task 
+        sun_vector_data = DH.get_latest_data("sun")
 
-        # Add y-axis sun vector
-        lora_tx_message += convert_fixed_point_hp(0.1357924)
-
-        # Add z-axis sun vector
-        lora_tx_message += convert_fixed_point_hp(-0.1234567)
+        # Add sun vector
+        lora_tx_message += convert_fixed_point_hp(sun_vector_data["x"])
+        lora_tx_message += convert_fixed_point_hp(sun_vector_data["y"])
+        lora_tx_message += convert_fixed_point_hp(sun_vector_data["z"])
 
         # Add time reference as uint32_t
-        lora_tx_message += [0x65, 0xF9, 0xE8, 0x4A]
+        time = sun_vector_data["time"]
+        lora_tx_message += [(time >> 24) & 0xFF, (time >> 16) & 0xFF, (time >> 8) & 0xFF, time & 0xFF]
 
     elif lora_tx_message_ID == SAT_HEARTBEAT_IMU:
         # Construct SAT heartbeat
