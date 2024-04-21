@@ -33,11 +33,13 @@ DH.delete_all_files()
 gc.collect()
 print(str(gc.mem_free()) + " bytes free")
 
-try:
-    # Run forever
-    state_manager.start("STARTUP")
-    pass
+import comms_test.py
 
-except Exception as e:
-    print("ERROR:", e)
-    # TODO Log the error
+# try:
+#     # Run forever
+#     state_manager.start("STARTUP")
+#     pass
+
+# except Exception as e:
+#     print("ERROR:", e)
+#     # TODO Log the error

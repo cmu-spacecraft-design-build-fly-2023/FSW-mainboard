@@ -42,7 +42,7 @@ QUEUE_2 = 0x02
 
 # Heartbeat sequence
 HEARTBEAT_SEQ = [
-    SAT_HEARTBEAT_SUN,
+    SAT_HEARTBEAT_BATT,
 ]
 
 # Other constants

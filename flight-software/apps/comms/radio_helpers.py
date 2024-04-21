@@ -28,17 +28,14 @@ class SATELLITE_RADIO:
     def __init__(self, sat: CubeSat):
         self.sat = sat
 
-        self.image_strs = [
-            "/sd/IMAGES/ohio.jpg",
-            "/sd/IMAGES/tokyo_small.jpg",
-            "/sd/IMAGES/oregon_small.jpg",
-        ]
+        # On boot, no images present 
+        self.image_strs = []
         self.image_num = 0
+        self.image_present = False
 
-        # self.image_get_info()
+        self.image_get_info()
         self.send_mod = 10
         self.heartbeat_sent = False
-        self.image_deleted = True
 
         self.gs_req_ack = 0x0
         self.gs_rx_message_ID = 0x0
@@ -62,21 +59,31 @@ class SATELLITE_RADIO:
         # Setup image class
         self.sat_images = IMAGES()
         # Setup initial image UIDs
-        self.sat_images.image_UID = 0x1
+        self.sat_images.image_UID = 0x01
 
         ## ---------- Image Sizes and Message Counts ---------- ##
-        # Get image #1 size and message count
-        image_stat = os.stat(self.image_strs[self.image_num])
-        self.sat_images.image_size = int(image_stat[6])
-        self.sat_images.image_message_count = int(self.sat_images.image_size / 196)
+        if not self.image_strs:
+            # No image in buffer
+            print("No image stored on satellite")
 
-        if (self.sat_images.image_size % 196) > 0:
-            self.sat_images.image_message_count += 1
+            # Set all image attributes to 0 for SAT_IMAGES message 
+            self.sat_images.image_UID = 0x00
+            self.sat_images.image_size = 0
+            self.sat_images.image_message_count = 0
 
-        print("Image size is", self.sat_images.image_size, "bytes")
-        print("This image requires", self.sat_images.image_message_count, "messages")
+        else:
+            # Image present on satellite, get attributes from filepath
+            image_stat = os.stat(self.image_strs[self.image_num])
+            self.sat_images.image_size = int(image_stat[6])
+            self.sat_images.image_message_count = int(self.sat_images.image_size / 196)
 
-        self.image_pack_images()
+            if (self.sat_images.image_size % 196) > 0:
+                self.sat_images.image_message_count += 1
+
+            print("Image size is", self.sat_images.image_size, "bytes")
+            print("This image requires", self.sat_images.image_message_count, "messages")
+
+            self.image_pack_images()
 
     """
         Name: image_pack_info
@@ -104,6 +111,7 @@ class SATELLITE_RADIO:
         # Image #Buffer Store
         bytes_remaining = self.sat_images.image_size
         send_bytes = open(self.image_strs[self.image_num], "rb")
+
         # Loop through image and store contents in an array
         while bytes_remaining > 0:
             if bytes_remaining >= 196:
@@ -112,6 +120,7 @@ class SATELLITE_RADIO:
                 self.image_array.append(send_bytes.read(bytes_remaining))
 
             bytes_remaining -= 196
+
         # Close file when complete
         send_bytes.close()
 
@@ -141,31 +150,40 @@ class SATELLITE_RADIO:
         deconstruct_message(lora_rx_message)
 
         if self.rx_message_ID == GS_ACK:
+            # GS acknowledged and sent command 
             self.gs_rx_message_ID = int.from_bytes(packet[4:5], "big")
             self.gs_req_message_ID = int.from_bytes(packet[5:6], "big")
             self.gs_req_seq_count = int.from_bytes(packet[6:8], "big")
 
             if self.gs_req_message_ID == SAT_DEL_IMG1:
+                # Delete image currently on satellite 
                 self.image_num = (self.image_num + 1) % len(self.image_strs)
                 self.image_get_info()
 
         if self.rx_message_ID == GS_OTA_REQ:
+            # GS sent OTA update
             packets_remaining = int.from_bytes(packet[4:6], "big")
             self.gs_req_message_ID = SAT_OTA_RES
 
             if self.ota_sequence_count == self.rx_message_sequence_count:
+                # Sequence count is synchronized on SAT and GS
                 self.ota_array.append(packet[6 : (6 + (self.rx_message_size - 2))])
                 self.ota_sequence_count += 1
                 self.ota_rec_success = 1
+
             elif self.ota_sequence_count > self.rx_message_sequence_count:
+                # Sequence count mismatch
                 while self.ota_sequence_count > self.rx_message_sequence_count:
+                    # Remove RX'd packets till sequence count matches
                     self.ota_sequence_count -= 1
                     self.ota_array.pop(self.ota_sequence_count)
 
+                # Add packets to OTA update file
                 self.ota_array.append(packet[6 : (self.rx_message_size - 2)])
                 self.ota_sequence_count += 1
                 self.ota_rec_success = 1
             else:
+                # OTA update failed
                 self.ota_rec_success = 0
 
             if (packets_remaining <= 0) and (self.ota_rec_success == 1):
@@ -220,7 +238,7 @@ class SATELLITE_RADIO:
 
         while send_multiple:
             time.sleep(0.15)
-            # This code is practically the same as Ground Station function hold_receive_mode
+            # Check if currently transmitting an image and CRC error has been 0 
             if (self.gs_req_message_ID == SAT_IMG1_CMD) and (self.crc_count == 0):
                 target_sequence_count = self.sat_images.image_message_count
 
@@ -248,6 +266,7 @@ class SATELLITE_RADIO:
                 send_multiple = False
                 self.sat_req_ack = REQ_ACK_NUM
 
+            # If GS did not acknowledge within timeout / on boot, send heartbeat
             if (not self.heartbeat_sent) or (self.crc_count > 0):
                 # Transmit SAT heartbeat
                 tx_message = construct_message(HEARTBEAT_SEQ[self.heartbeat_curr])
