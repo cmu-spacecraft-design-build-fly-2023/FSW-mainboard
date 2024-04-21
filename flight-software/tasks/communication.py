@@ -17,6 +17,8 @@ from hal.configuration import SATELLITE
 # Argus-1 Radio Libs
 from apps.comms.radio_helpers import *
 
+import time
+
 class Task(DebugTask):
 
     name = "COMMS"
@@ -32,12 +34,9 @@ class Task(DebugTask):
     tx_header = 0
 
     async def main_task(self):
-        
-        
-
         # Only transmit if SAT in NOMINAL state 
         if SM.current_state == "NOMINAL":
-            # In NOMINAL state, we can transmit 
+            # In NOMINAL state, can transmit 
 
             # If process not registered, register it 
             if DH.data_process_exists("comms") == False:
