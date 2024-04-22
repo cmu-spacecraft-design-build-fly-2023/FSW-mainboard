@@ -73,7 +73,6 @@ def construct_message(lora_tx_message_ID):
 
         # Get latest values from sun vector task 
         monitor_data = DH.get_latest_data("monitor")
-        print(monitor_data)
 
         # Add battery SOC
         lora_tx_message += [monitor_data["batt_soc"] & 0xFF]

@@ -25,3 +25,5 @@ class Task(DebugTask):
         elif SM.current_state == "NOMINAL":
             print(f"[{self.ID}][{self.name}] GLOBAL STATE: {SM.current_state}.")
             print(f"[{self.ID}][{self.name}] Time: {time.time()}")
+
+            

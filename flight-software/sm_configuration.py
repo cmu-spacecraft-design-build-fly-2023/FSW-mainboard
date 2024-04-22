@@ -15,7 +15,7 @@ TASK_REGISTRY = {
 }
 
 TASK_MAPPING_ID = {
-    "MONITOR": 0x00,
+    "MONITOR": 0x05,
     "TIMING": 0x01,
     "OBDH": 0x02,
     "IMU": 0x03,
@@ -37,7 +37,7 @@ SM_CONFIGURATION = {
     },
     "NOMINAL": {
         "Tasks": {
-            "MONITOR": {"Frequency": 1, "Priority": 2, "ScheduleLater": False},
+            "MONITOR": {"Frequency": 1, "Priority": 1, "ScheduleLater": False},
             "TIMING": {"Frequency": 1, "Priority": 2, "ScheduleLater": False},
             "OBDH": {"Frequency": 1, "Priority": 3, "ScheduleLater": False},
             "IMU": {"Frequency": 1, "Priority": 5, "ScheduleLater": True},

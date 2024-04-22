@@ -147,7 +147,7 @@ class SATELLITE_RADIO:
         # Remove first bit from packet
         lora_rx_message = list(packet)
         lora_rx_message[0] = lora_rx_message[0] & 0b01111111
-        deconstruct_message(lora_rx_message)
+        # deconstruct_message(lora_rx_message)
 
         if self.rx_message_ID == GS_ACK:
             # GS acknowledged and sent command 
