@@ -5,8 +5,8 @@ from hal.cubesat import CubeSat
 PYCUBED_V05 = const(0)
 ARGUS_V1 = const(1)
 
-HARDWARE_VERSION = PYCUBED_V05
-# HARDWARE_VERSION = ARGUS_V1
+# HARDWARE_VERSION = PYCUBED_V05
+HARDWARE_VERSION = ARGUS_V1
 
 # Enable for Middleware
 DEBUG_MODE = False

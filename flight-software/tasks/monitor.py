@@ -39,14 +39,17 @@ class Task(DebugTask):
                     "monitor", self.data_keys, "ffffb", True, line_limit=50
                 )
 
-            self.batt_soc = int((SATELLITE.battery_voltage / 8.4) * 100)
+            self.batt_soc, self.current = SATELLITE.BATTERY_POWER_MONITOR.read_voltage_current()
+
+            self.batt_soc = int(self.batt_soc * 100 / 8.4)
+            self.current = int(self.current * 1000)
             
             # Read data for monitoring 
             readings = {
                 "time": time.time(),
                 "system_status": 0,
                 "batt_soc": self.batt_soc, 
-                "current": int(SATELLITE.current_draw * 1000), 
+                "current": self.current, 
                 "reboot_cnt": 0,
             }
 
