@@ -224,7 +224,9 @@ class SATELLITE_RADIO:
                 rssi = self.sat.RADIO.rssi(raw=True)
                 # print(f"Received signal strength: {rssi} dBm")
                 self.unpack_message(my_packet)
+
         self.gs_req_ack = 0
+        return self.heartbeat_sent
 
     """
         Name: transmit_message

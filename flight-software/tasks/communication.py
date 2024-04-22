@@ -32,11 +32,13 @@ class Task(DebugTask):
     curr_time = time.monotonic_ns()
     SAT_RADIO = SATELLITE_RADIO(SATELLITE)
     tx_header = 0
+    heartbeat_sent = True
 
     async def main_task(self):
         # Only transmit if SAT in NOMINAL state 
         if SM.current_state == "NOMINAL":
             # In NOMINAL state, can transmit 
+            self.heartbeat_sent = True
 
             # If process not registered, register it 
             if DH.data_process_exists("comms") == False:
@@ -54,19 +56,11 @@ class Task(DebugTask):
             Once transmitted, run receive_message, waits for 1s 
             """
 
-            self.tx_header = self.SAT_RADIO.transmit_message()
+            while(self.heartbeat_sent == True):
+                self.tx_header = self.SAT_RADIO.transmit_message()
             
-            # Debug message 
-            print(f"[{self.ID}][{self.name}] Sent message with ID:", self.tx_header)
+                # Debug message 
+                print(f"[{self.ID}][{self.name}] Sent message with ID:", self.tx_header)
 
-            # Receive message, blocking for 1s
-            self.SAT_RADIO.receive_message()
-
-            # Time for frequency checking 
-            prev_time = self.curr_time
-            self.curr_time = time.monotonic_ns()
-
-            # # Debug messages for frequency check 
-            # print(
-            #     f"[{self.ID}][{self.name}] Frequency check: {self.curr_time - prev_time}"
-            # )
+                # Receive message, blocking for 1s
+                self.heartbeat_sent = self.SAT_RADIO.receive_message()
