@@ -6,7 +6,7 @@ Library for interfacing with the Jetson through UART. Also gives access
 to the GPIO pins for signaling
 --------------------
 
-TBD
+Author(s): Sachit Goyal, Harry Rosmann
 
 """
 from .msg import *
@@ -54,10 +54,11 @@ class ArgusComm:
 
         time = 0
         while(self.uart.in_waiting() < HEADER_PKT_SIZE):
-            if time > timeout:
-                return False
-            time += 1
-            sleep(0.01)
+            # if time > timeout:
+            #     return False
+            # time += 1
+            # sleep(0.01)
+            continue
 
         print("Received header")
         header = self.uart.read(HEADER_PKT_SIZE)
