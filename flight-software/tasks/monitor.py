@@ -36,6 +36,7 @@ class Task(DebugTask):
     current = 0
 
     async def main_task(self):
+        # Get power system readings 
         self.batt_soc, self.current = SATELLITE.BATTERY_POWER_MONITOR.read_voltage_current()
 
         self.batt_soc = int(self.batt_soc * 100 / 8.4)

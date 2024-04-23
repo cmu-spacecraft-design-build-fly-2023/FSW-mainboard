@@ -24,10 +24,6 @@ class Task(DebugTask):
     name = "JETSON"
     ID = 0x13
 
-    data_keys = [
-        "time", 
-    ]
-
     argus_comms = ArgusComm(SATELLITE.PAYLOADUART)
     TIMEOUT = 1000
     
@@ -42,18 +38,7 @@ class Task(DebugTask):
             ticks = 0
              
             # Wait for Jetson comms for 0.1s
-            while (not self.argus_comms.receive_message()):
-                if ticks > self.TIMEOUT:
-                    timed_out = True
-                    break
-
-                SATELLITE.PAYLOADUART.reset_input_buffer()
-                time.sleep(0.1)
-                ticks += 1
-
-                print("Waiting for Jetson Comms!")
-            
-            if timed_out:
+            if (self.argus_comms.receive_message() == False):
                 # No message received 
                 print(f"[{self.ID}][{self.name}] No message received from Jetson")
             

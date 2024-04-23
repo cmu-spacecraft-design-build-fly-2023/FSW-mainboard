@@ -47,17 +47,20 @@ class ArgusComm:
         DH.image_completed()
        
     def receive_message(self) -> bool:
-        timeout = 1000
+        timeout = 100
         expected_seq_num = 0
         retries = 0
         reset = False
 
         time = 0
+
         while(self.uart.in_waiting() < HEADER_PKT_SIZE):
-            # if time > timeout:
-            #     return False
-            # time += 1
-            # sleep(0.01)
+            if time > timeout:
+                return False
+
+            time += 1
+            sleep(0.01)
+
             continue
 
         print("Received header")
