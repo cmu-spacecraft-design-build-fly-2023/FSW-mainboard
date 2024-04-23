@@ -155,6 +155,6 @@ class Message:
         Returns:
             tuple[int, int]: the message type and the number of packets
         """
-        print("Header payload: ", header_payload)
+        # print("Header payload: ", header_payload)
         message_type, num_packets = unpack("@BH", header_payload)
         return message_type, num_packets

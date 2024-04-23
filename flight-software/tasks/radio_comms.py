@@ -34,16 +34,24 @@ class Task(DebugTask):
             # In NOMINAL state, can transmit 
             self.heartbeat_sent = True
 
-            # # Check if an image is available for downlinking
-            # tm_path = DH.request_TM_path("img")
-            # if(tm_path != None): 
-            #     # Image available, change filepath
-            #     self.SAT_RADIO.image_strs = [tm_path]
-            #     self.SAT_RADIO.image_get_info()
-            # else:
-            #     # No image available, use empty filepath
-            #     self.SAT_RADIO.image_strs = []
-            #     self.SAT_RADIO.image_get_info()
+            # Check if an image is available for downlinking
+            if DH.data_process_exists("img") == True:
+                tm_path = DH.request_TM_path("img")
+                if(tm_path != None): 
+                    # Image available, change filepath
+                    print(f"[{self.ID}][{self.name}] Onboard image at:", tm_path)
+                    self.SAT_RADIO.image_strs = [tm_path]
+                    self.SAT_RADIO.image_get_info()
+                else:
+                    # No image available, use empty filepath
+                    print(f"[{self.ID}][{self.name}] No image onboard")
+                    self.SAT_RADIO.image_strs = []
+                    self.SAT_RADIO.image_get_info()
+            else:
+                # No image available, use empty filepath
+                print(f"[{self.ID}][{self.name}] No image onboard")
+                self.SAT_RADIO.image_strs = []
+                self.SAT_RADIO.image_get_info()
 
             """
             Heartbeats transmitted every 20s based on task frequency 

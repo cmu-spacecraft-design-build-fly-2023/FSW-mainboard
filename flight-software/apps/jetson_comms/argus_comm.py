@@ -22,6 +22,7 @@ class ArgusComm:
         done = False
         current_seq = 0
         total_packets = message.num_packets
+
         while(not done):
             if current_seq == 0:
                 self.uart.write(message.create_header())
@@ -29,8 +30,10 @@ class ArgusComm:
                 self.uart.write(message.create_packet(current_seq))
             while(self.uart.in_waiting() != PKT_METADATA_SIZE):
                 continue
+
             response = self.uart.read(PKT_METADATA_SIZE)
             (seq_num, packet_type, _) = Message.parse_packet_meta(response)
+            
             if packet_type == PKT_TYPE_ACK:
                 current_seq = seq_num + 1
                 if current_seq == total_packets:
@@ -54,28 +57,41 @@ class ArgusComm:
 
         time = 0
         while(self.uart.in_waiting() < HEADER_PKT_SIZE):
+            if time > timeout:
+                self.uart.reset_input_buffer()
+                return False
+
+            time += 1
+            sleep(0.01)
+
             continue
 
-        print("Received header")
+        # print("Received header")
         header = self.uart.read(HEADER_PKT_SIZE)
         self.uart.reset_input_buffer()
         (seq_num, packet_type, payload_size) = Message.parse_packet_meta(header)
+
         if packet_type != PKT_TYPE_HEADER:
             #clear uart buffer
             raise RuntimeError("Invalid header")
         #do something with message type
         (message_type, num_packets) = Message.parse_header_payload(header[PKT_METADATA_SIZE:])
+
         msg = Message.create_ack(seq_num)
-        print(f"Sending ack {msg}")
+        # print(f"Sending ack {msg}")
         self.uart.write(msg)
         expected_seq_num = seq_num + 1
+
         while(expected_seq_num != num_packets + 1):
-            print(f"Waiting for packet {expected_seq_num}")
+            # print(f"Waiting for packet {expected_seq_num}")
             while(self.uart.in_waiting() < PACKET_SIZE):
                 continue
+
             packet = self.uart.read(PACKET_SIZE)
-            print(f"Received packet")
+            # print(f"Received packet")
+
             (seq_num, packet_type, payload_size) = Message.parse_packet_meta(packet)
+
             if packet_type == PKT_TYPE_DATA and seq_num == expected_seq_num:
                 expected_seq_num += 1
                 retries = 0
@@ -88,6 +104,7 @@ class ArgusComm:
             self.uart.write(Message.create_ack(expected_seq_num - 1))
             payload = packet[PKT_METADATA_SIZE:][:payload_size]
             self.log_data(payload)
+
         self.close_logger()
 
         return True
