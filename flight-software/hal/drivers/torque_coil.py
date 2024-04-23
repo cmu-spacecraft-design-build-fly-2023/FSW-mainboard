@@ -7,34 +7,30 @@ interface to set the torque level on the motor(s) and enable or disable the torq
 Authors: Gordonson Yan, Harry Rosmann
 """
 
-from .drv8830 import DRV8830
-from .middleware import Middleware
-
-
 # TorqueCoil Management Class
 class TorqueInterface:
     """Manage torque for dual or single DRV8830 motor controllers."""
 
-    def __init__(self, drv_p: DRV8830 | Middleware, drv_n: DRV8830 | Middleware = None):
+    def __init__(self, drv_p, drv_n):
         """
         Initialize the TorqueInterface with one or two DRV8830 instances.
 
         :param drv1: The first DRV8830 instance in positive direction (required).
         :param drv2: The second DRV8830 instance in negative direction (optional).
         """
-        if drv_p is None:
+        if drv_p is None and drv_n is None:
             raise ValueError("drv1 must not be None")
 
         self.drv_p = drv_p
         self.drv_n = drv_n
 
     @property
-    def drv_p(self) -> DRV8830 | Middleware:
+    def drv_p(self):
         """Get the positive direction DRV8830 instance."""
         return self.drv_p
 
     @property
-    def drv_n(self) -> DRV8830 | Middleware | None:
+    def drv_n(self):
         """Get the negative direction DRV8830 instance."""
         return self.drv_n
 

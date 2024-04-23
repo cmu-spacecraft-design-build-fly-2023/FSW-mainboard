@@ -104,8 +104,8 @@ class ArgusV1Components:
     SUN_SENSOR_XM_I2C_ADDRESS = const(0x45)
     SUN_SENSOR_YP_I2C_ADDRESS = const(0x46)
     SUN_SENSOR_YM_I2C_ADDRESS = const(0x47)
-    SUN_SENSOR_ZP_I2C_ADDRESS = const(0x49)
-    SUN_SENSOR_ZM_I2C_ADDRESS = const(0x4B)
+    SUN_SENSOR_ZP_I2C_ADDRESS = const(0x48)
+    SUN_SENSOR_ZM_I2C_ADDRESS = const(0x4a)
 
     # RADIO
     RADIO_SPI = ArgusV1Interfaces.SPI
@@ -776,7 +776,7 @@ class ArgusV1(CubeSat):
                 payload_uart = Middleware(payload_uart, payload_uart_fatal_exception)
 
             self.__payload_uart = payload_uart
-            self.__device_list.append(payload_uart)
+            self.__device_list.append(self.__payload_uart)
         except Exception as e:
             if self.__debug:
                 raise e
