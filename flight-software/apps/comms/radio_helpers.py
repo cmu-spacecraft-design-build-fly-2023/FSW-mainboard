@@ -28,10 +28,9 @@ class SATELLITE_RADIO:
     def __init__(self, sat: CubeSat):
         self.sat = sat
 
-        # On boot, no images present 
+        # On boot, no images present
         self.image_strs = []
         self.image_num = 0
-        self.image_present = False
 
         self.image_get_info()
         self.send_mod = 10
@@ -64,7 +63,7 @@ class SATELLITE_RADIO:
         ## ---------- Image Sizes and Message Counts ---------- ##
         if not self.image_strs:
             # No image in buffer
-            print("No image stored on satellite")
+            # print("No image stored on satellite")
 
             # Set all image attributes to 0 for SAT_IMAGES message 
             self.sat_images.image_UID = 0x00
@@ -80,8 +79,8 @@ class SATELLITE_RADIO:
             if (self.sat_images.image_size % 196) > 0:
                 self.sat_images.image_message_count += 1
 
-            print("Image size is", self.sat_images.image_size, "bytes")
-            print("This image requires", self.sat_images.image_message_count, "messages")
+            # print("Image size is", self.sat_images.image_size, "bytes")
+            # print("This image requires", self.sat_images.image_message_count, "messages")
 
             self.image_pack_images()
 
@@ -125,9 +124,7 @@ class SATELLITE_RADIO:
         send_bytes.close()
 
     def image_done_transmitting(self) -> bool:
-        return self.gs_req_message_ID == SAT_DEL_IMG1 or \
-                self.gs_req_message_ID == SAT_DEL_IMG2 or \
-                self.gs_req_message_ID == SAT_DEL_IMG3
+        return self.gs_req_message_ID == SAT_DEL_IMG1
 
     """
         Name: unpack_message
@@ -159,6 +156,17 @@ class SATELLITE_RADIO:
                 # Delete image currently on satellite 
                 self.image_num = (self.image_num + 1) % len(self.image_strs)
                 self.image_get_info()
+            
+            if self.gs_req_message_ID == GS_STOP:
+                # Kill comms with GS
+                # print("GS stopped comms with SAT!")
+                self.heartbeat_sent = False
+
+                self.gs_req_ack = 0x0
+                self.gs_rx_message_ID = 0x0
+                self.gs_req_message_ID = 0x0
+                self.gs_req_seq_count = 0
+                self.sat_req_ack = 0x0
 
         if self.rx_message_ID == GS_OTA_REQ:
             # GS sent OTA update

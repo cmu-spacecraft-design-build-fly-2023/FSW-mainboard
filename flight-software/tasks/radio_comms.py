@@ -34,31 +34,32 @@ class Task(DebugTask):
             # In NOMINAL state, can transmit 
             self.heartbeat_sent = True
 
-            # Check if an image is available for downlinking
-            if DH.data_process_exists("img") == True:
-                tm_path = DH.request_TM_path("img")
-                if(tm_path != None): 
-                    # Image available, change filepath
-                    print(f"[{self.ID}][{self.name}] Onboard image at:", tm_path)
-                    self.SAT_RADIO.image_strs = [tm_path]
-                    self.SAT_RADIO.image_get_info()
-                else:
-                    # No image available, use empty filepath
-                    print(f"[{self.ID}][{self.name}] No image onboard")
-                    self.SAT_RADIO.image_strs = []
-                    self.SAT_RADIO.image_get_info()
-            else:
-                # No image available, use empty filepath
-                print(f"[{self.ID}][{self.name}] No image onboard")
-                self.SAT_RADIO.image_strs = []
-                self.SAT_RADIO.image_get_info()
-
             """
             Heartbeats transmitted every 20s based on task frequency 
             Once transmitted, run receive_message, waits for 1s 
             """
 
             while(self.heartbeat_sent == True):
+                # Check if an image is available for downlinking
+                if DH.data_process_exists("img") == True:
+                    tm_path = DH.request_TM_path("img")
+                    if(tm_path != None): 
+                        # Image available, change filepath
+                        print(f"[{self.ID}][{self.name}] Onboard image at:", tm_path)
+                        self.SAT_RADIO.image_strs = [tm_path]
+                        self.SAT_RADIO.image_get_info()
+                    else:
+                        # No image available, use empty filepath
+                        print(f"[{self.ID}][{self.name}] No image onboard")
+                        self.SAT_RADIO.image_strs = []
+                        self.SAT_RADIO.image_get_info()
+                else:
+                    # No image available, use empty filepath
+                    print(f"[{self.ID}][{self.name}] No image onboard")
+                    self.SAT_RADIO.image_strs = []
+                    self.SAT_RADIO.image_get_info()
+
+                # Transmit message 
                 self.tx_header = self.SAT_RADIO.transmit_message()
             
                 # Debug message 
@@ -68,6 +69,6 @@ class Task(DebugTask):
                 self.heartbeat_sent = self.SAT_RADIO.receive_message()
 
                 if(self.SAT_RADIO.image_done_transmitting()):
+                    print(f"[{self.ID}][{self.name}] Image downlinked, deleting with OBDH")
                     DH.notify_TM_path("img", tm_path)
                     DH.clean_up()
-                    break

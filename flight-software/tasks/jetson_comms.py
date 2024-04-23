@@ -32,6 +32,8 @@ class Task(DebugTask):
             # Register image process
             if DH.data_process_exists("img") == False:
                 DH.register_image_process()
+
+            print(f"[{self.ID}][{self.name}] Requesting Jetson for image")
              
             # Wait for Jetson comms for 0.1s
             if (self.argus_comms.receive_message() == False):
