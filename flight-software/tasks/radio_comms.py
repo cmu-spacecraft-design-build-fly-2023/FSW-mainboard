@@ -55,7 +55,7 @@ class Task(DebugTask):
                         self.SAT_RADIO.image_get_info()
                 else:
                     # No image available, use empty filepath
-                    print(f"[{self.ID}][{self.name}] No image onboard")
+                    print(f"[{self.ID}][{self.name}] No image process")
                     self.SAT_RADIO.image_strs = []
                     self.SAT_RADIO.image_get_info()
 

@@ -817,6 +817,42 @@ class ImageProcess(DataProcess):
         self.file.write(data)
         self.file.flush()
 
+
+    def request_TM_path(self, latest: bool = False) -> Optional[str]:
+            """
+            MODIFIED FOR IMAGES as we need complete images to be transmitted.
+
+            Returns the path of a designated image available for transmission.
+            If no image is available, the function returns None.
+
+            The function store the file path to be excluded in clean-up policies.
+            Once fully transmitted, notify_TM_path() must be called to remove the file from the exclusion list.
+            """
+            # Assumes correct ordering (monotonic timestamp)
+            # TODO
+            files = os.listdir(self.dir_path)
+            if len(files) > 1:  # Ignore process configuration file 
+
+                if latest:
+                    transmit_file = files[-1]
+                    if transmit_file == _PROCESS_CONFIG_FILENAME:
+                        transmit_file = files[-2]
+                else:
+                    transmit_file = files[0]
+                    if transmit_file == _PROCESS_CONFIG_FILENAME:
+                        transmit_file = files[1]
+
+                tm_path = self.dir_path + transmit_file
+
+                if tm_path == self.current_path:
+                    return None
+
+                self.excluded_paths.append(tm_path)
+                return tm_path
+            else:
+                return None
+        
+
     def image_completed(self):
         """
         Closes the current file and resolves it, to prepare for the next image.
@@ -826,6 +862,7 @@ class ImageProcess(DataProcess):
         """
         self.close()
         self.resolve_current_file()
+
 
 
 def path_exist(path: str) -> bool:
