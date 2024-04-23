@@ -42,7 +42,7 @@ class Task(DebugTask):
             while(self.flag_ground_station_pass == True):
                 # Check if an image is available for downlinking
                 if DH.data_process_exists("img") == True:
-                    tm_path = DH.request_TM_path("img")
+                    tm_path = DH.request_TM_path_image()
                     if(tm_path != None): 
                         # Image available, change filepath
                         print(f"[{self.ID}][{self.name}] Onboard image at:", tm_path)

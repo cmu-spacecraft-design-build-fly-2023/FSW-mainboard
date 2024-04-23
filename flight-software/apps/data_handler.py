@@ -348,6 +348,26 @@ class DataHandler:
             print(f"Error: {e}")
 
     @classmethod
+    def request_TM_path_image(cls, latest=False):
+        """
+        Returns the path of a designated image available for transmission.
+        If no file is available, the function returns None.
+
+        The function store the file path to be excluded in clean-up policies.
+        Once fully transmitted, notify_TM_path() must be called to remove the file from the exclusion list.
+        """
+        try:
+            if "img" in cls.data_process_registry:
+                return cls.data_process_registry["img"].request_TM_path(
+                    latest=latest
+                )
+            else:
+                raise KeyError("Image process not registered!")
+        except KeyError as e:
+            print(f"Error: {e}")
+
+
+    @classmethod
     def notify_TM_path(cls, tag_name, path):
         """
         Acknowledge the transmission of the file.
@@ -845,7 +865,7 @@ class ImageProcess(DataProcess):
 
                 tm_path = self.dir_path + transmit_file
 
-                if tm_path == self.current_path:
+                if tm_path == self.current_path or path_exist(tm_path) == False:
                     return None
 
                 self.excluded_paths.append(tm_path)
