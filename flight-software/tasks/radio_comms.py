@@ -26,20 +26,20 @@ class Task(DebugTask):
 
     SAT_RADIO = SATELLITE_RADIO(SATELLITE)
     tx_header = 0
-    heartbeat_sent = True
+    flag_ground_station_pass = True
 
     async def main_task(self):
         # Only transmit if SAT in NOMINAL state 
         if SM.current_state == "NOMINAL":
             # In NOMINAL state, can transmit 
-            self.heartbeat_sent = True
+            self.flag_ground_station_pass = True
 
             """
             Heartbeats transmitted every 20s based on task frequency 
             Once transmitted, run receive_message, waits for 1s 
             """
 
-            while(self.heartbeat_sent == True):
+            while(self.flag_ground_station_pass == True):
                 # Check if an image is available for downlinking
                 if DH.data_process_exists("img") == True:
                     tm_path = DH.request_TM_path("img")
@@ -66,7 +66,7 @@ class Task(DebugTask):
                 print(f"[{self.ID}][{self.name}] Sent message with ID:", self.tx_header)
 
                 # Receive message, blocking for 1s
-                self.heartbeat_sent = self.SAT_RADIO.receive_message()
+                self.flag_ground_station_pass = self.SAT_RADIO.receive_message()
 
                 if(self.SAT_RADIO.image_done_transmitting()):
                     print(f"[{self.ID}][{self.name}] Image downlinked, deleting with OBDH")
