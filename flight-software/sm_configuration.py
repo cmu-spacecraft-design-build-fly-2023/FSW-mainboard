@@ -46,7 +46,7 @@ SM_CONFIGURATION = {
             # "IMU": {"Frequency": 1, "Priority": 5, "ScheduleLater": True},
             "SUN": {"Frequency": 1, "Priority": 5, "ScheduleLater": True},
             "COMMS": {"Frequency": 0.5, "Priority": 5, "ScheduleLater": False},
-            "JETSON": {"Frequency": 1, "Priority": 5, "ScheduleLater": False},
+            "JETSON": {"Frequency": 0.5, "Priority": 5, "ScheduleLater": False},
         },
         "MovesTo": [
             "SAFE",

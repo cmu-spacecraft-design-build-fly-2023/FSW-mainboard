@@ -64,7 +64,7 @@ class SATELLITE_RADIO:
         ## ---------- Image Sizes and Message Counts ---------- ##
         if not self.image_strs:
             # No image in buffer
-            # print("No image stored on satellite")
+            print("No image stored on satellite")
 
             # Set all image attributes to 0 for SAT_IMAGES message 
             self.sat_images.image_UID = 0x00
@@ -80,8 +80,8 @@ class SATELLITE_RADIO:
             if (self.sat_images.image_size % 196) > 0:
                 self.sat_images.image_message_count += 1
 
-            # print("Image size is", self.sat_images.image_size, "bytes")
-            # print("This image requires", self.sat_images.image_message_count, "messages")
+            print("Image size is", self.sat_images.image_size, "bytes")
+            print("This image requires", self.sat_images.image_message_count, "messages")
 
             self.image_pack_images()
 
@@ -241,24 +241,13 @@ class SATELLITE_RADIO:
         while send_multiple:
             time.sleep(0.15)
             # Check if currently transmitting an image and CRC error has been 0 
-            if (self.gs_req_message_ID == SAT_IMG1_CMD) and (self.crc_count == 0):
+            if ((self.gs_req_message_ID == SAT_IMG1_CMD) and (self.crc_count == 0)):
                 target_sequence_count = self.sat_images.image_message_count
 
                 multiple_packet_count += 1
-
-                if (
-                    (
-                        (
-                            (self.gs_req_seq_count + multiple_packet_count)
-                            % self.send_mod
-                        )
-                        > 0
-                    )
-                    and (
-                        (self.gs_req_seq_count + multiple_packet_count)
-                        < (target_sequence_count - 1)
-                    )
-                ) or ((self.gs_req_seq_count + multiple_packet_count) == 0):
+                
+                if (((((self.gs_req_seq_count + multiple_packet_count) % self.send_mod) > 0) and ((self.gs_req_seq_count + multiple_packet_count) < (target_sequence_count - 1))) or \
+                    ((self.gs_req_seq_count + multiple_packet_count) == 0)):
                     send_multiple = True
                     self.sat_req_ack = 0x0
                 else:
@@ -325,11 +314,11 @@ class SATELLITE_RADIO:
             self.sat.RADIO.send(tx_message)
             self.crc_count = 0
 
-            # # Debug output of message in bytes
+            # # # Debug output of message in bytes
             # print(
             #     "Satellite sent message with ID:",
             #     int.from_bytes(tx_message[0:1], "big") & 0b01111111,
             # )
             # print("\n")
 
-            return int.from_bytes(tx_message[0:1], "big") & 0b01111111
+        return int.from_bytes(tx_message[0:1], "big") & 0b01111111

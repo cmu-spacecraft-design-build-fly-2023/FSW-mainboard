@@ -39,7 +39,6 @@ SAT_IMG3_CMD = 0x52
 # Heartbeat sequence
 HEARTBEAT_SEQ = [
     SAT_HEARTBEAT_BATT,
-    SAT_HEARTBEAT_SUN,
 ]
 
 # Other constants
@@ -71,19 +70,22 @@ def construct_message(lora_tx_message_ID):
         lora_tx_message += [0x00, 0x00]
 
         # Get latest values from sun vector task 
-        monitor_data = DH.get_latest_data("monitor")
+        # monitor_data = DH.get_latest_data("monitor")
 
         # Add battery SOC
-        lora_tx_message += [monitor_data["batt_soc"] & 0xFF]
+        # lora_tx_message += [monitor_data["batt_soc"] & 0xFF]
+        lora_tx_message += [0x53 & 0xFF]
 
         # Add current as uint16_t
-        lora_tx_message += [(monitor_data["current"] >> 8) & 0xFF, monitor_data["current"] & 0xFF]
+        # lora_tx_message += [(monitor_data["current"] >> 8) & 0xFF, monitor_data["current"] & 0xFF]
+        lora_tx_message += [0x11, 0x11]
 
         # Add reboot count
         lora_tx_message += [0x00]
 
         # Add time reference as uint32_t
-        time = monitor_data["time"]
+        # time = monitor_data["time"]
+        time = 1713889283
         lora_tx_message += [(time >> 24) & 0xFF, (time >> 16) & 0xFF, (time >> 8) & 0xFF, time & 0xFF]
 
     elif lora_tx_message_ID == SAT_HEARTBEAT_SUN:

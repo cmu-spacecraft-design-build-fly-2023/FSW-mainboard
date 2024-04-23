@@ -38,15 +38,9 @@ while True:
 
     DH.register_image_process()
 
-    print("Waiting on header...")
     ticks = 0
     while (not argus_comms.receive_message()):
-        if ticks > TIMEOUT:
-            timed_out = True
-            break
-
-        SATELLITE.PAYLOADUART.reset_input_buffer()
-        time.sleep(0.1)
+        print("Waiting on header...")
 
     if timed_out:
         print("Timed out waiting for header")

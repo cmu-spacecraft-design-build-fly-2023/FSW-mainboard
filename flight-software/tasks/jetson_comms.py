@@ -25,7 +25,6 @@ class Task(DebugTask):
     ID = 0x13
 
     argus_comms = ArgusComm(SATELLITE.PAYLOADUART)
-    TIMEOUT = 1000
     
     async def main_task(self):
         # Only communicate if SAT in NOMINAL state 
@@ -33,9 +32,6 @@ class Task(DebugTask):
             # Register image process
             if DH.data_process_exists("img") == False:
                 DH.register_image_process()
-
-            # Ticks for tracking timeout  
-            ticks = 0
              
             # Wait for Jetson comms for 0.1s
             if (self.argus_comms.receive_message() == False):
