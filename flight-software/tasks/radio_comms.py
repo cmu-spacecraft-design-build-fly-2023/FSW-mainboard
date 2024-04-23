@@ -24,12 +24,6 @@ class Task(DebugTask):
     name = "COMMS"
     ID = 0x12
 
-    data_keys = [
-        "time", 
-    ]
-
-    # Time for frequency checking 
-    curr_time = time.monotonic_ns()
     SAT_RADIO = SATELLITE_RADIO(SATELLITE)
     tx_header = 0
     heartbeat_sent = True
@@ -40,16 +34,16 @@ class Task(DebugTask):
             # In NOMINAL state, can transmit 
             self.heartbeat_sent = True
 
-            # If process not registered, register it 
-            if DH.data_process_exists("comms") == False:
-                DH.register_data_process(
-                    "comms", self.data_keys, "f", True, line_limit=50
-                )
-
-            # Read time, not sure if necessary 
-            readings = {
-                "time": time.time(),  # temporary fake time
-            } 
+            # # Check if an image is available for downlinking
+            # tm_path = DH.request_TM_path("img")
+            # if(tm_path != None): 
+            #     # Image available, change filepath
+            #     self.SAT_RADIO.image_strs = [tm_path]
+            #     self.SAT_RADIO.image_get_info()
+            # else:
+            #     # No image available, use empty filepath
+            #     self.SAT_RADIO.image_strs = []
+            #     self.SAT_RADIO.image_get_info()
 
             """
             Heartbeats transmitted every 20s based on task frequency 
@@ -64,3 +58,8 @@ class Task(DebugTask):
 
                 # Receive message, blocking for 1s
                 self.heartbeat_sent = self.SAT_RADIO.receive_message()
+
+                if(self.SAT_RADIO.image_done_transmitting()):
+                    DH.notify_TM_path("img", tm_path)
+                    DH.clean_up()
+                    break

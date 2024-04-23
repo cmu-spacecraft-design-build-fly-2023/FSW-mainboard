@@ -31,27 +31,31 @@ class Task(DebugTask):
         "reboot_cnt", 
     ]
 
+    system_status = 0x00
+    batt_soc = 0
+    current = 0
+
     async def main_task(self):
+        self.batt_soc, self.current = SATELLITE.BATTERY_POWER_MONITOR.read_voltage_current()
+
+        self.batt_soc = int(self.batt_soc * 100 / 8.4)
+        self.current = int(self.current * 1000)
+        
+        # Read data for monitoring 
+        readings = {
+            "time": time.time(),
+            "system_status": 0,
+            "batt_soc": self.batt_soc, 
+            "current": self.current, 
+            "reboot_cnt": 0,
+        }
+
         if SM.current_state == "NOMINAL":
             # If process not registered, register it 
             if DH.data_process_exists("monitor") == False:
                 DH.register_data_process(
                     "monitor", self.data_keys, "ffffb", True, line_limit=50
                 )
-
-            self.batt_soc, self.current = SATELLITE.BATTERY_POWER_MONITOR.read_voltage_current()
-
-            self.batt_soc = int(self.batt_soc * 100 / 8.4)
-            self.current = int(self.current * 1000)
-            
-            # Read data for monitoring 
-            readings = {
-                "time": time.time(),
-                "system_status": 0,
-                "batt_soc": self.batt_soc, 
-                "current": self.current, 
-                "reboot_cnt": 0,
-            }
 
             DH.log_data("monitor", readings)
 

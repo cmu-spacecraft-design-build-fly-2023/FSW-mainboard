@@ -4,6 +4,7 @@ from tasks.timing import Task as timing
 from tasks.obdh import Task as obdh
 from tasks.sun import Task as sun
 from tasks.radio_comms import Task as comms
+from tasks.jetson_comms import Task as jetson
 
 TASK_REGISTRY = {
     "MONITOR": monitor,
@@ -12,6 +13,7 @@ TASK_REGISTRY = {
     "IMU": imu,
     "SUN": sun,
     "COMMS": comms, 
+    "JETSON": jetson, 
 }
 
 TASK_MAPPING_ID = {
@@ -21,6 +23,7 @@ TASK_MAPPING_ID = {
     "IMU": 0x03,
     "SUN": 0x11,
     "COMMS": 0x12,
+    "JETSON": 0x13,
 }
 
 
@@ -43,6 +46,7 @@ SM_CONFIGURATION = {
             # "IMU": {"Frequency": 1, "Priority": 5, "ScheduleLater": True},
             "SUN": {"Frequency": 1, "Priority": 5, "ScheduleLater": True},
             "COMMS": {"Frequency": 0.5, "Priority": 5, "ScheduleLater": False},
+            #"JETSON": {"Frequency": 1, "Priority": 5, "ScheduleLater": False},
         },
         "MovesTo": [
             "SAFE",
