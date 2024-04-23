@@ -46,7 +46,6 @@ while True:
             break
 
         SATELLITE.PAYLOADUART.reset_input_buffer()
-        time.sleep(0.1)
 
     if timed_out:
         print("Timed out waiting for header")
