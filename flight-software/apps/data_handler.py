@@ -57,7 +57,7 @@ class DataHandler:
 
     sd_path = "/sd"
     # Keep track of all file processes
-    _data_process_registry = dict()
+    data_process_registry = dict()
 
     @classmethod
     def scan_SD_card(cls) -> None:
@@ -101,19 +101,6 @@ class DataHandler:
                     print("HERE6")
 
         # print("SD Card Scanning complete - found ", cls.data_process_registry.keys())
-
-    @property
-    def data_process_registry(cls) -> dict:
-        """
-        Returns the data process registry.
-
-        Returns:
-            dict: The data process registry.
-
-        Example:
-            registry = DataHandler.data_process_registry
-        """
-        return cls._data_process_registry
 
 
     @classmethod
