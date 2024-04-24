@@ -20,6 +20,7 @@ SAT_HEARTBEAT_BATT = 0x00
 SAT_HEARTBEAT_SUN = 0x01
 SAT_HEARTBEAT_IMU = 0x02
 SAT_HEARTBEAT_GPS = 0x03
+SAT_HEARTBEAT_JETSON = 0x04
 
 GS_ACK = 0x08
 SAT_ACK = 0x09
@@ -36,8 +37,10 @@ SAT_IMG1_CMD = 0x50
 
 # Heartbeat sequence
 HEARTBEAT_SEQ = [
-    SAT_HEARTBEAT_BATT,
+    SAT_HEARTBEAT_BATT, 
     SAT_HEARTBEAT_SUN,
+    SAT_HEARTBEAT_IMU,
+    SAT_HEARTBEAT_JETSON,
 ]
 
 # Other constants
@@ -176,6 +179,30 @@ def construct_message(lora_tx_message_ID):
 
         # Add time reference as uint32_t
         lora_tx_message += [0x65, 0xF9, 0xE8, 0x4A]
+
+    elif lora_tx_message_ID == SAT_HEARTBEAT_JETSON:
+        # Construct SAT heartbeat
+        lora_tx_message = [REQ_ACK_NUM | SAT_HEARTBEAT_JETSON, 0x00, 0x00, 0x1E]
+
+        # Generate LoRa payload for SAT heartbeat
+        # Add system status
+        lora_tx_message += [0x00, 0x00]
+
+        # Add RAM usage % 
+        lora_tx_message += [0x2A]
+
+        # Add disk usage % 
+        lora_tx_message += [0x38]
+
+        # Add CPU temperature
+        lora_tx_message += [0x4B]
+
+        # Add GPU temperature 
+        lora_tx_message += [0x52]
+
+        # Add time reference as uint32_t
+        time = 1713925082
+        lora_tx_message += [(time >> 24) & 0xFF, (time >> 16) & 0xFF, (time >> 8) & 0xFF, time & 0xFF]
 
     else:
         # Construct SAT ACK

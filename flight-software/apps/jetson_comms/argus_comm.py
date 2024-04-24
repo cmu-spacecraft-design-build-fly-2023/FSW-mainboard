@@ -11,6 +11,7 @@ Author(s): Sachit Goyal, Harry Rosmann
 """
 from .msg import *
 from ..data_handler import DataHandler as DH
+from .message_id.py import *
 MAX_RETRIES = 3
 from time import sleep
 
@@ -69,42 +70,57 @@ class ArgusComm:
         # print("Received header")
         header = self.uart.read(HEADER_PKT_SIZE)
         self.uart.reset_input_buffer()
+        # print("Received header:", header)
+
         (seq_num, packet_type, payload_size) = Message.parse_packet_meta(header)
 
         if packet_type != PKT_TYPE_HEADER:
             #clear uart buffer
             raise RuntimeError("Invalid header")
+
         #do something with message type
         (message_type, num_packets) = Message.parse_header_payload(header[PKT_METADATA_SIZE:])
+        # print("Metadata:", message_type, num_packets)
 
-        msg = Message.create_ack(seq_num)
-        # print(f"Sending ack {msg}")
-        self.uart.write(msg)
-        expected_seq_num = seq_num + 1
+        if(message_type == TRANSMIT_IMAGE):
+            # Read image from Jetson
+            msg = Message.create_ack(seq_num)
+            # print(f"Sending ack {msg}")
+            self.uart.write(msg)
+            expected_seq_num = seq_num + 1
 
-        while(expected_seq_num != num_packets + 1):
-            # print(f"Waiting for packet {expected_seq_num}")
-            while(self.uart.in_waiting() < PACKET_SIZE):
-                continue
+            while(expected_seq_num != num_packets + 1):
+                # print(f"Waiting for packet {expected_seq_num}")
+                while(self.uart.in_waiting() < PACKET_SIZE):
+                    continue
 
-            packet = self.uart.read(PACKET_SIZE)
-            # print(f"Received packet")
+                packet = self.uart.read(PACKET_SIZE)
+                # print(f"Received packet")
 
-            (seq_num, packet_type, payload_size) = Message.parse_packet_meta(packet)
+                (seq_num, packet_type, payload_size) = Message.parse_packet_meta(packet)
 
-            if packet_type == PKT_TYPE_DATA and seq_num == expected_seq_num:
-                expected_seq_num += 1
-                retries = 0
-            # else:
-            #     if (retries >= MAX_RETRIES):
-            #         self.close_logger()
-            #         raise RuntimeError("Unable to receive message")
-                #clear uart buffer
-                retries += 1
-            self.uart.write(Message.create_ack(expected_seq_num - 1))
-            payload = packet[PKT_METADATA_SIZE:][:payload_size]
-            self.log_data(payload)
+                if packet_type == PKT_TYPE_DATA and seq_num == expected_seq_num:
+                    expected_seq_num += 1
+                    retries = 0
+                # else:
+                #     if (retries >= MAX_RETRIES):
+                #         self.close_logger()
+                #         raise RuntimeError("Unable to receive message")
+                    #clear uart buffer
+                    retries += 1
+                self.uart.write(Message.create_ack(expected_seq_num - 1))
+                payload = packet[PKT_METADATA_SIZE:][:payload_size]
+                self.log_data(payload)
 
-        self.close_logger()
+            self.close_logger()
 
-        return True
+            return True
+        
+        elif(message_type == TRANSMIT_DIAGNOSTIC_DATA):
+            # Read diagnostics from Jetson
+            msg = Message.create_ack(seq_num)
+            # print(f"Sending ack {msg}")
+            self.uart.write(msg)
+            expected_seq_num = seq_num + 1
+
+            

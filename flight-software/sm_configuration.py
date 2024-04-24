@@ -43,10 +43,10 @@ SM_CONFIGURATION = {
             "MONITOR": {"Frequency": 1, "Priority": 1, "ScheduleLater": False},
             "TIMING": {"Frequency": 1, "Priority": 2, "ScheduleLater": False},
             "OBDH": {"Frequency": 1, "Priority": 2, "ScheduleLater": False},
-            # "IMU": {"Frequency": 0.5, "Priority": 5, "ScheduleLater": True},
+            "IMU": {"Frequency": 0.5, "Priority": 5, "ScheduleLater": True},
             "SUN": {"Frequency": 0.5, "Priority": 5, "ScheduleLater": True},
-            "COMMS": {"Frequency": 0.1, "Priority": 5, "ScheduleLater": True},
-            "JETSON": {"Frequency": 0.05, "Priority": 5, "ScheduleLater": True},
+            "COMMS": {"Frequency": 0.5, "Priority": 5, "ScheduleLater": True},
+            "JETSON": {"Frequency": 0.5, "Priority": 5, "ScheduleLater": True},
         },
         "MovesTo": [
             "SAFE",
@@ -55,7 +55,7 @@ SM_CONFIGURATION = {
     "SAFE": {
         "Tasks": {
             "Monitor": {"Frequency": 10, "Priority": 1, "ScheduleLater": False},
-            # "IMU": {"Frequency": 2, "Priority": 3, "ScheduleLater": False},
+            "IMU": {"Frequency": 2, "Priority": 3, "ScheduleLater": False},
         },
         "MovesTo": ["NOMINAL"],
         "Enters": ["print"],
