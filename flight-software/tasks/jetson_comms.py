@@ -43,32 +43,20 @@ class Task(DebugTask):
                     "jetson", self.data_keys, "ffff", True, line_limit=40
                 )
 
-            # if (time.time() % 1 == 0):
-            #     # Ask Jetson for diagnostic info 
-            #     print(f"[{self.ID}][{self.name}] Requesting Jetson for diagnostics")
-            #     msg = Message(TRANSMIT_DIAGNOSTIC_DATA, struct.pack(b, 0))
+            # Register image process
+            if DH.data_process_exists("img") == False:
+                DH.register_image_process()
 
-            #     # Read diagnostics 
-
-            #     # Decode message (?)
-
-            #     # Write to data readings
-
-            if (time.time() % 1 == 0):
-                # Register image process
-                if DH.data_process_exists("img") == False:
-                    DH.register_image_process()
-
-                # Ask Jetson for image 
-                print(f"[{self.ID}][{self.name}] Requesting Jetson for image")
-                msg = Message(TRANSMIT_IMAGE, struct.pack(b, 0))
-                    
-                # Wait for Jetson comms for 0.1s
-                if (self.argus_comms.receive_message() == False):
-                    # No message received 
-                    print(f"[{self.ID}][{self.name}] No message received from Jetson")
+            # Ask Jetson for image 
+            print(f"[{self.ID}][{self.name}] Requesting Jetson for image")
+            # msg = Message(TRANSMIT_IMAGE, struct.pack(b, 0))
                 
-                # Image received successfully
-                else: 
-                    DH.image_completed()
-                    print(f"[{self.ID}][{self.name}] Image successfully received from Jetson")
+            # Wait for Jetson comms for 0.1s
+            if (self.argus_comms.receive_message() == False):
+                # No message received 
+                print(f"[{self.ID}][{self.name}] No message received from Jetson")
+            
+            # Image received successfully
+            else: 
+                DH.image_completed()
+                print(f"[{self.ID}][{self.name}] Image successfully received from Jetson")
