@@ -11,7 +11,7 @@ Author(s): Sachit Goyal, Harry Rosmann
 """
 from .msg import *
 from ..data_handler import DataHandler as DH
-from .message_id.py import *
+from .message_id import *
 MAX_RETRIES = 3
 from time import sleep
 
@@ -123,4 +123,30 @@ class ArgusComm:
             self.uart.write(msg)
             expected_seq_num = seq_num + 1
 
-            
+            while(expected_seq_num != num_packets + 1):
+                # print(f"Waiting for packet {expected_seq_num}")
+                while(self.uart.in_waiting() < 4):
+                    continue
+
+                packet = self.uart.read(PACKET_SIZE)
+                # print(f"Received packet")
+
+                (seq_num, packet_type, payload_size) = Message.parse_packet_meta(packet)
+
+                if packet_type == PKT_TYPE_DATA and seq_num == expected_seq_num:
+                    expected_seq_num += 1
+                    retries = 0
+                # else:
+                #     if (retries >= MAX_RETRIES):
+                #         self.close_logger()
+                #         raise RuntimeError("Unable to receive message")
+                    #clear uart buffer
+                    retries += 1
+                self.uart.write(Message.create_ack(expected_seq_num - 1))
+                payload = packet[PKT_METADATA_SIZE:][:payload_size]
+                self.log_data(payload)
+
+            return True
+
+        else:
+            print("ERROR: Undefined message type from Jetson")

@@ -43,18 +43,18 @@ class Task(DebugTask):
                     "jetson", self.data_keys, "ffff", True, line_limit=40
                 )
 
-            if (time.time() % 5 == 0):
-                # Ask Jetson for diagnostic info 
-                print(f"[{self.ID}][{self.name}] Requesting Jetson for diagnostics")
-                msg = Message(TRANSMIT_DIAGNOSTIC_DATA, struct.pack(b, 0))
+            # if (time.time() % 1 == 0):
+            #     # Ask Jetson for diagnostic info 
+            #     print(f"[{self.ID}][{self.name}] Requesting Jetson for diagnostics")
+            #     msg = Message(TRANSMIT_DIAGNOSTIC_DATA, struct.pack(b, 0))
 
-                # Read diagnostics 
+            #     # Read diagnostics 
 
-                # Decode message (?)
+            #     # Decode message (?)
 
-                # Write to data readings
+            #     # Write to data readings
 
-            if (time.time() % 30 == 0):
+            if (time.time() % 1 == 0):
                 # Register image process
                 if DH.data_process_exists("img") == False:
                     DH.register_image_process()
