@@ -42,8 +42,13 @@ class SATELLITE_RADIO:
         self.gs_req_seq_count = 0
         self.sat_req_ack = 0x0
 
+        self.heartbeat_seq = [
+            SAT_HEARTBEAT_BATT,
+            SAT_HEARTBEAT_SUN, 
+            SAT_HEARTBEAT_IMU, 
+        ]
         self.heartbeat_curr = 0
-        self.heartbeat_max = len(HEARTBEAT_SEQ)
+        self.heartbeat_max = len(self.heartbeat_seq)
 
         self.ota_array = []
         self.ota_sequence_count = 0
@@ -268,7 +273,7 @@ class SATELLITE_RADIO:
             # If GS did not acknowledge within timeout / on boot, send heartbeat
             if (not self.heartbeat_sent) or (self.crc_count > 0):
                 # Transmit SAT heartbeat
-                tx_message = construct_message(HEARTBEAT_SEQ[self.heartbeat_curr])
+                tx_message = construct_message(self.heartbeat_seq[self.heartbeat_curr])
 
                 if self.heartbeat_curr == (self.heartbeat_max - 1):
                     self.heartbeat_curr = 0
