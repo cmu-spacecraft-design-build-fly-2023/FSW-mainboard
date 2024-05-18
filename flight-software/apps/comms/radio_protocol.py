@@ -71,7 +71,7 @@ def construct_message(lora_tx_message_ID):
 
         if(monitor_data == None):
             # batt_soc, currentx2, reboot, timex4
-            lora_tx_message += [0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]
+            lora_tx_message += [0x55, 0x00, 0x71, 0x00, 0x66, 0x41, 0x39, 0x80]
         
         else:
             # Add battery SOC
@@ -104,10 +104,10 @@ def construct_message(lora_tx_message_ID):
         if(sun_vector_data == None):
             # Add sun vector
             lora_tx_message += convert_fixed_point_hp(1)
-            lora_tx_message += convert_fixed_point_hp(2)
-            lora_tx_message += convert_fixed_point_hp(3)
+            lora_tx_message += convert_fixed_point_hp(0.9981)
+            lora_tx_message += convert_fixed_point_hp(-0.9891)
 
-            lora_tx_message += [0x04, 0x05, 0x06, 0x07]
+            lora_tx_message += [0x66, 0x41, 0x39, 0x80]
         
         else:
             # Add sun vector
@@ -144,7 +144,7 @@ def construct_message(lora_tx_message_ID):
             lora_tx_message += convert_fixed_point(5)
             lora_tx_message += convert_fixed_point(6)    
 
-            lora_tx_message += [0x07, 0x08, 0x09, 0x0A]
+            lora_tx_message += [0x66, 0x41, 0x39, 0x80]
         
         else:
             # Add magnetometer values
