@@ -3,7 +3,7 @@
 ======================
 Python package containing protocol constants (IDs etc.). 
 Also contains functions for constructing/deconstructing 
-protocol messages. OLD VERSION!!!
+protocol messages.
 
 Each message has the following header: 
 MESSAGE_ID : 1 byte 
@@ -13,11 +13,14 @@ LENGTH     : 1 byte
 Authors: DJ Morvay, Akshat Sahay
 """
 
+from apps.data_handler import DataHandler as DH
+
 # Message ID definitions
 SAT_HEARTBEAT_BATT = 0x00
 SAT_HEARTBEAT_SUN = 0x01
 SAT_HEARTBEAT_IMU = 0x02
 SAT_HEARTBEAT_GPS = 0x03
+SAT_HEARTBEAT_JETSON = 0x04
 
 GS_ACK = 0x08
 SAT_ACK = 0x09
@@ -27,30 +30,13 @@ SAT_OTA_RES = 0x15
 
 SAT_IMAGES = 0x21
 SAT_DEL_IMG1 = 0x22
-SAT_DEL_IMG2 = 0x23
-SAT_DEL_IMG3 = 0x24
+
+GS_STOP = 0x30
 
 SAT_IMG1_CMD = 0x50
-SAT_IMG2_CMD = 0x51
-SAT_IMG3_CMD = 0x52
-
-QUEUE_0 = 0x01
-QUEUE_1 = 0x01
-QUEUE_2 = 0x02
-
-# Heartbeat sequence
-HEARTBEAT_SEQ = [
-    SAT_HEARTBEAT_BATT,
-    SAT_HEARTBEAT_SUN,
-    SAT_HEARTBEAT_IMU,
-    SAT_HEARTBEAT_BATT,
-    SAT_HEARTBEAT_SUN,
-    SAT_HEARTBEAT_GPS,
-]
 
 # Other constants
 REQ_ACK_NUM = 0x80
-
 
 class IMAGES:
     def __init__(self):
@@ -58,7 +44,6 @@ class IMAGES:
         self.image_UID = 0x0
         self.image_size = 0
         self.image_message_count = 0
-
 
 def construct_message(lora_tx_message_ID):
     """
@@ -72,23 +57,35 @@ def construct_message(lora_tx_message_ID):
 
     if lora_tx_message_ID == SAT_HEARTBEAT_BATT:
         # Construct SAT heartbeat
-        lora_tx_message = [REQ_ACK_NUM | SAT_HEARTBEAT_BATT, 0x00, 0x00, 0x12]
+        lora_tx_message = [REQ_ACK_NUM | SAT_HEARTBEAT_BATT, 0x00, 0x00, 0x0A]
 
         # Generate LoRa payload for SAT heartbeat
         # Add system status
         lora_tx_message += [0x00, 0x00]
 
-        # Add battery SOCs, 1 byte for each battery
-        lora_tx_message += [0x53, 0x51, 0x47, 0x61, 0x52, 0x51]
+        # Get latest values from monitor task
+        if(DH.data_process_exists("monitor")):
+            monitor_data = DH.get_latest_data("monitor")
+        else:
+            monitor_data = None
 
-        # Add current as uint16_t
-        lora_tx_message += [0x03, 0x7B]
+        if(monitor_data == None):
+            # batt_soc, currentx2, reboot, timex4
+            lora_tx_message += [0x55, 0x00, 0x71, 0x00, 0x66, 0x41, 0x39, 0x80]
+        
+        else:
+            # Add battery SOC
+            lora_tx_message += [monitor_data["batt_soc"] & 0xFF]
 
-        # Add reboot count and payload status
-        lora_tx_message += [0x00, 0x00]
+            # Add current as uint16_t
+            lora_tx_message += [(monitor_data["current"] >> 8) & 0xFF, monitor_data["current"] & 0xFF]
 
-        # Add time reference as uint32_t
-        lora_tx_message += [0x65, 0xF9, 0xE8, 0x4A]
+            # Add reboot count
+            lora_tx_message += [0x00]
+
+            # Add time reference as uint32_t
+            time = monitor_data["time"]
+            lora_tx_message += [(time >> 24) & 0xFF, (time >> 16) & 0xFF, (time >> 8) & 0xFF, time & 0xFF]
 
     elif lora_tx_message_ID == SAT_HEARTBEAT_SUN:
         # Construct SAT heartbeat
@@ -98,56 +95,73 @@ def construct_message(lora_tx_message_ID):
         # Add system status
         lora_tx_message += [0x00, 0x00]
 
-        # Add x-axis sun vector
-        lora_tx_message += convert_fixed_point_hp(0.1234567)
+        # Get latest values from sun vector task 
+        if(DH.data_process_exists("sun")):
+            sun_vector_data = DH.get_latest_data("sun")
+        else:
+            sun_vector_data = None
 
-        # Add y-axis sun vector
-        lora_tx_message += convert_fixed_point_hp(0.1357924)
+        if(sun_vector_data == None):
+            # Add sun vector
+            lora_tx_message += convert_fixed_point_hp(1)
+            lora_tx_message += convert_fixed_point_hp(0.9981)
+            lora_tx_message += convert_fixed_point_hp(-0.9891)
 
-        # Add z-axis sun vector
-        lora_tx_message += convert_fixed_point_hp(-0.1234567)
+            lora_tx_message += [0x66, 0x41, 0x39, 0x80]
+        
+        else:
+            # Add sun vector
+            lora_tx_message += convert_fixed_point_hp(sun_vector_data["x"])
+            lora_tx_message += convert_fixed_point_hp(sun_vector_data["y"])
+            lora_tx_message += convert_fixed_point_hp(sun_vector_data["z"])
 
-        # Add time reference as uint32_t
-        lora_tx_message += [0x65, 0xF9, 0xE8, 0x4A]
+            # Add time reference as uint32_t
+            time = sun_vector_data["time"]
+            lora_tx_message += [(time >> 24) & 0xFF, (time >> 16) & 0xFF, (time >> 8) & 0xFF, time & 0xFF]
 
     elif lora_tx_message_ID == SAT_HEARTBEAT_IMU:
         # Construct SAT heartbeat
-        lora_tx_message = [REQ_ACK_NUM | SAT_HEARTBEAT_IMU, 0x00, 0x00, 0x2A]
+        lora_tx_message = [REQ_ACK_NUM | SAT_HEARTBEAT_IMU, 0x00, 0x00, 0x1E]
 
         # Generate LoRa payload for SAT heartbeat
         # Add system status
         lora_tx_message += [0x00, 0x00]
 
-        # Add x-axis acceleration
-        lora_tx_message += convert_fixed_point(1000.1)
+        # Get latest values from IMU task
+        if(DH.data_process_exists("imu")):
+            imu_data = DH.get_latest_data("imu")
+        else:
+            imu_data = None
 
-        # Add y-axis acceleration
-        lora_tx_message += convert_fixed_point(1000.2)
+        if(imu_data == None):
+            # Add magnetometer values
+            lora_tx_message += convert_fixed_point(1)
+            lora_tx_message += convert_fixed_point(2)
+            lora_tx_message += convert_fixed_point(3)
 
-        # Add z-axis acceleration
-        lora_tx_message += convert_fixed_point(1000.3)
+            # Add gyroscope values
+            lora_tx_message += convert_fixed_point(4)
+            lora_tx_message += convert_fixed_point(5)
+            lora_tx_message += convert_fixed_point(6)    
 
-        # Add x-axis magnetometer value
-        lora_tx_message += convert_fixed_point(1001.1)
+            lora_tx_message += [0x66, 0x41, 0x39, 0x80]
+        
+        else:
+            # Add magnetometer values
+            lora_tx_message += convert_fixed_point(imu_data["mag_x"])
+            lora_tx_message += convert_fixed_point(imu_data["mag_y"])
+            lora_tx_message += convert_fixed_point(imu_data["mag_z"])
 
-        # Add y-axis magnetometer value
-        lora_tx_message += convert_fixed_point(1001.2)
+            # Add gyroscope values
+            lora_tx_message += convert_fixed_point(imu_data["gyro_x"])
+            lora_tx_message += convert_fixed_point(imu_data["gyro_y"])
+            lora_tx_message += convert_fixed_point(imu_data["gyro_z"])
 
-        # Add z-axis magnetometer value
-        lora_tx_message += convert_fixed_point(1001.3)
+            # Add time reference as uint32_t
+            time = imu_data["time"]
+            lora_tx_message += [(time >> 24) & 0xFF, (time >> 16) & 0xFF, (time >> 8) & 0xFF, time & 0xFF]
 
-        # Add x-axis gyroscope value
-        lora_tx_message += convert_fixed_point(1002.1)
-
-        # Add y-axis gyroscope value
-        lora_tx_message += convert_fixed_point(1002.2)
-
-        # Add z-axis gyroscope value
-        lora_tx_message += convert_fixed_point(1002.3)
-
-        # Add time reference as uint32_t
-        lora_tx_message += [0x65, 0xF9, 0xE8, 0x4A]
-
+    # GPS NOT IMPLEMENTED IN CURRENT VERSION!!!
     elif lora_tx_message_ID == SAT_HEARTBEAT_GPS:
         # Construct SAT heartbeat
         lora_tx_message = [REQ_ACK_NUM | SAT_HEARTBEAT_GPS, 0x00, 0x00, 0x36]
@@ -194,6 +208,31 @@ def construct_message(lora_tx_message_ID):
 
         # Add time reference as uint32_t
         lora_tx_message += [0x65, 0xF9, 0xE8, 0x4A]
+
+    # JETSON STATUS NOT IMPLEMENTED IN CURRENT VERSION!!!
+    elif lora_tx_message_ID == SAT_HEARTBEAT_JETSON:
+        # Construct SAT heartbeat
+        lora_tx_message = [REQ_ACK_NUM | SAT_HEARTBEAT_JETSON, 0x00, 0x00, 0x0A]
+
+        # Generate LoRa payload for SAT heartbeat
+        # Add system status
+        lora_tx_message += [0x00, 0x00]
+
+        # Add RAM usage % 
+        lora_tx_message += [0x2A]
+
+        # Add disk usage % 
+        lora_tx_message += [0x38]
+
+        # Add CPU temperature
+        lora_tx_message += [0x4B]
+
+        # Add GPU temperature 
+        lora_tx_message += [0x52]
+
+        # Add time reference as uint32_t
+        time = 1713925082
+        lora_tx_message += [(time >> 24) & 0xFF, (time >> 16) & 0xFF, (time >> 8) & 0xFF, time & 0xFF]
 
     else:
         # Construct SAT ACK

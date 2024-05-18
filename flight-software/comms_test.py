@@ -1,17 +1,12 @@
-"""
-'main.py'
-======================
-Comms PyCubed test bench. 
-
-Authors: DJ Morvay, Akshat Sahay
-"""
-
 from hal.configuration import SATELLITE
 
 # Argus-1 Radio Libs
+from apps.comms.radio_protocol import *
 from apps.comms.radio_helpers import *
 
 SAT_RADIO = SATELLITE_RADIO(SATELLITE)
+SAT_RADIO.heartbeat_seq = [SAT_HEARTBEAT_BATT]
+SAT_RADIO.heartbeat_max = len(SAT_RADIO.heartbeat_seq)
 
 ## ---------- MAIN CODE STARTS HERE! ---------- ##
 

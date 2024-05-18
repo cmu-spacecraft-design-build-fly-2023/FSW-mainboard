@@ -102,6 +102,7 @@ class DataHandler:
 
         # print("SD Card Scanning complete - found ", cls.data_process_registry.keys())
 
+
     @classmethod
     def register_data_process(
         cls,
@@ -345,6 +346,26 @@ class DataHandler:
                 raise KeyError("Data  process not registered!")
         except KeyError as e:
             print(f"Error: {e}")
+
+    @classmethod
+    def request_TM_path_image(cls, latest=False):
+        """
+        Returns the path of a designated image available for transmission.
+        If no file is available, the function returns None.
+
+        The function store the file path to be excluded in clean-up policies.
+        Once fully transmitted, notify_TM_path() must be called to remove the file from the exclusion list.
+        """
+        try:
+            if "img" in cls.data_process_registry:
+                return cls.data_process_registry["img"].request_TM_path(
+                    latest=latest
+                )
+            else:
+                raise KeyError("Image process not registered!")
+        except KeyError as e:
+            print(f"Error: {e}")
+
 
     @classmethod
     def notify_TM_path(cls, tag_name, path):
@@ -817,6 +838,42 @@ class ImageProcess(DataProcess):
         self.file.write(data)
         self.file.flush()
 
+
+    def request_TM_path(self, latest: bool = False) -> Optional[str]:
+            """
+            MODIFIED FOR IMAGES as we need complete images to be transmitted.
+
+            Returns the path of a designated image available for transmission.
+            If no image is available, the function returns None.
+
+            The function store the file path to be excluded in clean-up policies.
+            Once fully transmitted, notify_TM_path() must be called to remove the file from the exclusion list.
+            """
+            # Assumes correct ordering (monotonic timestamp)
+            # TODO
+            files = os.listdir(self.dir_path)
+            if len(files) > 1:  # Ignore process configuration file 
+
+                if latest:
+                    transmit_file = files[-1]
+                    if transmit_file == _PROCESS_CONFIG_FILENAME:
+                        transmit_file = files[-2]
+                else:
+                    transmit_file = files[0]
+                    if transmit_file == _PROCESS_CONFIG_FILENAME:
+                        transmit_file = files[1]
+
+                tm_path = self.dir_path + transmit_file
+
+                if tm_path == self.current_path or path_exist(tm_path) == False:
+                    return None
+
+                self.excluded_paths.append(tm_path)
+                return tm_path
+            else:
+                return None
+        
+
     def image_completed(self):
         """
         Closes the current file and resolves it, to prepare for the next image.
@@ -826,6 +883,7 @@ class ImageProcess(DataProcess):
         """
         self.close()
         self.resolve_current_file()
+
 
 
 def path_exist(path: str) -> bool:
