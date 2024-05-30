@@ -12,6 +12,9 @@ elif platform.system() == "Linux":
     BOARD_PATH = f"/media/{username}/ARGUS"
     if not os.path.exists(BOARD_PATH):
         BOARD_PATH = f"/media/{username}/PYCUBED"
+elif platform.system() == "Darwin":
+    BOARD_PATH = "/Volumes/ARGUS"
+
 
 def copy_folder(source_folder, destination_folder, show_identical_files=True):
 
@@ -48,8 +51,6 @@ def copy_folder(source_folder, destination_folder, show_identical_files=True):
 
 
 if __name__ == "__main__":
-
-
     if platform.system() == "Windows":
         BOARD_PATH = "D:\\"
     elif platform.system() == "Linux":
@@ -57,6 +58,8 @@ if __name__ == "__main__":
         BOARD_PATH = f"/media/{username}/ARGUS"
         if not os.path.exists(BOARD_PATH):
             BOARD_PATH = f"/media/{username}/PYCUBED"
+    elif platform.system() == "Darwin":
+        BOARD_PATH = "/Volumes/ARGUS"
 
     # Parses command line arguments.
     parser = argparse.ArgumentParser()
@@ -81,5 +84,5 @@ if __name__ == "__main__":
 
     source_folder = args.source_folder
     destination_folder = args.destination_folder
-    
+
     copy_folder(source_folder, destination_folder, show_identical_files=True)
