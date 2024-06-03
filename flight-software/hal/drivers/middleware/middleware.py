@@ -14,6 +14,7 @@ Author: Harry Rosmann
 
 from ..diagnostics.diagnostics import Diagnostics
 from micropython import const
+from handlers import Handler
 
 # The default number of retries for the middleware
 # NOTE: Keep this value low to prevent loss of timing
@@ -29,13 +30,14 @@ class Middleware:
     by the flight software.
     """
 
-    def __init__(self, cls_instance: Diagnostics, exception: Exception):
+    def __init__(self, cls_instance: Diagnostics, handler: Handler):
         """__init__: Constructor for the DriverMiddleware class.
 
         :param cls_instance: The instance of the driver class to wrap
         :param exception: The unique exception raised if fault not handled
         """
-        self.exception = exception
+        # self.exception = exception
+        self.handler = handler
         self._wrapped_instance = cls_instance
         self._wrapped_attributes = {}
         self.wrap_attributes()
@@ -84,14 +86,9 @@ class Middleware:
 
         def wrapper(*args, **kwargs):
             try:
-                res = method(*args, **kwargs)
-                num, flags = self._wrapped_instance.get_flags()
-                if num == 0:
-                    return res
-                else:
-                    print(flags)
+                return method(*args, **kwargs)
             except Exception as e:
-                flags = self._wrapped_instance.get_flags()
+                flags = self._wrapped_instance.status()
                 print(flags)
                 # Try to handle fault
                 if not self.handle_fault(method, *args, **kwargs):
@@ -104,6 +101,8 @@ class Middleware:
                     # Don't try to recover this time
                     raise self.exception(e)
 
+        if self.handler.is_handled(method):
+            return self.handler.handle_method(method)
         return wrapper
 
     def handle_fault(self, method, *args, **kwargs) -> bool:

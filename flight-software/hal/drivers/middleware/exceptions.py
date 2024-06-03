@@ -256,3 +256,16 @@ class payload_uart_fatal_exception(Exception):
 
     def __str__(self):
         return f"{type(self.exception).__name__}: {self.exception}"
+
+
+class handler_cant_handle_exception(Exception):
+    """
+    to be used when the handler attempts to handle a method that wasn't given to it
+    as a handlable method
+    """
+    def __init__(self, exception: Exception):
+        self.exception = exception
+        super().__init__()
+
+    def __str__(self):
+        return f"{type(self.exception).__name__}: {self.exception}"
