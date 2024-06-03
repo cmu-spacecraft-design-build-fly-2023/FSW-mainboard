@@ -84,8 +84,15 @@ class Middleware:
 
         def wrapper(*args, **kwargs):
             try:
-                return method(*args, **kwargs)
+                res = method(*args, **kwargs)
+                num, flags = self._wrapped_instance.get_flags()
+                if num == 0:
+                    return res
+                else:
+                    print(flags)
             except Exception as e:
+                flags = self._wrapped_instance.get_flags()
+                print(flags)
                 ## Try to handle fault
                 if not self.handle_fault(method, *args, **kwargs):
                     raise self.exception(e)

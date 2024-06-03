@@ -489,6 +489,40 @@ class OPT4001(Diagnostics):
         register_h, register_l = channels[id]
         return self.read_from_fifo(register_h, register_l, False)
 
+    @property
+    def get_flags(self):
+        res = (self.overload_flag << 3 |
+               (not self.conversion_ready_flag) << 2 |
+               self.flag_h << 1 |
+               self.flag_L)
+        return (res, {
+            "overload_flag": (self.overload_flag, self.handle_overload),
+            "conversion_ready_flag": (self.conversion_ready_flag,
+                                      self.handle_conversion_ready),
+            "flag_H": (self.flag_h, self.handle_flag_H),
+            "flag_L": (self.flag_L, self.handle_flag_L),
+        })
+
+    """
+    ------------------------- Handler Functions -------------------------
+    """
+    def handle_overload(self):
+        print("Lighting Exceeds full-scale range")
+
+    def handle_conversion_ready(self):
+        start_time = monotonic() + 1.1
+        while monotonic() < start_time:
+            if self.conversion_ready_flag:
+                break
+            sleep(0.001)
+        print("conversion ready!")
+
+    def handle_flag_H(self):
+        print("Consistently too high")
+
+    def handle_flag_L(self):
+        print("Consistently too low")
+
     ######################### DIAGNOSTICS #########################
 
     def __check_id_test(self) -> int:

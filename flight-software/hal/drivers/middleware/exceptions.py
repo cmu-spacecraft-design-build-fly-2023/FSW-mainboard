@@ -182,6 +182,16 @@ class sun_sensor_zm_fatal_exception(Exception):
         return f"{type(self.exception).__name__}: {self.exception}"
 
 
+class sun_sensor_overflow_exception(Exception):
+    """lux measurement overflow"""
+    def __init__(self, exception: Exception):
+        self.exception = exception
+        super.__init__()
+
+    def __str__(self):
+        return f"{type(self.exception).__name__}: {self.exception}"
+
+
 class rtc_fatal_exception(Exception):
     """rtc_fatal_exception: Exception for fatal RTC errors"""
 
@@ -235,6 +245,7 @@ class vfs_fatal_exception(Exception):
 
     def __str__(self):
         return f"{type(self.exception).__name__}: {self.exception}"
+
 
 class payload_uart_fatal_exception(Exception):
     """payload_uart_fatal_exception: Exception for fatal payload uart errors"""
