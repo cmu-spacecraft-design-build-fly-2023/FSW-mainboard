@@ -526,7 +526,8 @@ class OPT4001(Diagnostics):
     ######################### DIAGNOSTICS #########################
 
     def __check_id_test(self) -> int:
-        """Checks the opt4001 id to ensure that we can interface with the devices
+        """
+        Checks the opt4001 id to ensure that we can interface with the devices
 
         :return: True if read successful, otherwise false
         """

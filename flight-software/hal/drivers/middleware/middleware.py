@@ -33,7 +33,7 @@ class Middleware:
         """__init__: Constructor for the DriverMiddleware class.
 
         :param cls_instance: The instance of the driver class to wrap
-        :param exception: The unique exception to be raised if fault not handled
+        :param exception: The unique exception raised if fault not handled
         """
         self.exception = exception
         self._wrapped_instance = cls_instance
@@ -93,11 +93,11 @@ class Middleware:
             except Exception as e:
                 flags = self._wrapped_instance.get_flags()
                 print(flags)
-                ## Try to handle fault
+                # Try to handle fault
                 if not self.handle_fault(method, *args, **kwargs):
                     raise self.exception(e)
 
-                ## Second layer of exception handling
+                # Second layer of exception handling
                 try:
                     return method(*args, **kwargs)
                 except Exception as e:
