@@ -29,7 +29,6 @@ from hal.drivers.torque_coil import TorqueInterface
 from hal.drivers.payload import PayloadUART
 from hal.drivers.middleware.middleware import Middleware
 from hal.drivers.middleware.exceptions import *
-from hal.drivers.middleware.handlers import Handler
 
 
 class ArgusV1Interfaces:
@@ -220,8 +219,7 @@ class ArgusV1(CubeSat):
             gps1 = GPS(ArgusV1Components.GPS_UART, ArgusV1Components.GPS_ENABLE)
 
             if self.__middleware_enabled:
-                handler = Handler({})
-                gps1 = Middleware(gps1, gps_fatal_exception, handler)
+                gps1 = Middleware(gps1, gps_fatal_exception)
 
             self.__gps = gps1
             self.__device_list.append(gps1)
@@ -245,9 +243,8 @@ class ArgusV1(CubeSat):
             )
 
             if self.__middleware_enabled:
-                handler = Handler({})
                 battery_monitor = Middleware(
-                    battery_monitor, battery_power_monitor_fatal_exception, handler
+                    battery_monitor, battery_power_monitor_fatal_exception
                 )
 
             self.__battery_monitor = battery_monitor
@@ -272,9 +269,8 @@ class ArgusV1(CubeSat):
             )
 
             if self.__middleware_enabled:
-                handler = Handler({})
                 jetson_monitor = Middleware(
-                    jetson_monitor, battery_power_monitor_fatal_exception, handler
+                    jetson_monitor, battery_power_monitor_fatal_exception
                 )
 
             self.__jetson_monitor = jetson_monitor
@@ -300,8 +296,7 @@ class ArgusV1(CubeSat):
             )
 
             if self.__middleware_enabled:
-                handler = Handler({})
-                imu = Middleware(imu, imu_fatal_exception, handler)
+                imu = Middleware(imu, imu_fatal_exception)
 
             self.__imu = imu
             self.__device_list.append(imu)
@@ -324,8 +319,7 @@ class ArgusV1(CubeSat):
             )
 
             if self.__middleware_enabled:
-                handler = Handler({})
-                charger = Middleware(charger, charger_fatal_exception, handler)
+                charger = Middleware(charger, charger_fatal_exception)
 
             self.__charger = charger
             self.__device_list.append(charger)
@@ -349,8 +343,7 @@ class ArgusV1(CubeSat):
             )
 
             if self.__middleware_enabled:
-                handler = Handler({})
-                torque_xp = Middleware(torque_xp, torque_xp_fatal_exception, handler)
+                torque_xp = Middleware(torque_xp, torque_xp_fatal_exception)
 
             self.__torque_xp_driver = torque_xp
             self.__device_list.append(torque_xp)
@@ -374,8 +367,7 @@ class ArgusV1(CubeSat):
             )
 
             if self.__middleware_enabled:
-                handler = Handler({})
-                torque_xm = Middleware(torque_xm, torque_xm_fatal_exception, handler)
+                torque_xm = Middleware(torque_xm, torque_xm_fatal_exception)
 
             self.__torque_xm_driver = torque_xm
             self.__device_list.append(torque_xm)
@@ -399,8 +391,7 @@ class ArgusV1(CubeSat):
             )
 
             if self.__middleware_enabled:
-                handler = Handler({})
-                torque_yp = Middleware(torque_yp, torque_yp_fatal_exception, handler)
+                torque_yp = Middleware(torque_yp, torque_yp_fatal_exception)
 
             self.__torque_yp_driver = torque_yp
             self.__device_list.append(torque_yp)
@@ -424,8 +415,7 @@ class ArgusV1(CubeSat):
             )
 
             if self.__middleware_enabled:
-                handler = Handler({})
-                torque_ym = Middleware(torque_ym, torque_ym_fatal_exception, handler)
+                torque_ym = Middleware(torque_ym, torque_ym_fatal_exception)
 
             self.__torque_ym_driver = torque_ym
             self.__device_list.append(torque_ym)
@@ -449,8 +439,7 @@ class ArgusV1(CubeSat):
             )
 
             if self.__middleware_enabled:
-                handler = Handler({})
-                torque_z = Middleware(torque_z, torque_z_fatal_exception, handler)
+                torque_z = Middleware(torque_z, torque_z_fatal_exception)
 
             self.__torque_z_driver = torque_z
             self.__device_list.append(torque_z)
@@ -513,8 +502,7 @@ class ArgusV1(CubeSat):
             )
 
             if self.__middleware_enabled:
-                handler = Handler({})
-                sun_sensor_xp = Middleware(sun_sensor_xp, sun_sensor_xp_fatal_exception, handler)
+                sun_sensor_xp = Middleware(sun_sensor_xp, sun_sensor_xp_fatal_exception)
 
             self.__sun_sensor_xp = sun_sensor_xp
             self.__device_list.append(sun_sensor_xp)
@@ -538,8 +526,7 @@ class ArgusV1(CubeSat):
             )
 
             if self.__middleware_enabled:
-                handler = Handler({})
-                sun_sensor_xm = Middleware(sun_sensor_xm, sun_sensor_xm_fatal_exception, handler)
+                sun_sensor_xm = Middleware(sun_sensor_xm, sun_sensor_xm_fatal_exception)
 
             self.__sun_sensor_xm = sun_sensor_xm
             self.__device_list.append(sun_sensor_xm)
@@ -563,8 +550,7 @@ class ArgusV1(CubeSat):
             )
 
             if self.__middleware_enabled:
-                handler = Handler({})
-                sun_sensor_yp = Middleware(sun_sensor_yp, sun_sensor_yp_fatal_exception, handler)
+                sun_sensor_yp = Middleware(sun_sensor_yp, sun_sensor_yp_fatal_exception)
 
             self.__sun_sensor_yp = sun_sensor_yp
             self.__device_list.append(sun_sensor_yp)
@@ -588,8 +574,7 @@ class ArgusV1(CubeSat):
             )
 
             if self.__middleware_enabled:
-                handler = Handler({})
-                sun_sensor_ym = Middleware(sun_sensor_ym, sun_sensor_ym_fatal_exception, handler)
+                sun_sensor_ym = Middleware(sun_sensor_ym, sun_sensor_ym_fatal_exception)
 
             self.__sun_sensor_ym = sun_sensor_ym
             self.__device_list.append(sun_sensor_ym)
@@ -613,8 +598,7 @@ class ArgusV1(CubeSat):
             )
 
             if self.__middleware_enabled:
-                handler = Handler({})
-                sun_sensor_zp = Middleware(sun_sensor_zp, sun_sensor_zp_fatal_exception, handler)
+                sun_sensor_zp = Middleware(sun_sensor_zp, sun_sensor_zp_fatal_exception)
 
             self.__sun_sensor_zp = sun_sensor_zp
             self.__device_list.append(sun_sensor_zp)
@@ -638,8 +622,7 @@ class ArgusV1(CubeSat):
             )
 
             if self.__middleware_enabled:
-                handler = Handler({})
-                sun_sensor_zm = Middleware(sun_sensor_zm, sun_sensor_zm_fatal_exception, handler)
+                sun_sensor_zm = Middleware(sun_sensor_zm, sun_sensor_zm_fatal_exception)
 
             self.__sun_sensor_zm = sun_sensor_zm
             self.__device_list.append(sun_sensor_zm)
@@ -667,8 +650,7 @@ class ArgusV1(CubeSat):
             )
 
             if self.__middleware_enabled:
-                handler = Handler({})
-                radio = Middleware(radio, radio_fatal_exception, handler)
+                radio = Middleware(radio, radio_fatal_exception)
 
             self.__radio = radio
             self.__device_list.append(radio)
@@ -689,8 +671,7 @@ class ArgusV1(CubeSat):
             rtc = PCF8523(ArgusV1Components.RTC_I2C, ArgusV1Components.RTC_I2C_ADDRESS)
 
             if self.__middleware_enabled:
-                handler = Handler({})
-                rtc = Middleware(rtc, rtc_fatal_exception, handler)
+                rtc = Middleware(rtc, rtc_fatal_exception)
 
             self.__rtc = rtc
             self.__device_list.append(rtc)
@@ -774,8 +755,7 @@ class ArgusV1(CubeSat):
             )
 
             if self.__middleware_enabled:
-                handler = Handler({})
-                burn_wires = Middleware(burn_wires, burn_wire_fatal_exception, handler)
+                burn_wires = Middleware(burn_wires, burn_wire_fatal_exception)
 
             self.__burn_wires = burn_wires
             self.append_device(burn_wires)
@@ -793,8 +773,7 @@ class ArgusV1(CubeSat):
             payload_uart = PayloadUART(ArgusV1Components.PAYLOAD_UART, ArgusV1Components.PAYLOAD_ENABLE)
 
             if self.__middleware_enabled:
-                handler = Handler({})
-                payload_uart = Middleware(payload_uart, payload_uart_fatal_exception, handler)
+                payload_uart = Middleware(payload_uart, payload_uart_fatal_exception)
 
             self.__payload_uart = payload_uart
             self.__device_list.append(self.__payload_uart)

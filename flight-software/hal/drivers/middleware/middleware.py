@@ -30,14 +30,14 @@ class Middleware:
     by the flight software.
     """
 
-    def __init__(self, cls_instance: Diagnostics, exception: Exception, handler: Handler):
+    def __init__(self, cls_instance: Diagnostics, exception: Exception):
         """__init__: Constructor for the DriverMiddleware class.
 
         :param cls_instance: The instance of the driver class to wrap
         :param exception: The unique exception raised if fault not handled
         """
         self.exception = exception
-        self.handler = handler
+        self.handler_methods = cls_instance.handler_methods
         self._wrapped_instance = cls_instance
         self._wrapped_attributes = {}
         self.wrap_attributes()
@@ -84,15 +84,19 @@ class Middleware:
         :param method: The method to wrap
         """
 
-        if self.handler.is_handled(method):
-            return self.handler.handle_method(method)
+        if method.__name__ in self.handler_methods:
+            def wrapper(*args, **kwargs):
+                m_handler, m_exception = self.handlers[method.__name__]
+                try:
+                    return m_handler(*args, **kwargs)
+                except Exception as e:
+                    raise m_exception(e)
+            return wrapper
 
         def wrapper(*args, **kwargs):
             try:
                 return method(*args, **kwargs)
             except Exception as e:
-                flags = self._wrapped_instance.status()
-                print(flags)
                 # Try to handle fault
                 if not self.handle_fault(method, *args, **kwargs):
                     raise self.exception(e)
