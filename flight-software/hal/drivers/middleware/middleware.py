@@ -30,13 +30,13 @@ class Middleware:
     by the flight software.
     """
 
-    def __init__(self, cls_instance: Diagnostics, handler: Handler):
+    def __init__(self, cls_instance: Diagnostics, exception: Exception, handler: Handler):
         """__init__: Constructor for the DriverMiddleware class.
 
         :param cls_instance: The instance of the driver class to wrap
         :param exception: The unique exception raised if fault not handled
         """
-        # self.exception = exception
+        self.exception = exception
         self.handler = handler
         self._wrapped_instance = cls_instance
         self._wrapped_attributes = {}
