@@ -766,7 +766,7 @@ class ArgusV1(CubeSat):
             return [Diagnostics.BURNWIRES_NOT_INITIALIZED]
 
         return [Diagnostics.NOERROR]
-    
+
     def __payload_uart_boot(self) -> list[int]:
         """payload_uart_boot: Boot sequence for the Jetson UART"""
         try:
