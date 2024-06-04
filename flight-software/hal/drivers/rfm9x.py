@@ -378,6 +378,8 @@ class RFM9x(Diagnostics):
         self.enable_crc = True
         self.ack_delay = 0.2
 
+        self.handler_methods = {}
+
         super().__init__(self.__enable)
 
         self.sleep()

@@ -89,6 +89,8 @@ class BQ25883(Diagnostics):
         self.i2c_addr = addr
         assert self._pn == 3, "Unable to find BQ25883"
 
+        self.handler_methods = {}
+
         super().__init__()
 
     @property

@@ -63,6 +63,8 @@ class BurnWires(Diagnostics):
         self.__burn_yp = self.__configure_burn_pin(burn_yp)
         self.__burn_ym = self.__configure_burn_pin(burn_ym)
 
+        self.handler_methods = {}
+
         super().__init__(self.__enable)
 
     @property

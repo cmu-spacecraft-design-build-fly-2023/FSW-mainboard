@@ -419,6 +419,8 @@ class BMX160(Diagnostics):
         self.init_accel()
         self.init_gyro()
 
+        self.handler_methods = {}
+
     ######################## I2C HELPERS ########################
     def read_u8(self, address):
         with self.i2c_device as i2c:

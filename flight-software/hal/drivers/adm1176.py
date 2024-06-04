@@ -75,6 +75,8 @@ class ADM1176(Diagnostics):
         self._on = True
         self._overcurrent_level = 0xFF
 
+        self.handler_methods = {}
+
         super().__init__()
 
     def config(self, value: str) -> None:

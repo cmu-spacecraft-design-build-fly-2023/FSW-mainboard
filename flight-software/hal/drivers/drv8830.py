@@ -127,6 +127,8 @@ class DRV8830(Diagnostics):
         # Clear all fault status flags
         self.clear_faults()
 
+        self.handler_methods = {}
+
         super().__init__()
 
     # DEFINE I2C DEVICE BITS, NYBBLES, BYTES, AND REGISTERS

@@ -174,6 +174,8 @@ class PCF8523(Diagnostics):
         # if (buf[1] & 0b00000111) != 0b00000111:
         #     raise ValueError("Unable to find PCF8523 at i2c address 0x68.")
 
+        self.handler_methods = {}
+
         super().__init__()
 
     @property

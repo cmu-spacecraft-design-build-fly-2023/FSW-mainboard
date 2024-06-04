@@ -20,6 +20,8 @@ class PayloadUART(Diagnostics):
         self.__enable = DigitalInOut(enable_pin)
         self.__enable.switch_to_output(value=True)
 
+        self.handler_methods = {}
+
         super().__init__(self.__enable)
 
     def write(self, bytes: bytearray) -> None:

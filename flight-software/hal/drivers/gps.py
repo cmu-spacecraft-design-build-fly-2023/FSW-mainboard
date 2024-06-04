@@ -118,6 +118,7 @@ class GPS(Diagnostics):
         self.mess_num = None
         self._raw_sentence = None
         self.debug = debug
+        self.handler_methods = {}
 
         # Don't care to enable the GPS module during initialization
         self._enable = enable
