@@ -84,6 +84,9 @@ class Middleware:
         :param method: The method to wrap
         """
 
+        if self.handler.is_handled(method):
+            return self.handler.handle_method(method)
+
         def wrapper(*args, **kwargs):
             try:
                 return method(*args, **kwargs)
@@ -101,8 +104,6 @@ class Middleware:
                     # Don't try to recover this time
                     raise self.exception(e)
 
-        if self.handler.is_handled(method):
-            return self.handler.handle_method(method)
         return wrapper
 
     def handle_fault(self, method, *args, **kwargs) -> bool:
