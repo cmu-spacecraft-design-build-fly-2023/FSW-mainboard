@@ -151,6 +151,10 @@ class BQ25883(Diagnostics):
     def led(self, value: bool) -> None:
         self._stat_dis = not value
 
+    """
+    ----------------------- HANDLER METHODS -----------------------
+    """
+
     ######################### DIAGNOSTICS #########################
 
     def __check_for_faults(self) -> list[int]:

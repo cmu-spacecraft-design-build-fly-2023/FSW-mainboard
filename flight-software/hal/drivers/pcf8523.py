@@ -190,6 +190,10 @@ class PCF8523(Diagnostics):
         self.power_management = STANDARD_BATTERY_SWITCHOVER_AND_DETECTION
         self.datetime_register = value
 
+    """
+    ----------------------- HANDLER METHODS -----------------------
+    """
+
     ######################### DIAGNOSTICS #########################
 
     def __check_lost_power(self) -> int:

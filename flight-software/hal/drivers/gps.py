@@ -494,6 +494,10 @@ class GPS(Diagnostics):
         """Disable the GPS module through the enable pin"""
         self.__enable = False
 
+    """
+    ----------------------- HANDLER METHODS -----------------------
+    """
+
     ######################### DIAGNOSTICS #########################
 
     def __check_for_updates(self) -> int:

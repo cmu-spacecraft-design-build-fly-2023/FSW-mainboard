@@ -275,6 +275,10 @@ class DRV8830(Diagnostics):
         self._vset = 0
         self._in_x = BridgeControl.STANDBY
 
+    """
+    ----------------------- HANDLER METHODS -----------------------
+    """
+
     ######################### DIAGNOSTICS #########################
     def __check_for_faults(self) -> list[int]:
         """_check_for_faults: Checks for any device faluts returned by fault function in DRV8830

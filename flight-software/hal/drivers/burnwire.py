@@ -235,3 +235,7 @@ class BurnWires(Diagnostics):
         Burns the negative Y-axis wire.
         """
         self.__burn(self.__burn_ym)
+
+    """
+    ----------------------- HANDLER METHODS -----------------------
+    """

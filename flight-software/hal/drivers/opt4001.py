@@ -499,6 +499,10 @@ class OPT4001(Diagnostics):
                self.flag_L)
         return res
 
+    """
+    ----------------------- HANDLER METHODS -----------------------
+    """
+
     ######################### DIAGNOSTICS #########################
 
     def __check_id_test(self) -> int:

@@ -208,6 +208,10 @@ class ADM1176(Diagnostics):
         with self.i2c_device as i2c:
             i2c.write(_cmd)
         return _STATUS[0]
+    
+    """
+    ----------------------- HANDLER METHODS -----------------------
+    """
 
     ######################### DIAGNOSTICS #########################
 

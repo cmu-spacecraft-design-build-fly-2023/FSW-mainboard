@@ -1124,6 +1124,10 @@ class RFM9x(Diagnostics):
         self._write_u8(_RH_RF95_REG_12_IRQ_FLAGS, 0xFF)
         return
 
+    """
+    ----------------------- HANDLER METHODS -----------------------
+    """
+
     ######################### DIAGNOSTICS #########################
     def _read_frequency(self) -> bool:
         frequency = self._device.frequency_mhz()

@@ -36,6 +36,10 @@ class PayloadUART(Diagnostics):
     def reset_input_buffer(self) -> None:
         self.__uart.reset_input_buffer()
 
+    """
+    ----------------------- HANDLER METHODS -----------------------
+    """
+
     def run_diagnostics(self) -> list[int] | None:
         """run_diagnostic_test: Run all tests for the component"""
         return [Diagnostics.NOERROR]
