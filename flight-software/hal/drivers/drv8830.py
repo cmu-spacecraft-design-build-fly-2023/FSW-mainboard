@@ -51,6 +51,7 @@ from adafruit_register.i2c_bit import RWBit
 from adafruit_register.i2c_bit import ROBit
 
 from .diagnostics.diagnostics import Diagnostics
+from .middleware.generic_driver import Driver
 
 # DEVICE REGISTER MAP
 _CONTROL = 0x00  # Control Register      -W
@@ -110,7 +111,7 @@ class Faults:
     DESCRIPTOR = ["FAULT", "OCP", "UVLO", "OTS", "ILIMIT"]
 
 
-class DRV8830(Diagnostics):
+class DRV8830(Driver):
     """DC motor driver with I2C interface. Using an internal PWM scheme, the
     DRV8830 produces a regulated output voltage from a normalized input value
     (-1.0 to +1.0) or voltage input value (-5.06 to +5.06 volts).
@@ -126,8 +127,6 @@ class DRV8830(Diagnostics):
         self._in_x = BridgeControl.STANDBY
         # Clear all fault status flags
         self.clear_faults()
-
-        self.handler_methods = {}
 
         super().__init__()
 

@@ -9,9 +9,10 @@ Author(s): Harry Rosmann
 """
 
 from .diagnostics.diagnostics import Diagnostics
+from .middleware.generic_driver import Driver
 from digitalio import DigitalInOut
 
-class PayloadUART(Diagnostics):
+class PayloadUART(Driver):
     """Payload: Payload uart driver for the ARGUS-1 CubeSat"""
 
     def __init__(self, uart, enable_pin):
@@ -19,8 +20,6 @@ class PayloadUART(Diagnostics):
 
         self.__enable = DigitalInOut(enable_pin)
         self.__enable.switch_to_output(value=True)
-
-        self.handler_methods = {}
 
         super().__init__(self.__enable)
 

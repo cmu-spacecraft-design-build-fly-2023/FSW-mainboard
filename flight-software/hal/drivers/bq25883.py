@@ -18,6 +18,7 @@ from adafruit_register.i2c_bits import ROBits, RWBits
 from adafruit_register.i2c_bit import RWBit
 
 from .diagnostics.diagnostics import Diagnostics
+from .middleware.generic_driver import Driver
 
 # Registers
 _BATV_LIM = const(0x00)
@@ -66,7 +67,7 @@ def _to_signed(num):
     return num
 
 
-class BQ25883(Diagnostics):
+class BQ25883(Driver):
     """BQ25883: The"""
 
     _pn = ROBits(4, _PART_INFO, 3, 1, False)
@@ -88,8 +89,6 @@ class BQ25883(Diagnostics):
         self.i2c_device = I2CDevice(i2c_bus, addr)
         self.i2c_addr = addr
         assert self._pn == 3, "Unable to find BQ25883"
-
-        self.handler_methods = {}
 
         super().__init__()
 

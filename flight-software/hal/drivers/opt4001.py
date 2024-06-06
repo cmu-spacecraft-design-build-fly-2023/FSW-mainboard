@@ -46,6 +46,7 @@ from adafruit_register.i2c_bits import RWBits
 from adafruit_register.i2c_bit import ROBit, RWBit
 
 from .diagnostics.diagnostics import Diagnostics
+from .middleware.generic_driver import Driver
 
 try:
     from typing_extensions import Literal
@@ -72,7 +73,7 @@ SOT_5X3 = const(0)
 PICOSTAR = const(1)
 
 
-class OPT4001(Diagnostics):
+class OPT4001(Driver):
     """
     Driver for the OPT4001 ambient light sensor
 
@@ -284,8 +285,6 @@ class OPT4001(Diagnostics):
         if your device is Picostar (1) or SOT-5x3 (0)
 
         """
-
-        self.handler_methods = {}
 
         self.buf = bytearray(3)
 

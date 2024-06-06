@@ -53,6 +53,7 @@ from adafruit_register import i2c_bcd_alarm
 from adafruit_register import i2c_bcd_datetime
 
 from .diagnostics.diagnostics import Diagnostics
+from .middleware.generic_driver import Driver
 
 try:
     import typing  # noqa: F401
@@ -65,7 +66,7 @@ STANDARD_BATTERY_SWITCHOVER_AND_DETECTION = 0b000
 BATTERY_SWITCHOVER_OFF = 0b111
 
 
-class PCF8523(Diagnostics):
+class PCF8523(Driver):
     """Interface to the PCF8523 RTC.
 
     :param ~busio.I2C i2c_bus: The I2C bus the device is connected to
@@ -173,8 +174,6 @@ class PCF8523(Diagnostics):
 
         # if (buf[1] & 0b00000111) != 0b00000111:
         #     raise ValueError("Unable to find PCF8523 at i2c address 0x68.")
-
-        self.handler_methods = {}
 
         super().__init__()
 

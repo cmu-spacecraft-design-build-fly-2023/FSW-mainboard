@@ -45,6 +45,7 @@ Implementation Notes
 from time import struct_time
 from micropython import const
 from .diagnostics.diagnostics import Diagnostics
+from .middleware.generic_driver import Driver
 from digitalio import DigitalInOut
 
 __version__ = "3.5.1"
@@ -85,7 +86,7 @@ def _parse_str(nmea_data):
 
 # lint warning about too many attributes disabled
 # pylint: disable-msg=R0902
-class GPS(Diagnostics):
+class GPS(Driver):
     """GPS parsing module.  Can parse simple NMEA data sentences from serial
     GPS modules to read latitude, longitude, and more.
     """
@@ -118,7 +119,6 @@ class GPS(Diagnostics):
         self.mess_num = None
         self._raw_sentence = None
         self.debug = debug
-        self.handler_methods = {}
 
         # Don't care to enable the GPS module during initialization
         self._enable = enable

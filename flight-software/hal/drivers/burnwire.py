@@ -6,13 +6,14 @@ Date: March 28, 2024
 """
 
 from .diagnostics.diagnostics import Diagnostics
+from .middleware.generic_driver import Driver
 from digitalio import DigitalInOut, DriveMode
 from pwmio import PWMOut
 from micropython import const
 from time import sleep
 
 
-class BurnWires(Diagnostics):
+class BurnWires(Driver):
     """
     The BurnWires class provides functionality for controlling burn wires.
 
@@ -62,8 +63,6 @@ class BurnWires(Diagnostics):
         self.__burn_xm = self.__configure_burn_pin(burn_xm)
         self.__burn_yp = self.__configure_burn_pin(burn_yp)
         self.__burn_ym = self.__configure_burn_pin(burn_ym)
-
-        self.handler_methods = {}
 
         super().__init__(self.__enable)
 

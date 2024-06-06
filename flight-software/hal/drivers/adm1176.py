@@ -15,7 +15,7 @@ from micropython import const
 from adafruit_bus_device.i2c_device import I2CDevice
 
 from .diagnostics.diagnostics import Diagnostics
-
+from .middleware.generic_driver import Driver
 
 def _to_signed(num):
     if num > 0x7FFF:
@@ -65,7 +65,7 @@ CONTROL_REG_ADDR = const(0x83)
 CONTROL_SWOFF = const(0x1 << 0)
 
 
-class ADM1176(Diagnostics):
+class ADM1176(Driver):
     def __init__(self, i2c_bus, addr=0x4A):
         self.i2c_device = I2CDevice(i2c_bus, addr, probe=False)
         self.i2c_addr = addr
@@ -74,8 +74,6 @@ class ADM1176(Diagnostics):
 
         self._on = True
         self._overcurrent_level = 0xFF
-
-        self.handler_methods = {}
 
         super().__init__()
 

@@ -1,5 +1,6 @@
 from time import sleep
 from .diagnostics.diagnostics import Diagnostics
+from .middleware.generic_driver import Driver
 from digitalio import DigitalInOut
 
 
@@ -305,7 +306,7 @@ class _ScaledReadOnlyStruct(Struct):
 # scale factor can be changed as a function of range mode
 
 
-class BMX160(Diagnostics):
+class BMX160(Driver):
     """
     Driver for the BMX160 accelerometer, magnetometer, gyroscope.
 
@@ -418,8 +419,6 @@ class BMX160(Diagnostics):
         self.init_mag()
         self.init_accel()
         self.init_gyro()
-
-        self.handler_methods = {}
 
     """
     ----------------------- HANDLER METHODS -----------------------
