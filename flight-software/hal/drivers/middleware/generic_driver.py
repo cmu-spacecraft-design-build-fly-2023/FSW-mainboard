@@ -57,6 +57,7 @@ class Driver(Diagnostics):
         
         return handle
 
+    @property
     def get_flags(self) -> dict:
         """
         should return a dictionary of (raised flag -> fixer function)

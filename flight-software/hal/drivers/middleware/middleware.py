@@ -12,7 +12,7 @@ Author: Harry Rosmann
 
 """
 
-from ..diagnostics.diagnostics import Diagnostics
+from diagnostics.diagnostics import Diagnostics
 from micropython import const
 from handlers import Handler
 
