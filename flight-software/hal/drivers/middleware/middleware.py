@@ -14,7 +14,6 @@ Author: Harry Rosmann
 
 from diagnostics.diagnostics import Diagnostics
 from micropython import const
-from handlers import Handler
 
 # The default number of retries for the middleware
 # NOTE: Keep this value low to prevent loss of timing

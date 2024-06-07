@@ -4,6 +4,7 @@ from digitalio import DigitalInOut
 
 FAULT_HANDLE_RETRIES = 3
 
+
 class driver_cant_handle_exception(Exception):
     """
     to be used when the handler attempts to handle a method that wasn't given to it
@@ -30,7 +31,7 @@ class Driver(Diagnostics):
         if method.__name__ not in self.handleable:
             raise driver_cant_handle_exception("tried to handle unhandleable method")
         checker, m_exception = self.checkers[method.__name__]
-        
+
         def handle(*args, **kwargs):
             try:
                 res = method(*args, **kwargs)
@@ -39,7 +40,7 @@ class Driver(Diagnostics):
                     return res
                 else:
                     raise m_exception("erroneus result")
-            except Exception as e:
+            except Exception:
                 flags = self.get_flags()
                 for flag in flags:
                     fixer = flags[flag]
@@ -54,7 +55,7 @@ class Driver(Diagnostics):
                         raise m_exception("erroneus result")
                 except Exception as e:
                     raise m_exception(e)
-        
+
         return handle
 
     @property
