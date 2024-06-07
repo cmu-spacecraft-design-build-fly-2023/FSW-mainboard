@@ -192,6 +192,14 @@ class PCF8523(Driver):
     """
     ----------------------- HANDLER METHODS -----------------------
     """
+    @property
+    def get_flags(self):
+        flags = {}
+        if self.lost_power:
+            flags['lost_power'] = None
+        if self.battery_low:
+            flags['battery_low'] = None
+        return flags
 
     ######################### DIAGNOSTICS #########################
 

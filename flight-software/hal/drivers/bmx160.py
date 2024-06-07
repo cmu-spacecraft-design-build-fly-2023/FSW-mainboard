@@ -423,6 +423,9 @@ class BMX160(Driver):
     """
     ----------------------- HANDLER METHODS -----------------------
     """
+    @property
+    def get_flags(self):
+        return {}
 
     ######################## I2C HELPERS ########################
     def read_u8(self, address):

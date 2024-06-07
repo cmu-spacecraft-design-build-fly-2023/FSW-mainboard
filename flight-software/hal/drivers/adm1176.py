@@ -206,10 +206,27 @@ class ADM1176(Driver):
         with self.i2c_device as i2c:
             i2c.write(_cmd)
         return _STATUS[0]
-    
+
     """
     ----------------------- HANDLER METHODS -----------------------
     """
+    @property
+    def get_flags(self):
+        flags = {}
+        status = self.status
+        if status & 0b1:
+            flags['ADC_OC'] = None
+        if status & 0b10:
+            flags['ADC_ALERT'] = None
+        if status & 0b100:
+            flags['HS_OC'] = None
+        if status & 0b1000:
+            flags['HS_ALERT'] = None
+        if status & 0b10000:
+            flags['OFF_STATUS'] = None
+        if status & 0b100000:
+            flags['OFF_ALERT'] = None
+        return flags
 
     ######################### DIAGNOSTICS #########################
 

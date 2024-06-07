@@ -277,6 +277,20 @@ class DRV8830(Driver):
     """
     ----------------------- HANDLER METHODS -----------------------
     """
+    @property
+    def get_flags(self):
+        flags = {}
+        status = self._fault
+        if self._fault:
+            if self._ocp:
+                flags['ocp'] = None
+            if self._uvlo:
+                flags['uvlo'] = None
+            if self._ots:
+                flags['ots'] = None
+            if self._ilimit:
+                flags['ilimit'] = None
+        return flags
 
     ######################### DIAGNOSTICS #########################
     def __check_for_faults(self) -> list[int]:

@@ -1126,6 +1126,9 @@ class RFM9x(Driver):
     """
     ----------------------- HANDLER METHODS -----------------------
     """
+    @property
+    def get_flags(self):
+        return {}
 
     ######################### DIAGNOSTICS #########################
     def _read_frequency(self) -> bool:

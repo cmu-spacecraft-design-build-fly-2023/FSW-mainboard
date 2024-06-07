@@ -501,6 +501,18 @@ class OPT4001(Driver):
     """
     ----------------------- HANDLER METHODS -----------------------
     """
+    @property
+    def get_flags(self):
+        flags = {}
+        if self.flag_h:
+            flags['flag_H'] = None
+        if self.flag_L:
+            flags['flag_L'] = None
+        if self.overload_flag:
+            flags['overload_flag'] = None
+        if self.conversion_ready_flag:
+            flags['conversion_ready_flag'] = None
+        return flags
 
     ######################### DIAGNOSTICS #########################
 

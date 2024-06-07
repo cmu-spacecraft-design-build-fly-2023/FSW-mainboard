@@ -497,6 +497,9 @@ class GPS(Driver):
     """
     ----------------------- HANDLER METHODS -----------------------
     """
+    @property
+    def get_flags(self):
+        return {}
 
     ######################### DIAGNOSTICS #########################
 

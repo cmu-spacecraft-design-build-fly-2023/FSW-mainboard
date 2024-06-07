@@ -12,6 +12,7 @@ from .diagnostics.diagnostics import Diagnostics
 from .middleware.generic_driver import Driver
 from digitalio import DigitalInOut
 
+
 class PayloadUART(Driver):
     """Payload: Payload uart driver for the ARGUS-1 CubeSat"""
 
@@ -31,13 +32,16 @@ class PayloadUART(Driver):
 
     def in_waiting(self) -> int:
         return self.__uart.in_waiting
-    
+
     def reset_input_buffer(self) -> None:
         self.__uart.reset_input_buffer()
 
     """
     ----------------------- HANDLER METHODS -----------------------
     """
+    @property
+    def get_flags(self):
+        return {}
 
     def run_diagnostics(self) -> list[int] | None:
         """run_diagnostic_test: Run all tests for the component"""
