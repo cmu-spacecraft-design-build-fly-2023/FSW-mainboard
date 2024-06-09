@@ -14,7 +14,6 @@ def add_project_root_to_path():
 if __name__ == "__main__":
     add_project_root_to_path()
 
-
     import numpy 
     sys.path.append('tests/cp')
     sys.modules['micropython'] = __import__('micropython_mock')

@@ -1,11 +1,13 @@
+import tests.cp_mock
 
 import pytest
 import os
-import json
-from unittest.mock import patch, mock_open
 
 import flight.apps.data_handler as dh
 from flight.apps.data_handler import DataHandler as DH, DataProcess as DP
+
+
+
 
 @pytest.mark.parametrize("data_format, expected_size", [
     ("<bBhHiIlLqQfd", 1+1+2+2+4+4+4+4+8+8+4+8), # example with all format characters

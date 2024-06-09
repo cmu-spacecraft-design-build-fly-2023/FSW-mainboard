@@ -1,3 +1,5 @@
+import tests.cp_mock
+
 import numpy as np
 import pytest 
 
