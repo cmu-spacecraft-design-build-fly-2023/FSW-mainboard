@@ -166,7 +166,10 @@ class Diagnostics:
 
         for error in unique_errors:
             # Ensure it is a valid error number
-            if error < Diagnostics.__ERROR_MIN or error > Diagnostics.__ERROR_MAX:
+            if (
+                error < Diagnostics.__ERROR_MIN
+                or error > Diagnostics.__ERROR_MAX
+            ):
                 raise RuntimeError(f"Unrecognized error number ({error})")
 
             # NOTE: We DO want to track if there is no error

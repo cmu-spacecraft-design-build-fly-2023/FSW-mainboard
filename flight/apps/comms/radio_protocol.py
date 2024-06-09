@@ -232,7 +232,12 @@ def construct_message(lora_tx_message_ID):
     # JETSON STATUS NOT IMPLEMENTED IN CURRENT VERSION!!!
     elif lora_tx_message_ID == SAT_HEARTBEAT_JETSON:
         # Construct SAT heartbeat
-        lora_tx_message = [REQ_ACK_NUM | SAT_HEARTBEAT_JETSON, 0x00, 0x00, 0x0A]
+        lora_tx_message = [
+            REQ_ACK_NUM | SAT_HEARTBEAT_JETSON,
+            0x00,
+            0x00,
+            0x0A,
+        ]
 
         # Generate LoRa payload for SAT heartbeat
         # Add system status

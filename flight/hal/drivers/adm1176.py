@@ -230,7 +230,8 @@ class ADM1176(Diagnostics):
                 return Diagnostics.ADM1176_NOT_CONNECTED_TO_POWER
             elif rVoltage > V_MAX or rVoltage < V_MIN:
                 print(
-                    "Error: Voltage out of typical range!! Voltage Reading: ", rVoltage
+                    "Error: Voltage out of typical range!! Voltage Reading: ",
+                    rVoltage,
                 )
                 return Diagnostics.ADM1176_VOLTAGE_OUT_OF_RANGE
 

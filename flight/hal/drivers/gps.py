@@ -274,7 +274,11 @@ class GPS(Diagnostics):
 
         # Parse latitude and longitude.
         self.latitude = _parse_degrees(data[0])
-        if self.latitude is not None and data[1] is not None and data[1].lower() == "s":
+        if (
+            self.latitude is not None
+            and data[1] is not None
+            and data[1].lower() == "s"
+        ):
             self.latitude *= -1.0
         self.longitude = _parse_degrees(data[2])
         if (
@@ -290,9 +294,13 @@ class GPS(Diagnostics):
             secs = time_utc % 100
             # Set or update time to a friendly python time struct.
             if self.timestamp_utc is not None:
-                self.timestamp_utc = struct_time((0, 0, 0, hours, mins, secs, 0, 0, -1))
+                self.timestamp_utc = struct_time(
+                    (0, 0, 0, hours, mins, secs, 0, 0, -1)
+                )
             else:
-                self.timestamp_utc = struct_time((0, 0, 0, hours, mins, secs, 0, 0, -1))
+                self.timestamp_utc = struct_time(
+                    (0, 0, 0, hours, mins, secs, 0, 0, -1)
+                )
         # Parse data active or void
         self.isactivedata = _parse_str(data[5])
 
@@ -324,7 +332,9 @@ class GPS(Diagnostics):
                     )
                 )
             else:
-                self.timestamp_utc = struct_time((0, 0, 0, hours, mins, secs, 0, 0, -1))
+                self.timestamp_utc = struct_time(
+                    (0, 0, 0, hours, mins, secs, 0, 0, -1)
+                )
         # Parse status (active/fixed or void).
         status = data[1]
         self.fix_quality = 0
@@ -332,7 +342,11 @@ class GPS(Diagnostics):
             self.fix_quality = 1
         # Parse latitude and longitude.
         self.latitude = _parse_degrees(data[2])
-        if self.latitude is not None and data[3] is not None and data[3].lower() == "s":
+        if (
+            self.latitude is not None
+            and data[3] is not None
+            and data[3].lower() == "s"
+        ):
             self.latitude *= -1.0
         self.longitude = _parse_degrees(data[4])
         if (
@@ -348,7 +362,9 @@ class GPS(Diagnostics):
         if data[8] is not None and len(data[8]) == 6:
             day = int(data[8][0:2])
             month = int(data[8][2:4])
-            year = 2000 + int(data[8][4:6])  # Y2k bug, 2 digit year assumption.
+            year = 2000 + int(
+                data[8][4:6]
+            )  # Y2k bug, 2 digit year assumption.
             # This is a problem with the NMEA
             # spec and not this code.
             if self.timestamp_utc is not None:
@@ -369,7 +385,9 @@ class GPS(Diagnostics):
                 )
             else:
                 # Time hasn't been set so create it.
-                self.timestamp_utc = struct_time((year, month, day, 0, 0, 0, 0, 0, -1))
+                self.timestamp_utc = struct_time(
+                    (year, month, day, 0, 0, 0, 0, 0, -1)
+                )
 
     def _parse_gpgga(self, args):
         # Parse the arguments (everything after data type) for NMEA GPGGA
@@ -399,10 +417,16 @@ class GPS(Diagnostics):
                     )
                 )
             else:
-                self.timestamp_utc = struct_time((0, 0, 0, hours, mins, secs, 0, 0, -1))
+                self.timestamp_utc = struct_time(
+                    (0, 0, 0, hours, mins, secs, 0, 0, -1)
+                )
         # Parse latitude and longitude.
         self.latitude = _parse_degrees(data[1])
-        if self.latitude is not None and data[2] is not None and data[2].lower() == "s":
+        if (
+            self.latitude is not None
+            and data[2] is not None
+            and data[2].lower() == "s"
+        ):
             self.latitude *= -1.0
         self.longitude = _parse_degrees(data[3])
         if (

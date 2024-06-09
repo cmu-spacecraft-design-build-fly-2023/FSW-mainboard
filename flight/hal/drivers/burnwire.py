@@ -196,7 +196,9 @@ class BurnWires(Diagnostics):
         """
         # Set the duty cycle to 0 so it doesn't start burning
         burn_wire = PWMOut(
-            burn_pin, frequency=self.frequency_hz, duty_cycle=self.DUTY_CYCLE_OFF
+            burn_pin,
+            frequency=self.frequency_hz,
+            duty_cycle=self.DUTY_CYCLE_OFF,
         )
 
         return burn_wire

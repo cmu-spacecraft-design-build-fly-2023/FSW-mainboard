@@ -115,7 +115,9 @@ class TestLoop(TestCase):
         actual_tps = 0
         # Assert that all the tasks hit their scheduled count, at least within +-5 iterations.
         for i in range(len(counters)):
-            self.assertAlmostEqual(duration * (3 * (i + 1) + 5), counters[i], delta=5)
+            self.assertAlmostEqual(
+                duration * (3 * (i + 1) + 5), counters[i], delta=5
+            )
             expected_tps += 3 * (i + 1) + 5
             actual_tps += counters[i]
         actual_tps /= duration
@@ -167,6 +169,8 @@ class TestLoop(TestCase):
             0, count, "count should not increment before waiting long enough"
         )
 
-        time.sleep(0.1)  # Make sure enough time has passed for step to pick up the task
+        time.sleep(
+            0.1
+        )  # Make sure enough time has passed for step to pick up the task
         loop._step()
         self.assertEqual(1, count, "count should increment once per step")

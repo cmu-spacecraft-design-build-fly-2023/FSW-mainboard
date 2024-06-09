@@ -31,4 +31,6 @@ class Task(DebugTask):
         elif SM.current_state == "NOMINAL":
             self.SD_stored_volume = DH.compute_total_size_files()
 
-        print(f"[{self.ID}][{self.name}] Stored files: {self.SD_stored_volume} bytes.")
+        print(
+            f"[{self.ID}][{self.name}] Stored files: {self.SD_stored_volume} bytes."
+        )

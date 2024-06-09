@@ -267,7 +267,11 @@ class GPS:
 
         # Parse latitude and longitude.
         self.latitude = _parse_degrees(data[0])
-        if self.latitude is not None and data[1] is not None and data[1].lower() == "s":
+        if (
+            self.latitude is not None
+            and data[1] is not None
+            and data[1].lower() == "s"
+        ):
             self.latitude *= -1.0
         self.longitude = _parse_degrees(data[2])
         if (
@@ -331,7 +335,11 @@ class GPS:
             self.fix_quality = 1
         # Parse latitude and longitude.
         self.latitude = _parse_degrees(data[2])
-        if self.latitude is not None and data[3] is not None and data[3].lower() == "s":
+        if (
+            self.latitude is not None
+            and data[3] is not None
+            and data[3].lower() == "s"
+        ):
             self.latitude *= -1.0
         self.longitude = _parse_degrees(data[4])
         if (
@@ -347,7 +355,9 @@ class GPS:
         if data[8] is not None and len(data[8]) == 6:
             day = int(data[8][0:2])
             month = int(data[8][2:4])
-            year = 2000 + int(data[8][4:6])  # Y2k bug, 2 digit year assumption.
+            year = 2000 + int(
+                data[8][4:6]
+            )  # Y2k bug, 2 digit year assumption.
             # This is a problem with the NMEA
             # spec and not this code.
             if self.timestamp_utc is not None:
@@ -405,7 +415,11 @@ class GPS:
                 )
         # Parse latitude and longitude.
         self.latitude = _parse_degrees(data[1])
-        if self.latitude is not None and data[2] is not None and data[2].lower() == "s":
+        if (
+            self.latitude is not None
+            and data[2] is not None
+            and data[2].lower() == "s"
+        ):
             self.latitude *= -1.0
         self.longitude = _parse_degrees(data[3])
         if (
@@ -497,7 +511,12 @@ class GPS_GtopI2C(GPS):
     """
 
     def __init__(
-        self, i2c_bus, *, address=_GPSI2C_DEFAULT_ADDRESS, debug=False, timeout=5
+        self,
+        i2c_bus,
+        *,
+        address=_GPSI2C_DEFAULT_ADDRESS,
+        debug=False,
+        timeout=5
     ):
         import adafruit_bus_device.i2c_device as i2c_device
 
@@ -521,7 +540,9 @@ class GPS_GtopI2C(GPS):
                 if (char == ord("\n")) and (self._lastbyte != ord("\r")):
                     continue  # skip duplicate \n's!
                 result.append(char)
-                self._lastbyte = char  # keep track of the last character approved
+                self._lastbyte = (
+                    char  # keep track of the last character approved
+                )
         return bytearray(result)
 
     def write(self, bytestr):
@@ -533,7 +554,8 @@ class GPS_GtopI2C(GPS):
     @property
     def in_waiting(self):
         """Returns number of bytes available in UART read buffer, always 32
-        since I2C does not have the ability to know how much data is available"""
+        since I2C does not have the ability to know how much data is available
+        """
         return 32
 
     def readline(self):
@@ -542,7 +564,9 @@ class GPS_GtopI2C(GPS):
         timeout = time.monotonic() + self._timeout
         while timeout > time.monotonic():
             # check if our internal buffer has a '\n' termination already
-            if self._internalbuffer and (self._internalbuffer[-1] == ord("\n")):
+            if self._internalbuffer and (
+                self._internalbuffer[-1] == ord("\n")
+            ):
                 break
             char = self.read(1)
             if not char:

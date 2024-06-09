@@ -44,7 +44,9 @@ class TorqueInterface:
         if throttle > 1.0 or throttle < -1.0:
             raise ValueError("Throttle must be between -1.0 and 1.0")
 
-        self.drv_p.throttle = throttle  # Set to full speed forward for demonstration
+        self.drv_p.throttle = (
+            throttle  # Set to full speed forward for demonstration
+        )
         if self.drv_n is not None:
             self.drv_n.throttle = throttle
 

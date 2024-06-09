@@ -69,4 +69,6 @@ class multiByte:
     def __set__(self, obj, value):
         if value >= self.maxval:
             value = self.maxval
-        obj.micro.nvm[self.start : self.stop] = value.to_bytes(self.num_bytes, "big")
+        obj.micro.nvm[self.start : self.stop] = value.to_bytes(
+            self.num_bytes, "big"
+        )

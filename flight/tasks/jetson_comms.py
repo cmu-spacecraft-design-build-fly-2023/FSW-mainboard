@@ -12,10 +12,13 @@ import time
 from apps.data_handler import DataHandler as DH
 from apps.jetson_comms.argus_comm import *
 from apps.jetson_comms.message_id import *
+
 # PyCubed Board Lib
 from hal.configuration import SATELLITE
+
 # State manager and OBDH
 from state_manager import state_manager as SM
+
 # Template task from taskio
 from tasks.template_task import DebugTask
 
@@ -53,7 +56,9 @@ class Task(DebugTask):
             # Wait for Jetson comms for 0.1s
             if self.argus_comms.receive_message() == False:
                 # No message received
-                print(f"[{self.ID}][{self.name}] No message received from Jetson")
+                print(
+                    f"[{self.ID}][{self.name}] No message received from Jetson"
+                )
 
             # Image received successfully
             else:

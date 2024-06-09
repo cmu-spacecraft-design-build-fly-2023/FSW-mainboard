@@ -75,11 +75,15 @@ class Handle:
         self.active = False
 
     async def __aenter__(self):
-        resource = await self._managed_resource._aenter(self._args, self._kwargs)
+        resource = await self._managed_resource._aenter(
+            self._args, self._kwargs
+        )
         self.active = True
         return resource
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        resource = await self._managed_resource._aexit(self._args, self._kwargs)
+        resource = await self._managed_resource._aexit(
+            self._args, self._kwargs
+        )
         self.active = False
         return resource

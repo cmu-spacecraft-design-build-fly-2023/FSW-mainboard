@@ -5,6 +5,7 @@ from adafruit_register.i2c_bit import ROBit
 from adafruit_register.i2c_bits import ROBits, RWBits
 from adafruit_register.i2c_struct import Struct
 from digitalio import DigitalInOut
+
 # from adafruit_bus_device.spi_device import SPIDevice
 from micropython import const
 
@@ -283,12 +284,16 @@ g_TO_METERS_PER_SECOND_SQUARED = 1 / 9.80665  # in m/s^2
 AccelSensitivity2Gravity = const(
     16384
 )  # accelerometer sensitivity. See Section 1.2, Table 2
-GyroSensitivity2DegPerSec = 131.2  # gyroscope sensitivity. See Section 1.2, Table 3
+GyroSensitivity2DegPerSec = (
+    131.2  # gyroscope sensitivity. See Section 1.2, Table 3
+)
 
 
 class _ScaledReadOnlyStruct(Struct):
     def __init__(self, register_address, struct_format, scale):
-        super(_ScaledReadOnlyStruct, self).__init__(register_address, struct_format)
+        super(_ScaledReadOnlyStruct, self).__init__(
+            register_address, struct_format
+        )
         self.scale = scale
 
     # NOTE: I think super() may be an allocating operation.
@@ -719,7 +724,12 @@ class BMX160(Diagnostics):
 
     ## UTILS:
     def generic_setter(
-        self, desired, possible_values, bmx_constants, config_addr, warning_interp=""
+        self,
+        desired,
+        possible_values,
+        bmx_constants,
+        config_addr,
+        warning_interp="",
     ):
         i = find_nearest_valid(desired, possible_values)
         rounded = possible_values[i]
@@ -786,7 +796,9 @@ def find_nearest_valid(desired, possible_values):
     # If no such value exists (desired is lower than all possible), the line throws a StopIteration
     # Exception. In that case we return -1 as the index to use (i.e. the last/smallest value in the list)
     try:
-        return next(filter(lambda x: (desired >= x[1]), enumerate(possible_values)))[0]
+        return next(
+            filter(lambda x: (desired >= x[1]), enumerate(possible_values))
+        )[0]
     except:
         return -1
 

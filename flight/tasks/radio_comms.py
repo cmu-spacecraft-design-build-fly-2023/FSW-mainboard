@@ -9,10 +9,13 @@ import time
 # Argus-1 Radio Libs
 from apps.comms.radio_helpers import *
 from apps.data_handler import DataHandler as DH
+
 # PyCubed Board Lib
 from hal.configuration import SATELLITE
+
 # State manager and OBDH
 from state_manager import state_manager as SM
+
 # Template task from taskio
 from tasks.template_task import DebugTask
 
@@ -43,7 +46,10 @@ class Task(DebugTask):
                     tm_path = DH.request_TM_path_image()
                     if tm_path != None:
                         # Image available, change filepath
-                        print(f"[{self.ID}][{self.name}] Onboard image at:", tm_path)
+                        print(
+                            f"[{self.ID}][{self.name}] Onboard image at:",
+                            tm_path,
+                        )
                         self.SAT_RADIO.image_strs = [tm_path]
                         self.SAT_RADIO.image_get_info()
                     else:
@@ -61,10 +67,15 @@ class Task(DebugTask):
                 self.tx_header = self.SAT_RADIO.transmit_message()
 
                 # Debug message
-                print(f"[{self.ID}][{self.name}] Sent message with ID:", self.tx_header)
+                print(
+                    f"[{self.ID}][{self.name}] Sent message with ID:",
+                    self.tx_header,
+                )
 
                 # Receive message, blocking for 1s
-                self.flag_ground_station_pass = self.SAT_RADIO.receive_message()
+                self.flag_ground_station_pass = (
+                    self.SAT_RADIO.receive_message()
+                )
 
                 if self.SAT_RADIO.image_done_transmitting():
                     print(

@@ -9,10 +9,13 @@ import gc
 import time
 
 from apps.data_handler import DataHandler as DH
+
 # PyCubed Board Lib
 from hal.configuration import SATELLITE
+
 # State manager and OBDH
 from state_manager import state_manager as SM
+
 # Template task from taskio
 from tasks.template_task import DebugTask
 
@@ -36,9 +39,10 @@ class Task(DebugTask):
 
     async def main_task(self):
         # Get power system readings
-        self.batt_soc, self.current = (
-            SATELLITE.BATTERY_POWER_MONITOR.read_voltage_current()
-        )
+        (
+            self.batt_soc,
+            self.current,
+        ) = SATELLITE.BATTERY_POWER_MONITOR.read_voltage_current()
 
         self.batt_soc = int(self.batt_soc * 100 / 8.4)
         self.current = int(self.current * 10000)
@@ -62,4 +66,6 @@ class Task(DebugTask):
             DH.log_data("monitor", readings)
 
             print(f"[{self.ID}][{self.name}] Data: {readings}")
-            print(f"[{self.ID}][{self.name}] {gc.mem_free()} free bytes in memory")
+            print(
+                f"[{self.ID}][{self.name}] {gc.mem_free()} free bytes in memory"
+            )

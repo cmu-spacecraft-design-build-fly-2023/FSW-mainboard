@@ -75,7 +75,9 @@ class ArgusComm:
         self.uart.reset_input_buffer()
         # print("Received header:", header)
 
-        (seq_num, packet_type, payload_size) = Message.parse_packet_meta(header)
+        (seq_num, packet_type, payload_size) = Message.parse_packet_meta(
+            header
+        )
 
         if packet_type != PKT_TYPE_HEADER:
             # clear uart buffer
@@ -101,7 +103,9 @@ class ArgusComm:
             packet = self.uart.read(PACKET_SIZE)
             # print(f"Received packet")
 
-            (seq_num, packet_type, payload_size) = Message.parse_packet_meta(packet)
+            (seq_num, packet_type, payload_size) = Message.parse_packet_meta(
+                packet
+            )
 
             if packet_type == PKT_TYPE_DATA and seq_num == expected_seq_num:
                 expected_seq_num += 1

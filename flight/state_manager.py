@@ -76,7 +76,9 @@ class StateManager:
             priority = props["Priority"]
             task_fn = self.tasks[task_name]._run
 
-            self.scheduled_tasks[task_name] = schedule(frequency, task_fn, priority)
+            self.scheduled_tasks[task_name] = schedule(
+                frequency, task_fn, priority
+            )
 
         print(f"Switched to state {new_state}")
 

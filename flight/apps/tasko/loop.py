@@ -79,7 +79,13 @@ class ScheduledTask:
             self._loop.add_task(self._run_at_fixed_rate(), self._priority)
 
     def __init__(
-        self, loop, hz, forward_async_fn, priority, forward_args, forward_kwargs
+        self,
+        loop,
+        hz,
+        forward_async_fn,
+        priority,
+        forward_args,
+        forward_kwargs,
     ):
         self._loop = loop
         self._forward_async_fn = forward_async_fn
@@ -116,7 +122,9 @@ class ScheduledTask:
                 # Try to reschedule for the next window without skew. If we're falling behind,
                 # just go as fast as possible & schedule to run "now." If we catch back up again
                 # we'll return to seconds_per_invocation without doing a bunch of catchup runs.
-                target_run_nanos = target_run_nanos + self._nanoseconds_per_invocation
+                target_run_nanos = (
+                    target_run_nanos + self._nanoseconds_per_invocation
+                )
                 # print('target_run_nanos is ', target_run_nanos)
                 now_nanos = _monotonic_ns()
                 if now_nanos <= target_run_nanos:
@@ -219,7 +227,9 @@ class Loop:
         self._current = None
         return _yield_once(), resume
 
-    def schedule(self, hz: float, coroutine_function, priority, *args, **kwargs):
+    def schedule(
+        self, hz: float, coroutine_function, priority, *args, **kwargs
+    ):
         """
         Describe how often a method should be called.
 
@@ -240,12 +250,18 @@ class Loop:
         :param coroutine_function: the async def function you want invoked on your schedule
         :param event_loop: An event loop that can .sleep() and .add_task.  Like BudgetEventLoop.
         """
-        assert coroutine_function is not None, "coroutine function must not be none"
-        task = ScheduledTask(self, hz, coroutine_function, priority, args, kwargs)
+        assert (
+            coroutine_function is not None
+        ), "coroutine function must not be none"
+        task = ScheduledTask(
+            self, hz, coroutine_function, priority, args, kwargs
+        )
         task.start()
         return task
 
-    def schedule_later(self, hz: float, coroutine_function, priority, *args, **kwargs):
+    def schedule_later(
+        self, hz: float, coroutine_function, priority, *args, **kwargs
+    ):
         """
         Like schedule, but invokes the coroutine_function after the first hz interval.
 
@@ -313,7 +329,9 @@ class Loop:
                 self._debug("    {}".format(i))
 
         # Create the ready list based on whichever tasks are ready to be executed
-        self._ready = [x for x in self._sleeping if x.resume_nanos() <= _monotonic_ns()]
+        self._ready = [
+            x for x in self._sleeping if x.resume_nanos() <= _monotonic_ns()
+        ]
         # Sort the ready tasks based on priority
         self._ready.sort(key=lambda x: x.task.priority)
 
@@ -378,7 +396,9 @@ class Loop:
         From within a coroutine, sleeps until the target time.monotonic_ns
         Returns the thing to await
         """
-        assert self._current is not None, "You can only sleep from within a task"
+        assert (
+            self._current is not None
+        ), "You can only sleep from within a task"
         self._sleeping.append(Sleeper(target_run_nanos, self._current))
         self._debug("  sleeping ", self._current)
         self._current = None

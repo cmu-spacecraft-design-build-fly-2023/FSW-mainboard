@@ -24,6 +24,7 @@ from .drivers_PYC_V05 import adm1176  # Power Monitor
 from .drivers_PYC_V05 import bmx160  # IMU
 from .drivers_PYC_V05 import bq25883  # USB Charger
 from .drivers_PYC_V05 import rfm9x  # Radio
+
 # Common CircuitPython Libs
 from .drivers_PYC_V05.bitflags import bitFlag, multiBitFlag, multiByte
 
@@ -115,9 +116,13 @@ class PyCubed:
         }
         # Define burn wires:
         self._relayA = digitalio.DigitalInOut(board.RELAY_A)
-        self._relayA.switch_to_output(drive_mode=digitalio.DriveMode.OPEN_DRAIN)
+        self._relayA.switch_to_output(
+            drive_mode=digitalio.DriveMode.OPEN_DRAIN
+        )
         self._resetReg = digitalio.DigitalInOut(board.VBUS_RST)
-        self._resetReg.switch_to_output(drive_mode=digitalio.DriveMode.OPEN_DRAIN)
+        self._resetReg.switch_to_output(
+            drive_mode=digitalio.DriveMode.OPEN_DRAIN
+        )
 
         # Define battery voltage
         self._vbatt = AnalogIn(board.BATTERY)

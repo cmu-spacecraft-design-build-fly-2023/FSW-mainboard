@@ -49,7 +49,9 @@ class JetsonComm:
         while self.uart.in_waiting != HEADER_PKT_SIZE:
             continue
         header = self.uart.read(PACKET_SIZE)
-        (seq_num, packet_type, payload_size) = Message.parse_packet_meta(header)
+        (seq_num, packet_type, payload_size) = Message.parse_packet_meta(
+            header
+        )
         if packet_type != PKT_TYPE_HEADER:
             # clear uart buffer
             raise RuntimeError("Invalid header")
@@ -64,7 +66,9 @@ class JetsonComm:
             while self.uart.in_waiting != PACKET_SIZE:
                 continue
             packet = self.uart.read(PACKET_SIZE)
-            (seq_num, packet_type, payload_size) = Message.parse_packet_meta(packet)
+            (seq_num, packet_type, payload_size) = Message.parse_packet_meta(
+                packet
+            )
             if packet_type == PKT_TYPE_DATA and seq_num == expected_seq_num:
                 expected_seq_num += 1
                 retries = 0

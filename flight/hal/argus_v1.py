@@ -197,7 +197,9 @@ class ArgusV1(CubeSat):
         error_list += self.__burn_wire_boot()
         error_list += self.__payload_uart_boot()
 
-        error_list = [error for error in error_list if error != Diagnostics.NOERROR]
+        error_list = [
+            error for error in error_list if error != Diagnostics.NOERROR
+        ]
 
         if self.__debug:
             print("Boot Errors:")
@@ -220,7 +222,9 @@ class ArgusV1(CubeSat):
         :return: Error code if the GPS failed to initialize
         """
         try:
-            gps1 = GPS(ArgusV1Components.GPS_UART, ArgusV1Components.GPS_ENABLE)
+            gps1 = GPS(
+                ArgusV1Components.GPS_UART, ArgusV1Components.GPS_ENABLE
+            )
 
             if self.__middleware_enabled:
                 gps1 = Middleware(gps1, gps_fatal_exception)
@@ -319,7 +323,8 @@ class ArgusV1(CubeSat):
         """
         try:
             charger = BQ25883(
-                ArgusV1Components.CHARGER_I2C, ArgusV1Components.CHARGER_I2C_ADDRESS
+                ArgusV1Components.CHARGER_I2C,
+                ArgusV1Components.CHARGER_I2C_ADDRESS,
             )
 
             if self.__middleware_enabled:
@@ -510,7 +515,9 @@ class ArgusV1(CubeSat):
             )
 
             if self.__middleware_enabled:
-                sun_sensor_xp = Middleware(sun_sensor_xp, sun_sensor_xp_fatal_exception)
+                sun_sensor_xp = Middleware(
+                    sun_sensor_xp, sun_sensor_xp_fatal_exception
+                )
 
             self.__sun_sensor_xp = sun_sensor_xp
             self.__device_list.append(sun_sensor_xp)
@@ -534,7 +541,9 @@ class ArgusV1(CubeSat):
             )
 
             if self.__middleware_enabled:
-                sun_sensor_xm = Middleware(sun_sensor_xm, sun_sensor_xm_fatal_exception)
+                sun_sensor_xm = Middleware(
+                    sun_sensor_xm, sun_sensor_xm_fatal_exception
+                )
 
             self.__sun_sensor_xm = sun_sensor_xm
             self.__device_list.append(sun_sensor_xm)
@@ -558,7 +567,9 @@ class ArgusV1(CubeSat):
             )
 
             if self.__middleware_enabled:
-                sun_sensor_yp = Middleware(sun_sensor_yp, sun_sensor_yp_fatal_exception)
+                sun_sensor_yp = Middleware(
+                    sun_sensor_yp, sun_sensor_yp_fatal_exception
+                )
 
             self.__sun_sensor_yp = sun_sensor_yp
             self.__device_list.append(sun_sensor_yp)
@@ -582,7 +593,9 @@ class ArgusV1(CubeSat):
             )
 
             if self.__middleware_enabled:
-                sun_sensor_ym = Middleware(sun_sensor_ym, sun_sensor_ym_fatal_exception)
+                sun_sensor_ym = Middleware(
+                    sun_sensor_ym, sun_sensor_ym_fatal_exception
+                )
 
             self.__sun_sensor_ym = sun_sensor_ym
             self.__device_list.append(sun_sensor_ym)
@@ -606,7 +619,9 @@ class ArgusV1(CubeSat):
             )
 
             if self.__middleware_enabled:
-                sun_sensor_zp = Middleware(sun_sensor_zp, sun_sensor_zp_fatal_exception)
+                sun_sensor_zp = Middleware(
+                    sun_sensor_zp, sun_sensor_zp_fatal_exception
+                )
 
             self.__sun_sensor_zp = sun_sensor_zp
             self.__device_list.append(sun_sensor_zp)
@@ -630,7 +645,9 @@ class ArgusV1(CubeSat):
             )
 
             if self.__middleware_enabled:
-                sun_sensor_zm = Middleware(sun_sensor_zm, sun_sensor_zm_fatal_exception)
+                sun_sensor_zm = Middleware(
+                    sun_sensor_zm, sun_sensor_zm_fatal_exception
+                )
 
             self.__sun_sensor_zm = sun_sensor_zm
             self.__device_list.append(sun_sensor_zm)
@@ -676,7 +693,9 @@ class ArgusV1(CubeSat):
         :return: Error code if the RTC failed to initialize
         """
         try:
-            rtc = PCF8523(ArgusV1Components.RTC_I2C, ArgusV1Components.RTC_I2C_ADDRESS)
+            rtc = PCF8523(
+                ArgusV1Components.RTC_I2C, ArgusV1Components.RTC_I2C_ADDRESS
+            )
 
             if self.__middleware_enabled:
                 rtc = Middleware(rtc, rtc_fatal_exception)
@@ -779,11 +798,14 @@ class ArgusV1(CubeSat):
         """payload_uart_boot: Boot sequence for the Jetson UART"""
         try:
             payload_uart = PayloadUART(
-                ArgusV1Components.PAYLOAD_UART, ArgusV1Components.PAYLOAD_ENABLE
+                ArgusV1Components.PAYLOAD_UART,
+                ArgusV1Components.PAYLOAD_ENABLE,
             )
 
             if self.__middleware_enabled:
-                payload_uart = Middleware(payload_uart, payload_uart_fatal_exception)
+                payload_uart = Middleware(
+                    payload_uart, payload_uart_fatal_exception
+                )
 
             self.__payload_uart = payload_uart
             self.__device_list.append(self.__payload_uart)
@@ -798,7 +820,9 @@ class ArgusV1(CubeSat):
     ######################## DIAGNOSTICS ########################
     def __get_device_diagnostic_error(self, device) -> list[int]:
         """__get_device_diagnostic_error: Get the error code for a device that failed to initialize"""
-        if isinstance(device, Middleware):  # Convert device to the wrapped instance
+        if isinstance(
+            device, Middleware
+        ):  # Convert device to the wrapped instance
             device = device.get_instance()
 
         if device is self.RTC:
