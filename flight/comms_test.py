@@ -1,8 +1,7 @@
-from hal.configuration import SATELLITE
-
+from apps.comms.radio_helpers import *
 # Argus-1 Radio Libs
 from apps.comms.radio_protocol import *
-from apps.comms.radio_helpers import *
+from hal.configuration import SATELLITE
 
 SAT_RADIO = SATELLITE_RADIO(SATELLITE)
 SAT_RADIO.heartbeat_seq = [SAT_HEARTBEAT_BATT]

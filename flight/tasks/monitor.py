@@ -4,19 +4,18 @@ monitor.py
 Satellite monitoring task
 """
 
+# Garbage collector and time
+import gc
+import time
+
+from apps.data_handler import DataHandler as DH
+# PyCubed Board Lib
+from hal.configuration import SATELLITE
+# State manager and OBDH
+from state_manager import state_manager as SM
 # Template task from taskio
 from tasks.template_task import DebugTask
 
-# State manager and OBDH
-from state_manager import state_manager as SM
-from apps.data_handler import DataHandler as DH
-
-# PyCubed Board Lib
-from hal.configuration import SATELLITE
-
-# Garbage collector and time 
-import gc
-import time
 
 class Task(DebugTask):
 
@@ -27,8 +26,8 @@ class Task(DebugTask):
         "time",
         "system_status",
         "batt_soc",
-        "current", 
-        "reboot_cnt", 
+        "current",
+        "reboot_cnt",
     ]
 
     system_status = 0x00
@@ -36,23 +35,25 @@ class Task(DebugTask):
     current = 0
 
     async def main_task(self):
-        # Get power system readings 
-        self.batt_soc, self.current = SATELLITE.BATTERY_POWER_MONITOR.read_voltage_current()
+        # Get power system readings
+        self.batt_soc, self.current = (
+            SATELLITE.BATTERY_POWER_MONITOR.read_voltage_current()
+        )
 
         self.batt_soc = int(self.batt_soc * 100 / 8.4)
         self.current = int(self.current * 10000)
-        
-        # Read data for monitoring 
+
+        # Read data for monitoring
         readings = {
             "time": time.time(),
             "system_status": 0,
-            "batt_soc": self.batt_soc, 
-            "current": self.current, 
+            "batt_soc": self.batt_soc,
+            "current": self.current,
             "reboot_cnt": 0,
         }
 
         if SM.current_state == "NOMINAL":
-            # If process not registered, register it 
+            # If process not registered, register it
             if DH.data_process_exists("monitor") == False:
                 DH.register_data_process(
                     "monitor", self.data_keys, "ffffb", True, line_limit=50

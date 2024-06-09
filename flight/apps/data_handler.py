@@ -28,16 +28,16 @@ Data format (character: byte size):
 
 """
 
+import json
 import os
 import re
 import struct
 import time
-import json
 
 from micropython import const
 
 try:
-    from typing import List, Tuple, Any, Optional
+    from typing import Any, List, Optional, Tuple
 except ImportError:
     pass
 
@@ -416,45 +416,43 @@ class ImageProcess(DataProcess):
         """
         self.resolve_current_file()
         self.last_data = data
-        
+
         self.file.write(data)
         self.file.flush()
 
-
     def request_TM_path(self, latest: bool = False) -> Optional[str]:
-            """
-            MODIFIED FOR IMAGES as we need complete images to be transmitted.
+        """
+        MODIFIED FOR IMAGES as we need complete images to be transmitted.
 
-            Returns the path of a designated image available for transmission.
-            If no image is available, the function returns None.
+        Returns the path of a designated image available for transmission.
+        If no image is available, the function returns None.
 
-            The function store the file path to be excluded in clean-up policies.
-            Once fully transmitted, notify_TM_path() must be called to remove the file from the exclusion list.
-            """
-            # Assumes correct ordering (monotonic timestamp)
-            # TODO
-            files = os.listdir(self.dir_path)
-            if len(files) > 1:  # Ignore process configuration file 
+        The function store the file path to be excluded in clean-up policies.
+        Once fully transmitted, notify_TM_path() must be called to remove the file from the exclusion list.
+        """
+        # Assumes correct ordering (monotonic timestamp)
+        # TODO
+        files = os.listdir(self.dir_path)
+        if len(files) > 1:  # Ignore process configuration file
 
-                if latest:
-                    transmit_file = files[-1]
-                    if transmit_file == _PROCESS_CONFIG_FILENAME:
-                        transmit_file = files[-2]
-                else:
-                    transmit_file = files[0]
-                    if transmit_file == _PROCESS_CONFIG_FILENAME:
-                        transmit_file = files[1]
-
-                tm_path = self.dir_path + transmit_file
-
-                if tm_path == self.current_path or path_exist(tm_path) == False:
-                    return None
-
-                self.excluded_paths.append(tm_path)
-                return tm_path
+            if latest:
+                transmit_file = files[-1]
+                if transmit_file == _PROCESS_CONFIG_FILENAME:
+                    transmit_file = files[-2]
             else:
+                transmit_file = files[0]
+                if transmit_file == _PROCESS_CONFIG_FILENAME:
+                    transmit_file = files[1]
+
+            tm_path = self.dir_path + transmit_file
+
+            if tm_path == self.current_path or path_exist(tm_path) == False:
                 return None
-        
+
+            self.excluded_paths.append(tm_path)
+            return tm_path
+        else:
+            return None
 
     def image_completed(self):
         """
@@ -522,7 +520,6 @@ class DataHandler:
                     print("HERE6")
 
         # print("SD Card Scanning complete - found ", cls.data_process_registry.keys())
-
 
     @classmethod
     def register_data_process(
@@ -611,7 +608,6 @@ class DataHandler:
                 raise KeyError("Data process not registered!")
         except KeyError as e:
             print(f"Error: {e}")
-
 
     @classmethod
     def image_completed(cls) -> bool:
@@ -779,14 +775,11 @@ class DataHandler:
         """
         try:
             if "img" in cls.data_process_registry:
-                return cls.data_process_registry["img"].request_TM_path(
-                    latest=latest
-                )
+                return cls.data_process_registry["img"].request_TM_path(latest=latest)
             else:
                 raise KeyError("Image process not registered!")
         except KeyError as e:
             print(f"Error: {e}")
-
 
     @classmethod
     def notify_TM_path(cls, tag_name, path):
@@ -891,7 +884,6 @@ class DataHandler:
                 cls.print_directory(path + "/" + file, tabs + 1)
 
 
-
 def path_exist(path: str) -> bool:
     """
     Replacement for os.path.exists() function, which is not implemented in micropython. If the request for a directory, the function will return True if the directory exists, even if it is empty.
@@ -922,7 +914,7 @@ def join_path(*paths: str) -> str:
         return ""
 
     joined_path = "/".join(paths)
-    normalized_path = re.sub(r"/+", "/", joined_path) # remove multiple slashes
+    normalized_path = re.sub(r"/+", "/", joined_path)  # remove multiple slashes
     # Remove leading slash if this was not an absolute path
     if not paths[0].startswith("/"):
         normalized_path = normalized_path.lstrip("/")

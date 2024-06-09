@@ -4,24 +4,28 @@ PyCubed Hardware Version: mainboard-v05
 CircuitPython Version: 7.0.0 alpha
 """
 
+import sys
+import time
+
 # Common CircuitPython Libs
-import board, microcontroller
-import busio, time, sys
-from storage import mount, umount, VfsFat
+import board
+import busio
+import digitalio
+import microcontroller
+import neopixel  # RGB LED
+import pwmio
+import sdcardio
 from analogio import AnalogIn
-import digitalio, sdcardio, pwmio
+from micropython import const
+from storage import VfsFat, mount, umount
 
 # Hardware Specific Libs
-from .drivers_PYC_V05 import rfm9x  # Radio
-from .drivers_PYC_V05 import bmx160  # IMU
-import neopixel  # RGB LED
-from .drivers_PYC_V05 import bq25883  # USB Charger
 from .drivers_PYC_V05 import adm1176  # Power Monitor
-
+from .drivers_PYC_V05 import bmx160  # IMU
+from .drivers_PYC_V05 import bq25883  # USB Charger
+from .drivers_PYC_V05 import rfm9x  # Radio
 # Common CircuitPython Libs
 from .drivers_PYC_V05.bitflags import bitFlag, multiBitFlag, multiByte
-from micropython import const
-
 
 # NVM register numbers
 _BOOTCNT = const(0)

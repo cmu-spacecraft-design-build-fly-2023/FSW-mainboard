@@ -6,9 +6,10 @@ This file contains the base class for all components which need diagnostic tests
 Author: Harry Rosmann
 """
 
+import time
+
 from digitalio import DigitalInOut
 from micropython import const
-import time
 
 
 class Diagnostics:

@@ -1,18 +1,12 @@
 # Sun Vector Tasks
 
-from tasks.template_task import DebugTask
-
-
-from hal.configuration import SATELLITE
-
-
-from state_manager import state_manager as SM
-from apps.data_handler import DataHandler as DH
-from apps.sun import compute_body_sun_vector, in_eclipse
-
 import time
 
-
+from apps.data_handler import DataHandler as DH
+from apps.sun import compute_body_sun_vector, in_eclipse
+from hal.configuration import SATELLITE
+from state_manager import state_manager as SM
+from tasks.template_task import DebugTask
 
 
 class Task(DebugTask):
@@ -42,7 +36,8 @@ class Task(DebugTask):
                 SATELLITE.SUN_SENSOR_YP,
                 SATELLITE.SUN_SENSOR_YM,
                 SATELLITE.SUN_SENSOR_ZP,
-                SATELLITE.SUN_SENSOR_ZM}
+                SATELLITE.SUN_SENSOR_ZM,
+            }
 
             # TODO Fake sun vector that always moves infinitesimally
             self.sun_vector = compute_body_sun_vector(lux_readings)

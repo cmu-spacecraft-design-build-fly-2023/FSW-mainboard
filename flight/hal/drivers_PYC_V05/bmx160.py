@@ -1,15 +1,12 @@
+import struct
 import time
 
-import struct
-
-
 from adafruit_bus_device.i2c_device import I2CDevice
-
+from adafruit_register.i2c_bit import ROBit, RWBit
+from adafruit_register.i2c_bits import ROBits, RWBits
+from adafruit_register.i2c_struct import Struct, UnaryStruct
 # from adafruit_bus_device.spi_device import SPIDevice
 from micropython import const
-from adafruit_register.i2c_struct import Struct, UnaryStruct
-from adafruit_register.i2c_bits import ROBits, RWBits
-from adafruit_register.i2c_bit import ROBit, RWBit
 
 # Chip ID
 BMX160_CHIP_ID = const(0xD8)

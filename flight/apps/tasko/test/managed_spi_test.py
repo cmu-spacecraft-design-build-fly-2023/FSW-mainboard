@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from tasko.managed_spi import ManagedSpi
 from tasko import Loop
+from tasko.managed_spi import ManagedSpi
 
 
 # This is a terrible pattern, used only for tests

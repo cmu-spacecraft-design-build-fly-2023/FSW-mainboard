@@ -1,5 +1,6 @@
-from .managed_resource import ManagedResource
 import tasko
+
+from .managed_resource import ManagedResource
 
 
 class ManagedSpi:

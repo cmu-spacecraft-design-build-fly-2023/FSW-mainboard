@@ -7,6 +7,7 @@ interface to set the torque level on the motor(s) and enable or disable the torq
 Authors: Gordonson Yan, Harry Rosmann
 """
 
+
 # TorqueCoil Management Class
 class TorqueInterface:
     """Manage torque for dual or single DRV8830 motor controllers."""

@@ -12,11 +12,10 @@ Authors: DJ Morvay, Akshat Sahay
 import os
 import time
 
-# PyCubed Board Lib
-from hal.cubesat import CubeSat
-
 # Argus-1 Lib
 from apps.comms.radio_protocol import *
+# PyCubed Board Lib
+from hal.cubesat import CubeSat
 
 
 class SATELLITE_RADIO:
@@ -44,8 +43,8 @@ class SATELLITE_RADIO:
 
         self.heartbeat_seq = [
             SAT_HEARTBEAT_BATT,
-            SAT_HEARTBEAT_SUN, 
-            SAT_HEARTBEAT_IMU, 
+            SAT_HEARTBEAT_SUN,
+            SAT_HEARTBEAT_IMU,
         ]
         self.heartbeat_curr = 0
         self.heartbeat_max = len(self.heartbeat_seq)
@@ -70,7 +69,7 @@ class SATELLITE_RADIO:
             # No image in buffer
             # print("No image stored on satellite")
 
-            # Set all image attributes to 0 for SAT_IMAGES message 
+            # Set all image attributes to 0 for SAT_IMAGES message
             self.sat_images.image_UID = 0x00
             self.sat_images.image_size = 0
             self.sat_images.image_message_count = 0
@@ -152,16 +151,16 @@ class SATELLITE_RADIO:
         # deconstruct_message(lora_rx_message)
 
         if self.rx_message_ID == GS_ACK:
-            # GS acknowledged and sent command 
+            # GS acknowledged and sent command
             self.gs_rx_message_ID = int.from_bytes(packet[4:5], "big")
             self.gs_req_message_ID = int.from_bytes(packet[5:6], "big")
             self.gs_req_seq_count = int.from_bytes(packet[6:8], "big")
 
             if self.gs_req_message_ID == SAT_DEL_IMG1:
-                # Delete image currently on satellite 
+                # Delete image currently on satellite
                 self.image_num = (self.image_num + 1) % len(self.image_strs)
                 self.image_get_info()
-            
+
             if self.gs_req_message_ID == GS_STOP:
                 # Kill comms with GS
                 # print("GS stopped comms with SAT!")
@@ -253,14 +252,25 @@ class SATELLITE_RADIO:
 
         while send_multiple:
             time.sleep(0.15)
-            # Check if currently transmitting an image and CRC error has been 0 
-            if ((self.gs_req_message_ID == SAT_IMG1_CMD) and (self.crc_count == 0)):
+            # Check if currently transmitting an image and CRC error has been 0
+            if (self.gs_req_message_ID == SAT_IMG1_CMD) and (self.crc_count == 0):
                 target_sequence_count = self.sat_images.image_message_count
 
                 multiple_packet_count += 1
-                
-                if (((((self.gs_req_seq_count + multiple_packet_count) % self.send_mod) > 0) and ((self.gs_req_seq_count + multiple_packet_count) < (target_sequence_count - 1))) or \
-                    ((self.gs_req_seq_count + multiple_packet_count) == 0)):
+
+                if (
+                    (
+                        (
+                            (self.gs_req_seq_count + multiple_packet_count)
+                            % self.send_mod
+                        )
+                        > 0
+                    )
+                    and (
+                        (self.gs_req_seq_count + multiple_packet_count)
+                        < (target_sequence_count - 1)
+                    )
+                ) or ((self.gs_req_seq_count + multiple_packet_count) == 0):
                     send_multiple = True
                     self.sat_req_ack = 0x0
                 else:

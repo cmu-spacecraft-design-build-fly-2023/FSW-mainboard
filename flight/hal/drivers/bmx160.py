@@ -1,15 +1,14 @@
 from time import sleep
-from .diagnostics.diagnostics import Diagnostics
-from digitalio import DigitalInOut
-
 
 from adafruit_bus_device.i2c_device import I2CDevice
-
+from adafruit_register.i2c_bit import ROBit
+from adafruit_register.i2c_bits import ROBits, RWBits
+from adafruit_register.i2c_struct import Struct
+from digitalio import DigitalInOut
 # from adafruit_bus_device.spi_device import SPIDevice
 from micropython import const
-from adafruit_register.i2c_struct import Struct
-from adafruit_register.i2c_bits import ROBits, RWBits
-from adafruit_register.i2c_bit import ROBit
+
+from .diagnostics.diagnostics import Diagnostics
 
 # Chip ID
 BMX160_CHIP_ID = const(0xD8)
@@ -399,10 +398,9 @@ class BMX160(Diagnostics):
     def __init__(self, i2c, i2c_address, enable_pin=None):
         if enable_pin is not None:
             self._enable = DigitalInOut(enable_pin)
-            self._enable.switch_to_output(value = True)
-        
+            self._enable.switch_to_output(value=True)
+
         super().__init__(self._enable)
-        
 
         self.i2c_device = I2CDevice(i2c, i2c_address, probe=True)
 

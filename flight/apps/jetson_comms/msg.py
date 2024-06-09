@@ -8,8 +8,10 @@ to the GPIO pins for signaling
 
 * Author(s): Sachit Goyal, Harry Rosmann
 """
-from micropython import const
+
 from struct import pack, unpack
+
+from micropython import const
 
 MAX_PACKETS = const(0xFFFF)  # 65535 packets
 
@@ -51,19 +53,23 @@ class Message:
         self.data = data
 
         if self.data_len % PAYLOAD_PER_PACKET != 0:
-            self.data += bytearray(PAYLOAD_PER_PACKET - (self.data_len % PAYLOAD_PER_PACKET))
-        
-        self.data_len = len(self.data) 
+            self.data += bytearray(
+                PAYLOAD_PER_PACKET - (self.data_len % PAYLOAD_PER_PACKET)
+            )
+
+        self.data_len = len(self.data)
         self.num_packets = self.data_len // PAYLOAD_PER_PACKET
-        
+
         if self.message_type > 0xFF or self.message_type < 0x00:
             raise ValueError("Message type out of range")
-        
+
         if self.num_packets > MAX_PACKETS:
             raise ValueError("Data too large to send")
-        
-        self.packets = [self.data[i*PAYLOAD_PER_PACKET:(i+1)*PAYLOAD_PER_PACKET] 
-                        for i in range(self.num_packets)]
+
+        self.packets = [
+            self.data[i * PAYLOAD_PER_PACKET : (i + 1) * PAYLOAD_PER_PACKET]
+            for i in range(self.num_packets)
+        ]
 
     def create_header(self) -> bytearray:
         """create_header: creates the header packet for the entire message
@@ -71,8 +77,14 @@ class Message:
         Returns:
             bytearray: the header packet for the message
         """
-        data = pack('@HBBBH', 0, PKT_TYPE_HEADER, HEADER_PAYLOAD_SIZE, 
-             self.message_type, self.num_packets)
+        data = pack(
+            "@HBBBH",
+            0,
+            PKT_TYPE_HEADER,
+            HEADER_PAYLOAD_SIZE,
+            self.message_type,
+            self.num_packets,
+        )
         return data
 
     def create_packet(self, packet_seq: int) -> bytearray:
@@ -87,15 +99,15 @@ class Message:
 
         if packet_seq > self.num_packets or packet_seq <= 0:
             raise ValueError("Data Packet number out of range")
-        
+
         if packet_seq == self.num_packets:
-            packet_payload_size = self.data_len % PAYLOAD_PER_PACKET 
+            packet_payload_size = self.data_len % PAYLOAD_PER_PACKET
             if packet_payload_size == 0:
                 packet_payload_size = PAYLOAD_PER_PACKET
         else:
             packet_payload_size = PAYLOAD_PER_PACKET
-        
-        metadata = pack('@HBB', packet_seq, PKT_TYPE_DATA, packet_payload_size)
+
+        metadata = pack("@HBB", packet_seq, PKT_TYPE_DATA, packet_payload_size)
         current_packet = self.packets[packet_seq - 1][:packet_payload_size]
         return metadata + current_packet
 
@@ -136,7 +148,7 @@ class Message:
             # Ensure that metadata is at least 4 bytes
             if len(metadata) < PKT_METADATA_SIZE:
                 raise ValueError("Invalid packet format")
-            
+
             # Grab first 4 bytes of metadata
             data = metadata[:PKT_METADATA_SIZE]
 

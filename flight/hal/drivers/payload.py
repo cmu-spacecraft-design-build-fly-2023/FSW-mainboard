@@ -8,8 +8,10 @@ methods to send and receive data over the uart.
 Author(s): Harry Rosmann
 """
 
-from .diagnostics.diagnostics import Diagnostics
 from digitalio import DigitalInOut
+
+from .diagnostics.diagnostics import Diagnostics
+
 
 class PayloadUART(Diagnostics):
     """Payload: Payload uart driver for the ARGUS-1 CubeSat"""
@@ -30,7 +32,7 @@ class PayloadUART(Diagnostics):
 
     def in_waiting(self) -> int:
         return self.__uart.in_waiting
-    
+
     def reset_input_buffer(self) -> None:
         self.__uart.reset_input_buffer()
 

@@ -5,11 +5,13 @@ Author: Harry Rosmann
 Date: March 28, 2024
 """
 
-from .diagnostics.diagnostics import Diagnostics
-from digitalio import DigitalInOut, DriveMode
-from pwmio import PWMOut
-from micropython import const
 from time import sleep
+
+from digitalio import DigitalInOut, DriveMode
+from micropython import const
+from pwmio import PWMOut
+
+from .diagnostics.diagnostics import Diagnostics
 
 
 class BurnWires(Diagnostics):

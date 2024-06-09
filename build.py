@@ -1,9 +1,9 @@
-import os
-import subprocess
-import shutil
-import filecmp
 import argparse
+import filecmp
+import os
 import platform
+import shutil
+import subprocess
 
 MPY_CROSS_NAME = "mpy-cross"
 if platform.system() == "Darwin":
@@ -37,7 +37,9 @@ def create_build(source_folder):
             if file.endswith(".py"):
                 source_path = os.path.join(root, file)
 
-                build_path = os.path.join(build_folder, os.path.relpath(source_path, source_folder))
+                build_path = os.path.join(
+                    build_folder, os.path.relpath(source_path, source_folder)
+                )
 
                 os.makedirs(os.path.dirname(build_path), exist_ok=True)
                 shutil.copy2(source_path, build_path)
@@ -77,6 +79,7 @@ def create_build(source_folder):
     os.makedirs(os.path.join(build_folder, "sd/"), exist_ok=True)
 
     return build_folder
+
 
 def copy_folder(build_folder, destination_folder, show_identical_files=True):
     for root, dirs, files in os.walk(build_folder):
@@ -122,14 +125,10 @@ if __name__ == "__main__":
         type=str,
         default="flight-software",
         help="Source folder path",
-        required=False
+        required=False,
     )
     args = parser.parse_args()
 
     source_folder = args.source_folder
 
     build_folder = create_build(source_folder)
-
-
-
-    

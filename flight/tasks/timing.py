@@ -1,14 +1,12 @@
 # Time distribution and handling task
 
 # from hal.pycubed import hardware
-from tasks.template_task import DebugTask
-
-
-from state_manager import state_manager as SM
-from apps.data_handler import DataHandler as DH
+import time
 
 import rtc
-import time
+from apps.data_handler import DataHandler as DH
+from state_manager import state_manager as SM
+from tasks.template_task import DebugTask
 
 
 class Task(DebugTask):
@@ -25,5 +23,3 @@ class Task(DebugTask):
         elif SM.current_state == "NOMINAL":
             print(f"[{self.ID}][{self.name}] GLOBAL STATE: {SM.current_state}.")
             print(f"[{self.ID}][{self.name}] Time: {time.time()}")
-
-            

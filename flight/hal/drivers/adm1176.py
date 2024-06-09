@@ -11,8 +11,8 @@ Implementation Notes
 
 """
 
-from micropython import const
 from adafruit_bus_device.i2c_device import I2CDevice
+from micropython import const
 
 from .diagnostics.diagnostics import Diagnostics
 

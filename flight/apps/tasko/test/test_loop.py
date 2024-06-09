@@ -1,8 +1,8 @@
-from tasko.loop import _yield_once, set_time_provider
 import time
 from unittest import TestCase
 
 from tasko import Loop
+from tasko.loop import _yield_once, set_time_provider
 
 
 class TestLoop(TestCase):

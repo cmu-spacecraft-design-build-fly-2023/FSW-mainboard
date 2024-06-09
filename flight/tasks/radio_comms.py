@@ -4,20 +4,18 @@ radio_comms.py
 Comms FSW Task
 """
 
-# Template task from taskio
-from tasks.template_task import DebugTask
-
-# State manager and OBDH
-from state_manager import state_manager as SM
-from apps.data_handler import DataHandler as DH
-
-# PyCubed Board Lib
-from hal.configuration import SATELLITE
+import time
 
 # Argus-1 Radio Libs
 from apps.comms.radio_helpers import *
+from apps.data_handler import DataHandler as DH
+# PyCubed Board Lib
+from hal.configuration import SATELLITE
+# State manager and OBDH
+from state_manager import state_manager as SM
+# Template task from taskio
+from tasks.template_task import DebugTask
 
-import time
 
 class Task(DebugTask):
 
@@ -29,9 +27,9 @@ class Task(DebugTask):
     flag_ground_station_pass = True
 
     async def main_task(self):
-        # Only transmit if SAT in NOMINAL state 
+        # Only transmit if SAT in NOMINAL state
         if SM.current_state == "NOMINAL":
-            # In NOMINAL state, can transmit 
+            # In NOMINAL state, can transmit
             self.flag_ground_station_pass = True
 
             """
@@ -39,11 +37,11 @@ class Task(DebugTask):
             Once transmitted, run receive_message, waits for 1s 
             """
 
-            while(self.flag_ground_station_pass == True):
+            while self.flag_ground_station_pass == True:
                 # Check if an image is available for downlinking
                 if DH.data_process_exists("img") == True:
                     tm_path = DH.request_TM_path_image()
-                    if(tm_path != None): 
+                    if tm_path != None:
                         # Image available, change filepath
                         print(f"[{self.ID}][{self.name}] Onboard image at:", tm_path)
                         self.SAT_RADIO.image_strs = [tm_path]
@@ -59,16 +57,18 @@ class Task(DebugTask):
                     self.SAT_RADIO.image_strs = []
                     self.SAT_RADIO.image_get_info()
 
-                # Transmit message 
+                # Transmit message
                 self.tx_header = self.SAT_RADIO.transmit_message()
-            
-                # Debug message 
+
+                # Debug message
                 print(f"[{self.ID}][{self.name}] Sent message with ID:", self.tx_header)
 
                 # Receive message, blocking for 1s
                 self.flag_ground_station_pass = self.SAT_RADIO.receive_message()
 
-                if(self.SAT_RADIO.image_done_transmitting()):
-                    print(f"[{self.ID}][{self.name}] Image downlinked, deleting with OBDH")
+                if self.SAT_RADIO.image_done_transmitting():
+                    print(
+                        f"[{self.ID}][{self.name}] Image downlinked, deleting with OBDH"
+                    )
                     DH.notify_TM_path("img", tm_path)
                     DH.clean_up()

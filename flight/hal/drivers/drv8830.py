@@ -46,9 +46,8 @@ Implementation Notes
 """
 
 from adafruit_bus_device.i2c_device import I2CDevice
+from adafruit_register.i2c_bit import ROBit, RWBit
 from adafruit_register.i2c_bits import RWBits
-from adafruit_register.i2c_bit import RWBit
-from adafruit_register.i2c_bit import ROBit
 
 from .diagnostics.diagnostics import Diagnostics
 

@@ -1,4 +1,5 @@
 import sys
+
 from hal.configuration import SATELLITE
 from state_manager import state_manager
 

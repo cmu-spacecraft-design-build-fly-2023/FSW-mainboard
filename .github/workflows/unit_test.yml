@@ -36,7 +36,9 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
       - name: Run unit tests
         run: pytest tests/ --html=report.html # --cov=. --cov-report=xml

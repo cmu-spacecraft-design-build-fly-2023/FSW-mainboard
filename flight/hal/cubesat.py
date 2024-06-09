@@ -1,5 +1,5 @@
-from micropython import const
 from hal.drivers.diagnostics.diagnostics import Diagnostics
+from micropython import const
 
 
 class CubeSat:

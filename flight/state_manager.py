@@ -18,7 +18,7 @@ class StateManager:
         :param start_state: The state to start the state machine in
         :type start_state: str
         """
-        from sm_configuration import TASK_REGISTRY, SM_CONFIGURATION
+        from sm_configuration import SM_CONFIGURATION, TASK_REGISTRY
 
         self.config = SM_CONFIGURATION
         self.task_registry = TASK_REGISTRY

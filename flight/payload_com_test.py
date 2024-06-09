@@ -1,11 +1,10 @@
-# Testing script for the UART communication with the payload 
+# Testing script for the UART communication with the payload
 
+import gc
 import sys
 import time
-import gc
 
 from apps.data_handler import DataHandler as DH
-
 from apps.jetson_comms.argus_comm import *
 from hal.configuration import SATELLITE
 
@@ -21,7 +20,7 @@ DH.scan_SD_card()
 
 DH.delete_all_files()
 
-## Put Jetson Code here 
+## Put Jetson Code here
 DH.register_image_process()
 
 ## Initialize the UAR
@@ -31,6 +30,7 @@ if SATELLITE is None:
 argus_comms = ArgusComm(SATELLITE.PAYLOADUART)
 
 from apps.comms.radio_helpers import *
+
 SAT_RADIO = SATELLITE_RADIO(SATELLITE)
 
 while True:
@@ -40,7 +40,7 @@ while True:
 
     print("Waiting on header...")
     ticks = 0
-    while (not argus_comms.receive_message()):
+    while not argus_comms.receive_message():
         if ticks > TIMEOUT:
             timed_out = True
             break
@@ -72,7 +72,6 @@ while True:
             break
 
     time.sleep(5)
-
 
     # Print out image contents from datahandler
 

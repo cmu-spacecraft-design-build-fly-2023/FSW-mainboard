@@ -43,6 +43,7 @@ Implementation Notes
 
 """
 import time
+
 from micropython import const
 
 __version__ = "3.5.1"

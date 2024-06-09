@@ -1,9 +1,9 @@
-import os
-import subprocess
-import shutil
-import filecmp
 import argparse
+import filecmp
+import os
 import platform
+import shutil
+import subprocess
 
 if platform.system() == "Windows":
     BOARD_PATH = "D:\\"
@@ -70,7 +70,7 @@ if __name__ == "__main__":
         type=str,
         default="flight-software/build",
         help="Source folder path",
-        required=False
+        required=False,
     )
     parser.add_argument(
         "-d",
@@ -78,7 +78,7 @@ if __name__ == "__main__":
         type=str,
         default=BOARD_PATH,
         help="Destination folder path",
-        required=False
+        required=False,
     )
     args = parser.parse_args()
 

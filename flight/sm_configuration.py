@@ -1,10 +1,10 @@
 from tasks.imu import Task as imu
-from tasks.monitor import Task as monitor
-from tasks.timing import Task as timing
-from tasks.obdh import Task as obdh
-from tasks.sun import Task as sun
-from tasks.radio_comms import Task as comms
 from tasks.jetson_comms import Task as jetson
+from tasks.monitor import Task as monitor
+from tasks.obdh import Task as obdh
+from tasks.radio_comms import Task as comms
+from tasks.sun import Task as sun
+from tasks.timing import Task as timing
 
 TASK_REGISTRY = {
     "MONITOR": monitor,
@@ -12,8 +12,8 @@ TASK_REGISTRY = {
     "OBDH": obdh,
     "IMU": imu,
     "SUN": sun,
-    "COMMS": comms, 
-    "JETSON": jetson, 
+    "COMMS": comms,
+    "JETSON": jetson,
 }
 
 TASK_MAPPING_ID = {

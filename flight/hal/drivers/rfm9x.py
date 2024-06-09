@@ -11,11 +11,13 @@ Library Repo: https://github.com/pycubed/library_pycubed.py
 * Edits by: Max Holliday
 """
 import math
-from time import sleep, monotonic
 from random import random
+from time import monotonic, sleep
+
+import adafruit_bus_device.spi_device as spidev
 from digitalio import DigitalInOut, Pull
 from micropython import const
-import adafruit_bus_device.spi_device as spidev
+
 from .diagnostics.diagnostics import Diagnostics
 
 # pylint: disable=bad-whitespace

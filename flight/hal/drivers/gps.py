@@ -43,9 +43,11 @@ Implementation Notes
 
 """
 from time import struct_time
-from micropython import const
-from .diagnostics.diagnostics import Diagnostics
+
 from digitalio import DigitalInOut
+from micropython import const
+
+from .diagnostics.diagnostics import Diagnostics
 
 __version__ = "3.5.1"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_GPS.git"

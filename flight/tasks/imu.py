@@ -1,9 +1,10 @@
 # from hal.pycubed import hardware
-from hal.configuration import SATELLITE
-from tasks.template_task import DebugTask
-from state_manager import state_manager as SM
-from apps.data_handler import DataHandler as DH
 import time
+
+from apps.data_handler import DataHandler as DH
+from hal.configuration import SATELLITE
+from state_manager import state_manager as SM
+from tasks.template_task import DebugTask
 
 
 class Task(DebugTask):

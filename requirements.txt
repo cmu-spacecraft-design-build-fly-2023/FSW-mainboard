@@ -3,3 +3,5 @@ pytest>=7.4.3
 pytest-html
 pytest-cov
 flake8
+black
+isort

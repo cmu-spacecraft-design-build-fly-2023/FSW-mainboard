@@ -12,9 +12,10 @@ Library Repo: https://github.com/pycubed/library_pycubed.py
 """
 import time
 from random import random
+
+import adafruit_bus_device.spi_device as spidev
 import digitalio
 from micropython import const
-import adafruit_bus_device.spi_device as spidev
 
 # pylint: disable=bad-whitespace
 # Internal constants:

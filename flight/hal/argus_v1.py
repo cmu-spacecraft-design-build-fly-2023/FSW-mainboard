@@ -4,31 +4,30 @@ Author: Harry
 Description: This file contains the definition of the ArgusV1 class and its associated interfaces and components.
 """
 
+from sys import path
+
+import board
+import neopixel
 from busio import I2C, SPI, UART
 from hal.cubesat import CubeSat
-from micropython import const
-import board
-from sdcardio import SDCard
-from sys import path
-from storage import mount, VfsFat
-
-import neopixel
-
-from hal.drivers.diagnostics.diagnostics import Diagnostics
 from hal.drivers.adm1176 import ADM1176
-from hal.drivers.bq25883 import BQ25883
 from hal.drivers.bmx160 import BMX160
+from hal.drivers.bq25883 import BQ25883
+from hal.drivers.burnwire import BurnWires
+from hal.drivers.diagnostics.diagnostics import Diagnostics
+from hal.drivers.drv8830 import DRV8830
+from hal.drivers.gps import GPS
+from hal.drivers.middleware.exceptions import *
+from hal.drivers.middleware.middleware import Middleware
+from hal.drivers.opt4001 import OPT4001
+from hal.drivers.payload import PayloadUART
 from hal.drivers.pcf8523 import PCF8523
 from hal.drivers.rfm9x import RFM9x
-from hal.drivers.opt4001 import OPT4001
-from hal.drivers.gps import GPS
-from hal.drivers.drv8830 import DRV8830
-from hal.drivers.burnwire import BurnWires
 from hal.drivers.stateflags import StateFlags
 from hal.drivers.torque_coil import TorqueInterface
-from hal.drivers.payload import PayloadUART
-from hal.drivers.middleware.middleware import Middleware
-from hal.drivers.middleware.exceptions import *
+from micropython import const
+from sdcardio import SDCard
+from storage import VfsFat, mount
 
 
 class ArgusV1Interfaces:
@@ -58,7 +57,12 @@ class ArgusV1Interfaces:
     UART2_RECEIVE_BUF_SIZE = const(256)
     UART2_TX = board.JET_TX
     UART2_RX = board.JET_RX
-    UART2 = UART(UART2_TX, UART2_RX, baudrate=UART2_BAUD, receiver_buffer_size=UART2_RECEIVE_BUF_SIZE)
+    UART2 = UART(
+        UART2_TX,
+        UART2_RX,
+        baudrate=UART2_BAUD,
+        receiver_buffer_size=UART2_RECEIVE_BUF_SIZE,
+    )
 
 
 class ArgusV1Components:
@@ -105,7 +109,7 @@ class ArgusV1Components:
     SUN_SENSOR_YP_I2C_ADDRESS = const(0x46)
     SUN_SENSOR_YM_I2C_ADDRESS = const(0x47)
     SUN_SENSOR_ZP_I2C_ADDRESS = const(0x48)
-    SUN_SENSOR_ZM_I2C_ADDRESS = const(0x4a)
+    SUN_SENSOR_ZM_I2C_ADDRESS = const(0x4A)
 
     # RADIO
     RADIO_SPI = ArgusV1Interfaces.SPI
@@ -466,7 +470,9 @@ class ArgusV1(CubeSat):
 
         # X direction
         try:
-            torque_interface = TorqueInterface(self.__torque_xp_driver, self.__torque_xm_driver)
+            torque_interface = TorqueInterface(
+                self.__torque_xp_driver, self.__torque_xm_driver
+            )
             self.__torque_x = torque_interface
         except Exception as e:
             if self.__debug:
@@ -474,7 +480,9 @@ class ArgusV1(CubeSat):
 
         # Y direction
         try:
-            torque_interface = TorqueInterface(self.__torque_yp_driver, self.__torque_ym_driver)
+            torque_interface = TorqueInterface(
+                self.__torque_yp_driver, self.__torque_ym_driver
+            )
             self.__torque_y = torque_interface
         except Exception as e:
             if self.__debug:
@@ -766,11 +774,13 @@ class ArgusV1(CubeSat):
             return [Diagnostics.BURNWIRES_NOT_INITIALIZED]
 
         return [Diagnostics.NOERROR]
-    
+
     def __payload_uart_boot(self) -> list[int]:
         """payload_uart_boot: Boot sequence for the Jetson UART"""
         try:
-            payload_uart = PayloadUART(ArgusV1Components.PAYLOAD_UART, ArgusV1Components.PAYLOAD_ENABLE)
+            payload_uart = PayloadUART(
+                ArgusV1Components.PAYLOAD_UART, ArgusV1Components.PAYLOAD_ENABLE
+            )
 
             if self.__middleware_enabled:
                 payload_uart = Middleware(payload_uart, payload_uart_fatal_exception)

@@ -9,8 +9,9 @@ Author: Harry Rosmann
 
 """
 
-from .bitflags import bitFlag, multiBitFlag
 from micropython import const
+
+from .bitflags import bitFlag, multiBitFlag
 
 
 class StateFlags:

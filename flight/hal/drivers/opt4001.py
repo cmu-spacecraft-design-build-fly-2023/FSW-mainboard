@@ -39,11 +39,12 @@ Thomas Damiani
     https://github.com/adafruit/Adafruit_CircuitPython_Register
 """
 
-from time import sleep, monotonic
-from micropython import const
+from time import monotonic, sleep
+
 from adafruit_bus_device.i2c_device import I2CDevice
-from adafruit_register.i2c_bits import RWBits
 from adafruit_register.i2c_bit import ROBit, RWBit
+from adafruit_register.i2c_bits import RWBits
+from micropython import const
 
 from .diagnostics.diagnostics import Diagnostics
 

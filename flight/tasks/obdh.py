@@ -1,9 +1,8 @@
 # Onboard Data Handling (OBDH) Task
 
-from tasks.template_task import DebugTask
-
-from state_manager import state_manager as SM
 from apps.data_handler import DataHandler as DH
+from state_manager import state_manager as SM
+from tasks.template_task import DebugTask
 
 
 class Task(DebugTask):

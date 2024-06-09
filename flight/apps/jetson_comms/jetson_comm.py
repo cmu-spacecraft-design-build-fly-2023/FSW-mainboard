@@ -8,13 +8,15 @@ to the GPIO pins for signaling
 
 * Author(s): Sachit Goyal, Harry Rosmann
 """
+
 from message import *
 from micropython import const
 
 MAX_RETRIES = const(3)
 
+
 # TODO: Add comments
-class JetsonComm():
+class JetsonComm:
     def __init__(self, uart):
         self.uart = uart
 
@@ -22,12 +24,12 @@ class JetsonComm():
         done = False
         current_seq = 0
         total_packets = message.num_packets
-        while(not done):
+        while not done:
             if current_seq == 0:
                 self.uart.write(message.create_header())
             else:
                 self.uart.write(message.create_packet(current_seq))
-            while(self.uart.in_waiting != PKT_METADATA_SIZE):
+            while self.uart.in_waiting != PKT_METADATA_SIZE:
                 continue
             response = self.uart.read(PKT_METADATA_SIZE)
             (seq_num, packet_type, _) = Message.parse_packet_meta(response)
@@ -44,20 +46,22 @@ class JetsonComm():
         expected_seq_num = 0
         retries = 0
         reset = False
-        while(self.uart.in_waiting != HEADER_PKT_SIZE):
-           continue
+        while self.uart.in_waiting != HEADER_PKT_SIZE:
+            continue
         header = self.uart.read(PACKET_SIZE)
         (seq_num, packet_type, payload_size) = Message.parse_packet_meta(header)
         if packet_type != PKT_TYPE_HEADER:
-            #clear uart buffer
+            # clear uart buffer
             raise RuntimeError("Invalid header")
-        #do something with message type
-        (message_type, num_packets) = Message.parse_header_payload(header[PKT_METADATA_SIZE:])
+        # do something with message type
+        (message_type, num_packets) = Message.parse_header_payload(
+            header[PKT_METADATA_SIZE:]
+        )
         self.uart.write(Message.create_ack(seq_num))
         expected_seq_num = seq_num + 1
         message = []
-        while(expected_seq_num != num_packets + 1):
-            while(self.uart.in_waiting != PACKET_SIZE):
+        while expected_seq_num != num_packets + 1:
+            while self.uart.in_waiting != PACKET_SIZE:
                 continue
             packet = self.uart.read(PACKET_SIZE)
             (seq_num, packet_type, payload_size) = Message.parse_packet_meta(packet)
@@ -65,10 +69,10 @@ class JetsonComm():
                 expected_seq_num += 1
                 retries = 0
             else:
-                if (retries >= MAX_RETRIES):
+                if retries >= MAX_RETRIES:
                     self.close_logger()
                     raise RuntimeError("Unable to receive message")
-                #clear uart buffer
+                # clear uart buffer
                 retries += 1
             self.uart.write(Message.create_ack(expected_seq_num - 1))
             message += packet[PKT_METADATA_SIZE:][:payload_size]
