@@ -1,0 +1,1 @@
+This folder contains replications of circuit-python modules and functions in standard python for testing purposes.

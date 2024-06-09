@@ -1,17 +1,18 @@
 # Sun Vector Tasks
 
-# from hal.pycubed import hardware
 from tasks.template_task import DebugTask
+
+
+from hal.configuration import SATELLITE
 
 
 from state_manager import state_manager as SM
 from apps.data_handler import DataHandler as DH
-from apps.sun import process_sun_vector
+from apps.sun import compute_body_sun_vector, in_eclipse
 
-import rtc
 import time
 
-import math
+
 
 
 class Task(DebugTask):
@@ -23,6 +24,7 @@ class Task(DebugTask):
 
     # Fake starting sun vector
     sun_vector = [1, 0, 0]
+    eclipse_state = False
 
     async def main_task(self):
 
@@ -33,20 +35,25 @@ class Task(DebugTask):
                     "sun", self.data_keys, "ffffb", True, line_limit=50
                 )
 
-            # TODO: Access Sun Sensor Readings - Sun Acquisition
-            lux_readings = {}
+            # TODO: Access Sun Sensor Readings - Satellite must return the array directly
+            lux_readings = {
+                SATELLITE.SUN_SENSOR_XP,
+                SATELLITE.SUN_SENSOR_XM,
+                SATELLITE.SUN_SENSOR_YP,
+                SATELLITE.SUN_SENSOR_YM,
+                SATELLITE.SUN_SENSOR_ZP,
+                SATELLITE.SUN_SENSOR_ZM}
 
             # TODO Fake sun vector that always moves infinitesimally
-            self.sun_vector, eclipse_state = process_sun_vector(
-                lux_readings, self.sun_vector
-            )
+            self.sun_vector = compute_body_sun_vector(lux_readings)
+            self.eclipse_state = in_eclipse(lux_readings)
 
             readings = {
                 "time": time.time(),
                 "x": self.sun_vector[0],
                 "y": self.sun_vector[1],
                 "z": self.sun_vector[2],
-                "eclipse": eclipse_state,
+                "eclipse": self.eclipse_state,
             }
 
             DH.log_data("sun", readings)
