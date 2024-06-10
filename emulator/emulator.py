@@ -1,3 +1,5 @@
+from numpy import array
+
 from emulator.cubesat import CubeSat
 from emulator.drivers.burnwire import BurnWires
 from emulator.drivers.imu import IMU
@@ -6,7 +8,6 @@ from emulator.drivers.power_monitor import PowerMonitor
 from emulator.drivers.radio import Radio
 from emulator.drivers.sd import SD
 from emulator.drivers.sun_sensor import SunSensor
-from numpy import array
 
 
 class device:
