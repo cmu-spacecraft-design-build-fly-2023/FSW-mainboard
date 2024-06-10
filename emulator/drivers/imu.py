@@ -8,15 +8,15 @@ class IMU:
     @property
     def accel(self):
         return self.__accel
-    
+
     @property
     def mag(self):
         return self.__mag
-    
+
     @property
     def gyro(self):
         return self.__gyro
-    
+
     @property
     def temp(self):
         return self.__temp

@@ -236,6 +236,7 @@ class vfs_fatal_exception(Exception):
     def __str__(self):
         return f"{type(self.exception).__name__}: {self.exception}"
 
+
 class payload_uart_fatal_exception(Exception):
     """payload_uart_fatal_exception: Exception for fatal payload uart errors"""
 
