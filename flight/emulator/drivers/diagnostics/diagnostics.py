@@ -153,7 +153,7 @@ class Diagnostics:
         :param errors: The list of errors. Must be a valid diagnostic error
         :returns: The byte array of toggled error bits
         """
-        BITS_IN_BYTE = const(8)
+        BITS_IN_BYTE = 8
 
         num_bytes = Diagnostics.__ERROR_MAX / BITS_IN_BYTE
         error_bytes = bytearray([0x00] * num_bytes)

@@ -42,7 +42,7 @@ Implementation Notes
   https://github.com/adafruit/circuitpython/releases
 
 """
-from time import struct_time
+from time import struct_time, sleep
 
 from digitalio import DigitalInOut
 from micropython import const
