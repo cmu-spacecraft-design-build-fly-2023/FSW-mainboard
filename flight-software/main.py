@@ -15,6 +15,9 @@ print("Booting ARGUS-1...")
 boot_errors = SATELLITE.boot_sequence()
 print("ARGUS-1 booted.")
 print()
+print("initializing the board...")
+from hal.pycubed import hardware
+from state_manager import state_manager
 
 print("Boot Errors: ", boot_errors)
 print()
