@@ -1,16 +1,21 @@
-import os
-import subprocess
-import shutil
-import filecmp
 import argparse
+import filecmp
+import os
 import platform
+import shutil
+import subprocess
 
-MPY_CROSS_PATH = f"{os.getcwd()}/mpy-cross"
+MPY_CROSS_NAME = "mpy-cross"
+if platform.system() == "Darwin":
+    MPY_CROSS_NAME = "mpy-cross-macos"
+MPY_CROSS_PATH = f"{os.getcwd()}/{MPY_CROSS_NAME}"
 
 
 def check_directory_location(source_folder):
     if not os.path.exists(MPY_CROSS_PATH):
-        raise FileNotFoundError(f"MPY_CROSS_PATH folder {MPY_CROSS_PATH} not found")
+        raise FileNotFoundError(
+            f"MPY_CROSS_PATH folder {MPY_CROSS_PATH} not found"
+        )
 
     if not os.path.exists(f"{source_folder}"):
         raise FileNotFoundError(f"Source folder {source_folder} not found")
@@ -34,7 +39,9 @@ def create_build(source_folder):
             if file.endswith(".py"):
                 source_path = os.path.join(root, file)
 
-                build_path = os.path.join(build_folder, os.path.relpath(source_path, source_folder))
+                build_path = os.path.join(
+                    build_folder, os.path.relpath(source_path, source_folder)
+                )
 
                 os.makedirs(os.path.dirname(build_path), exist_ok=True)
                 shutil.copy2(source_path, build_path)
@@ -56,9 +63,13 @@ def create_build(source_folder):
                 relative_path = os.path.relpath(source_folder, build_path)
 
                 try:
-                    os.system(f"{relative_path}/mpy-cross {file_name} -O3")
+                    os.system(
+                        f"{relative_path}/{MPY_CROSS_NAME} {file_name} -O3"
+                    )
                 except Exception as e:
-                    print(f"Error occurred while compiling {file_name}: {str(e)}")
+                    print(
+                        f"Error occurred while compiling {file_name}: {str(e)}"
+                    )
 
                 # Delete file python file once it has been compiled
                 os.remove(file_name)
@@ -74,6 +85,7 @@ def create_build(source_folder):
     os.makedirs(os.path.join(build_folder, "sd/"), exist_ok=True)
 
     return build_folder
+
 
 def copy_folder(build_folder, destination_folder, show_identical_files=True):
     for root, dirs, files in os.walk(build_folder):
@@ -91,7 +103,9 @@ def copy_folder(build_folder, destination_folder, show_identical_files=True):
             else:
                 if filecmp.cmp(source_path, destination_path):
                     if show_identical_files:
-                        print(f"File {source_path} already exists and is identical.")
+                        print(
+                            f"File {source_path} already exists and is identical."
+                        )
                 else:
                     shutil.copy2(source_path, destination_path)
                     print(f"Overwrote {destination_path} with {source_path}")
@@ -100,7 +114,9 @@ def copy_folder(build_folder, destination_folder, show_identical_files=True):
     for root, dirs, files in os.walk(destination_folder):
         for file in files:
             destination_path = os.path.join(root, file)
-            relative_path = os.path.relpath(destination_path, destination_folder)
+            relative_path = os.path.relpath(
+                destination_path, destination_folder
+            )
             source_path = os.path.join(build_folder, relative_path)
 
             if not os.path.exists(source_path):
@@ -119,14 +135,10 @@ if __name__ == "__main__":
         type=str,
         default="flight-software",
         help="Source folder path",
-        required=False
+        required=False,
     )
     args = parser.parse_args()
 
     source_folder = args.source_folder
 
     build_folder = create_build(source_folder)
-
-
-
-    
