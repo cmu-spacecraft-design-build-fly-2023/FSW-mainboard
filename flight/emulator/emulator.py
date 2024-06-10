@@ -2,14 +2,14 @@
 from numpy import array
 
 # drivers
-from emulator.cubesat import CubeSat
 from emulator.drivers.burnwire import BurnWires
+from emulator.cubesat import CubeSat
 from emulator.drivers.imu import IMU
 from emulator.drivers.payload import Payload
 from emulator.drivers.power_monitor import PowerMonitor
 from emulator.drivers.radio import Radio
-from emulator.drivers.sun_sensor import SunSensor
 from emulator.drivers.sd import SD
+from emulator.drivers.sun_sensor import SunSensor
 
 
 class device:
