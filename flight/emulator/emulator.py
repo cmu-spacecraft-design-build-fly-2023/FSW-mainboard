@@ -1,5 +1,7 @@
+# standard library
 from numpy import array
 
+# drivers
 from emulator.drivers.burnwire import BurnWires
 from emulator.cubesat import CubeSat
 from emulator.drivers.imu import IMU
