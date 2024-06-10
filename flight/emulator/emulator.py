@@ -2,8 +2,8 @@
 from numpy import array
 
 # drivers
-from emulator.drivers.burnwire import BurnWires
 from emulator.cubesat import CubeSat
+from emulator.drivers.burnwire import BurnWires
 from emulator.drivers.imu import IMU
 from emulator.drivers.payload import Payload
 from emulator.drivers.power_monitor import PowerMonitor
