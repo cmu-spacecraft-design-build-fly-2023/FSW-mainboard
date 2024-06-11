@@ -1,4 +1,4 @@
-import flight.apps.task_scheduler as task_scheduler
+import flight.core.scheduler as scheduler
 
 
 class StateManager:
@@ -6,14 +6,24 @@ class StateManager:
 
     def __init__(self):
 
-        self.current_state = None
-        self.previous_state = None
-        self.scheduled_tasks = {}
-        self.initialized = False
+        self.__current_state = None
+        self.__previous_state = None
+        self.__scheduled_tasks = {}
+        self.__initialized = False
         self.config = None
         self.task_registry = None
 
-    def start(self, start_state: str, SM_CONFIGURATION: dict, TASK_REGISTRY: dict):
+    @property
+    def current_state(self):
+        return self.__current_state
+    
+    @property
+    def scheduled_tasks(self):
+        return self.__scheduled_tasks
+    
+    def start(
+        self, start_state: str, SM_CONFIGURATION: dict, TASK_REGISTRY: dict
+    ):
         """Starts the state machine
 
         Args:
@@ -30,11 +40,11 @@ class StateManager:
         # init task objects
         self.tasks = {key: task() for key, task in TASK_REGISTRY.items()}
 
-        self.current_state = start_state
+        self.__current_state = start_state
 
         # Will load all the tasks through the state switch
         self.switch_to(start_state)
-        task_scheduler.run()
+        scheduler.run()
 
     def switch_to(self, new_state):
         """Switches to a new state and actiavte all corresponding tasks as defined in the SM_CONFIGURATION
@@ -47,16 +57,16 @@ class StateManager:
         if new_state not in self.states:
             raise ValueError(f"State {new_state} is not in the list of states")
 
-        if self.initialized:
+        if self.__initialized:
             # prevent illegal transitions
-            if not (new_state in self.config[self.current_state]["MovesTo"]):
+            if not (new_state in self.config[self.__current_state]["MovesTo"]):
                 raise ValueError(
-                    f"No transition from {self.current_state} to {new_state}"
+                    f"No transition from {self.__current_state} to {new_state}"
                 )
         else:
-            self.initialized = True
+            self.__initialized = True
 
-        self.previous_state = self.current_state
+        self.__previous_state = self.__current_state
 
         # TODO transition functions
 
@@ -67,39 +77,34 @@ class StateManager:
 
         print(f"Switched to state {new_state}")
 
-
     def schedule_new_state_tasks(self, new_state):
-        
-        self.scheduled_tasks = {}  # Reset
-        self.current_state = new_state
+
+        self.__scheduled_tasks = {}  # Reset
+        self.__current_state = new_state
         state_config = self.config[new_state]
 
         for task_name, props in state_config["Tasks"].items():
             if props["ScheduleLater"]:
-                schedule = task_scheduler.schedule_later
+                schedule = scheduler.schedule_later
             else:
-                schedule = task_scheduler.schedule
+                schedule = scheduler.schedule
 
             frequency = props["Frequency"]
             priority = props["Priority"]
             task_fn = self.tasks[task_name]._run
 
-            self.scheduled_tasks[task_name] = schedule(
+            self.__scheduled_tasks[task_name] = schedule(
                 frequency, task_fn, priority
             )
 
-
-
     def stop_all_tasks(self):
-        for name, task in self.scheduled_tasks.items():
+        for name, task in self.__scheduled_tasks.items():
             task.stop()
 
-    def query_global_state(self):
-        return self.current_state
 
-    def query_state(self):
+    def query_task_states(self):
         state = {}
-        for task in self.scheduled_tasks:
+        for task in self.__scheduled_tasks:
             state[task] = task.query_state()
         return state
 

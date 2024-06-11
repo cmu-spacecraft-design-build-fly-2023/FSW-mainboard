@@ -11,7 +11,7 @@ from apps.jetson_comms.argus_comm import ArgusComm
 from hal.configuration import SATELLITE
 
 # State manager and OBDH
-from state_manager import state_manager as SM
+from flight.core.state_manager import state_manager as SM
 
 # Template task from taskio
 from tasks.template_task import TemplateTask

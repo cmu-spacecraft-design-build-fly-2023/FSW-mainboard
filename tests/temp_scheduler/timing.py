@@ -2,7 +2,7 @@
 
 import time
 
-from flight.state_manager import state_manager as SM
+from flight.core.state_manager import state_manager as SM
 from flight.tasks.template_task import TemplateTask
 
 
@@ -13,9 +13,7 @@ class Task(TemplateTask):
 
     async def main_task(self):
 
-        print(
-            f"[{self.ID}][{self.name}] GLOBAL STATE: {SM.current_state}."
-        )
+        print(f"[{self.ID}][{self.name}] GLOBAL STATE: {SM.current_state}.")
         print(f"[{self.ID}][{self.name}] Time: {time.time()}")
 
         if SM.current_state == "STARTUP":

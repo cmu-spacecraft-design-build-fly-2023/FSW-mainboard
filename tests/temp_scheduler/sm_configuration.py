@@ -1,4 +1,3 @@
-
 from tests.temp_scheduler.sun import Task as sun
 from tests.temp_scheduler.timing import Task as timing
 
@@ -7,10 +6,7 @@ TASK_REGISTRY = {
     "SUN": sun,
 }
 
-TASK_MAPPING_ID = {
-    "SUN": 0x05,
-    "TIMING": 0x01
-}
+TASK_MAPPING_ID = {"SUN": 0x05, "TIMING": 0x01}
 
 
 SM_CONFIGURATION = {
@@ -31,5 +27,5 @@ SM_CONFIGURATION = {
         "MovesTo": [
             "SAFE",
         ],
-    }
+    },
 }

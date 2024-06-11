@@ -1,13 +1,12 @@
 # TODO Logging
 
-
 class TemplateTask:
     """
     A Task Object.
 
     Attributes:
         ID:          Unique identifier for the task.
-        name:        Name of the task object for logging purposes.
+        name:        Name of the task object.
     """
 
     ID = 0xFF
@@ -22,7 +21,6 @@ class TemplateTask:
 
         :param msg: Debug message to print
         :param level: > 1 will print as a sub-level
-
         """
         print(f"[{self.ID}][{self.name}] Error: {msg}")
 
@@ -32,7 +30,6 @@ class TemplateTask:
 
         :param `*args`: Variable number of arguments used for task execution.
         :param `**kwargs`: Variable number of keyword arguments used for task execution.
-
         """
         pass
 

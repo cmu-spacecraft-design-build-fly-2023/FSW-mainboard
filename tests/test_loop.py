@@ -4,8 +4,8 @@
 import time
 from unittest import TestCase
 
-from flight.apps.task_scheduler import Loop
-from flight.apps.task_scheduler.loop import _yield_once, set_time_provider
+from flight.core.scheduler import Loop
+from flight.core.scheduler.loop import _yield_once, set_time_provider
 
 
 class TestLoop(TestCase):

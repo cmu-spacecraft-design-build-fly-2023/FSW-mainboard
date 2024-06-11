@@ -2,7 +2,7 @@ import gc
 import sys
 
 from hal.configuration import SATELLITE
-from state_manager import state_manager
+from flight.core.state_manager import state_manager
 
 for path in ["/hal", "/apps"]:
     if path not in sys.path:
@@ -37,6 +37,7 @@ print(str(gc.mem_free()) + " bytes free")
 try:
     # Run forever
     from sm_configuration import SM_CONFIGURATION, TASK_REGISTRY
+
     state_manager.start("STARTUP", SM_CONFIGURATION, TASK_REGISTRY)
     pass
 

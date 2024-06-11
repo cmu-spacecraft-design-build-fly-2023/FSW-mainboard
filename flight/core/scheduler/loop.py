@@ -46,8 +46,9 @@ class Sleeper:
     __str__ = __repr__
 
 
-class Task:
+class PriorityTask:
     """Represents an asynchronous task with a priority."""
+
     def __init__(self, coroutine, priority):
         self.coroutine = coroutine
         self.priority = priority
@@ -170,7 +171,6 @@ class Loop:
         self._debug = print
         print("Task scheduler debug logging enabled")
 
-
     def add_task(self, awaitable_task, priority):
         """
         Add a concurrent task (known as a coroutine, implemented as a generator in CircuitPython)
@@ -181,7 +181,7 @@ class Loop:
         if self.debug:
             self._debug("adding task ", awaitable_task)
         # Added a priority parameter
-        self._tasks.append(Task(awaitable_task, priority))
+        self._tasks.append(PriorityTask(awaitable_task, priority))
 
     async def sleep(self, seconds):
         """
@@ -197,7 +197,7 @@ class Loop:
         """
         Add a concurrent task, delayed by some seconds.
         Use:
-          task_scheduler.run_later( seconds_to_delay=1.2, my_async_method() )
+          scheduler.run_later( seconds_to_delay=1.2, my_async_method() )
         :param seconds_to_delay: How long until the task should be kicked off?
         :param awaitable_task:   The coroutine to be concurrently driven to completion.
         """
@@ -323,7 +323,7 @@ class Loop:
             self._debug("  stepping over ", len(self._tasks), " tasks")
 
         # Sort tasks by priority
-        self._tasks.sort(key=Task.priority_sort)
+        self._tasks.sort(key=PriorityTask.priority_sort)
 
         for _ in range(len(self._tasks)):
             task = self._tasks.pop(0)
@@ -377,7 +377,7 @@ class Loop:
 
                 time.sleep(sleep_seconds)
 
-    def _run_task(self, task: Task):
+    def _run_task(self, task: PriorityTask):
         """
         Runs a task and re-queues for the next loop if it is both (1) not complete and (2) not sleeping.
         """
