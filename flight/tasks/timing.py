@@ -4,7 +4,6 @@
 import time
 
 import rtc
-from apps.data_handler import DataHandler as DH
 from state_manager import state_manager as SM
 from tasks.template_task import DebugTask
 

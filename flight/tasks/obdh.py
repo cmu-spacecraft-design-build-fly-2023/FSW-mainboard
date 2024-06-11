@@ -18,10 +18,10 @@ class Task(DebugTask):
     async def main_task(self):
 
         if SM.current_state == "STARTUP":
-            if self.SD_cleaned == False:
+            if not self.SD_cleaned:
                 DH.delete_all_files()
                 self.SD_cleaned = True
-            if self.SD_scanned == False:
+            if not self.SD_scanned:
                 DH.scan_SD_card()
                 self.SD_scanned = True
 
