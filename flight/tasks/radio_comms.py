@@ -1,5 +1,5 @@
 """
-radio_comms.py 
+radio_comms.py
 ================
 Comms FSW Task
 """
@@ -34,8 +34,8 @@ class Task(DebugTask):
             self.flag_ground_station_pass = True
 
             """
-            Heartbeats transmitted every 20s based on task frequency 
-            Once transmitted, run receive_message, waits for 1s 
+            Heartbeats transmitted every 20s based on task frequency
+            Once transmitted, run receive_message, waits for 1s
             """
 
             while self.flag_ground_station_pass:

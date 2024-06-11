@@ -2,17 +2,17 @@ import sys
 
 from hal.configuration import SATELLITE
 from state_manager import state_manager
+import gc
 
 for path in ["/hal", "/apps"]:
     if path not in sys.path:
         sys.path.append(path)
 
-import gc
 
 gc.collect()
 print(str(gc.mem_free()) + " bytes free")
 
-"""print("Booting ARGUS-1...")
+print("Booting ARGUS-1...")
 boot_errors = SATELLITE.boot_sequence()
 print("ARGUS-1 booted.")
 print()
@@ -24,7 +24,7 @@ print("Running system diagnostics...")
 errors = SATELLITE.run_system_diagnostics()
 print("System diagnostics complete")
 print("Errors:", errors)
-print()"""
+print()
 
 """
 from apps.data_handler import DataHandler as DH

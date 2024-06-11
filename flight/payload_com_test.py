@@ -1,11 +1,11 @@
 # Testing script for the UART communication with the payload
 
-import gc
 import sys
 import time
 
 from apps.data_handler import DataHandler as DH
-from apps.jetson_comms.argus_comm import *
+from apps.jetson_comms.argus_comm import ArgusComm
+from apps.comms.radio_helpers import SATELLITE_RADIO
 from hal.configuration import SATELLITE
 
 for path in ["/hal", "/apps"]:
@@ -28,8 +28,6 @@ if SATELLITE is None:
     raise RuntimeError("SATELLITE is not defined")
 
 argus_comms = ArgusComm(SATELLITE.PAYLOADUART)
-
-from apps.comms.radio_helpers import *
 
 SAT_RADIO = SATELLITE_RADIO(SATELLITE)
 
