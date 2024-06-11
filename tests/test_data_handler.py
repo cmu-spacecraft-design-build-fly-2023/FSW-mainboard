@@ -3,8 +3,7 @@ import os
 import pytest
 
 import flight.apps.data_handler as dh
-import tests.cp_mock        # noqa: F401
-from flight.apps.data_handler import DataHandler as DH
+import tests.cp_mock  # noqa: F401
 from flight.apps.data_handler import DataProcess as DP
 
 

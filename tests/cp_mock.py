@@ -1,6 +1,6 @@
 import sys
 
-import numpy        # noqa: F401
+import numpy  # noqa: F401
 
 sys.path.append("tests/cp/")
 sys.modules["micropython"] = __import__("micropython_mock")

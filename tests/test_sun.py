@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-import tests.cp_mock        # noqa: F401
+import tests.cp_mock  # noqa: F401
 from flight.apps.sun import compute_body_sun_vector
 
 MAX_RANGE_OPT4001 = 117000
