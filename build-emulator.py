@@ -66,7 +66,11 @@ def create_build(source_folder, emulator_folder):
     # Create main.py file with single import statement "import main_module"
     build_folder = os.path.join(build_folder, "..")
     with open(os.path.join(build_folder, "main.py"), "w") as f:
-        f.write("import main_module\n")
+        f.write("import sys\n")
+        f.write("if '/lib' not in sys.path:\n")
+        f.write("   sys.path.insert(0, './lib')\n")
+        f.write("import hal.cp_mock\n")
+        f.write("import lib.main_module\n")
 
     # Create SD folder
     os.makedirs(os.path.join(build_folder, "sd/"), exist_ok=True)
