@@ -13,7 +13,7 @@ import os
 import time
 
 # Argus-1 Lib
-from apps.comms.radio_protocol import construct_message, IMAGES, Definitions
+from apps.comms.radio_protocol import IMAGES, Definitions, construct_message
 
 # PyCubed Board Lib
 from hal.cubesat import CubeSat
