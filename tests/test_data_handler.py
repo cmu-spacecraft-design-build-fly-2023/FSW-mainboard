@@ -2,8 +2,8 @@ import os
 
 import pytest
 
-import flight.apps.data_handler as dh
 import tests.cp_mock
+import flight.apps.data_handler as dh
 from flight.apps.data_handler import DataHandler as DH
 from flight.apps.data_handler import DataProcess as DP
 
