@@ -1,4 +1,4 @@
-import apps.tasko as tasko
+import tasko 
 
 
 class StateManager:
@@ -62,6 +62,13 @@ class StateManager:
         ## Scheduling
 
         self.stop_all_tasks()
+        self.schedule_new_state_tasks(new_state)
+
+        print(f"Switched to state {new_state}")
+
+
+    def schedule_new_state_tasks(self, new_state):
+        
         self.scheduled_tasks = {}  # Reset
         self.current_state = new_state
         state_config = self.config[new_state]
@@ -80,7 +87,7 @@ class StateManager:
                 frequency, task_fn, priority
             )
 
-        print(f"Switched to state {new_state}")
+
 
     def stop_all_tasks(self):
         for name, task in self.scheduled_tasks.items():
