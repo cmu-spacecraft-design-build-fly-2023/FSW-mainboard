@@ -1,5 +1,6 @@
 # TODO Logging
 
+
 class TemplateTask:
     """
     A Task Object.

@@ -13,11 +13,11 @@ from apps.data_handler import DataHandler as DH
 # PyCubed Board Lib
 from hal.configuration import SATELLITE
 
-# State manager and OBDH
-from flight.core.state_manager import state_manager as SM
-
 # Template task from taskio
-from tasks.template_task import TemplateTask
+from flight.core import TemplateTask
+
+# State manager and OBDH
+import flight.core.state_manager as SM
 
 
 class Task(TemplateTask):

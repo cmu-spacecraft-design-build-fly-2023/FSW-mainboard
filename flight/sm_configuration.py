@@ -70,3 +70,12 @@ SM_CONFIGURATION = {
         "Exit": ["print"],
     },
 }
+
+"""
+TODO
+Attributes to add? 
+- Start time 
+- Duration (if applicable)
+- Internal state of the task? handled inside each task
+- timeout
+"""

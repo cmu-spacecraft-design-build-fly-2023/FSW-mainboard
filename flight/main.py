@@ -2,6 +2,7 @@ import gc
 import sys
 
 from hal.configuration import SATELLITE
+
 from flight.core.state_manager import state_manager
 
 for path in ["/hal", "/apps"]:

@@ -4,6 +4,14 @@ import flight.core.scheduler as scheduler
 class StateManager:
     """Singleton Class"""
 
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls, *args, **kwargs)
+        return cls._instance
+    
+
     def __init__(self):
 
         self.__current_state = None
@@ -16,11 +24,11 @@ class StateManager:
     @property
     def current_state(self):
         return self.__current_state
-    
+
     @property
     def scheduled_tasks(self):
         return self.__scheduled_tasks
-    
+
     def start(
         self, start_state: str, SM_CONFIGURATION: dict, TASK_REGISTRY: dict
     ):
@@ -71,7 +79,6 @@ class StateManager:
         # TODO transition functions
 
         ## Scheduling
-
         self.stop_all_tasks()
         self.schedule_new_state_tasks(new_state)
 
@@ -101,12 +108,14 @@ class StateManager:
         for name, task in self.__scheduled_tasks.items():
             task.stop()
 
-
     def query_task_states(self):
         state = {}
         for task in self.__scheduled_tasks:
             state[task] = task.query_state()
         return state
 
-
-state_manager = StateManager()
+    def print_current_tasks(self):
+        """Prints all current tasks being executed"""
+        print("Current tasks:")
+        for task_name in self.__scheduled_tasks:
+            print(task_name)

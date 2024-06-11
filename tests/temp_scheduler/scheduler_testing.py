@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append(".")
 print("sys.path", sys.path)
 
@@ -22,6 +23,7 @@ scheduler.run()"""
 
 
 from sm_configuration import SM_CONFIGURATION, TASK_REGISTRY
-from flight.core.state_manager import state_manager
+
+import flight.core.state_manager as state_manager
 
 state_manager.start("STARTUP", SM_CONFIGURATION, TASK_REGISTRY)
