@@ -79,11 +79,8 @@ SM_CONFIGURATION = {
     },
 }
 
-"""
-TODO
-Attributes to add? 
-- Start time 
-- Duration (if applicable)
-- Internal state of the task? handled inside each task
-- timeout
-"""
+# TODO later: Attributes to add 
+# - start
+# - duration
+# - internal state of the task
+# - timeout
