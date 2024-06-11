@@ -4,15 +4,13 @@ jetson_comms.py
 Task to interact with Jetson over UART
 """
 
-from apps.data_handler import DataHandler as DH
 from apps.jetson_comms.argus_comm import ArgusComm
-
 from hal.configuration import SATELLITE
-
-from flight.core import TemplateTask
 
 # State manager and OBDH
 import flight.core.state_manager as SM
+from flight.core import TemplateTask
+from flight.core.data_handler import DataHandler as DH
 
 
 class Task(TemplateTask):

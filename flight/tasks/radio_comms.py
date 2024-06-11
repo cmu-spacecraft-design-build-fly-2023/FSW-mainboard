@@ -6,16 +6,16 @@ Comms FSW Task
 
 # Argus-1 Radio Libs
 from apps.comms.radio_helpers import SATELLITE_RADIO
-from apps.data_handler import DataHandler as DH
 
 # PyCubed Board Lib
 from hal.configuration import SATELLITE
 
-# Template task from taskio
-from flight.core import TemplateTask
-
 # State manager and OBDH
 import flight.core.state_manager as SM
+
+# Template task from taskio
+from flight.core import TemplateTask
+from flight.core.data_handler import DataHandler as DH
 
 
 class Task(TemplateTask):

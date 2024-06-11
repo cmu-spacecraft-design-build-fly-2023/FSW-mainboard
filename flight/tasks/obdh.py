@@ -1,9 +1,8 @@
 # Onboard Data Handling (OBDH) Task
 
-from apps.data_handler import DataHandler as DH
-from flight.core import TemplateTask
-
 import flight.core.state_manager as SM
+from flight.core import TemplateTask
+from flight.core.data_handler import DataHandler as DH
 
 
 class Task(TemplateTask):

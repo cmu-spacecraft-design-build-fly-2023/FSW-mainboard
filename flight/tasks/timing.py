@@ -4,9 +4,9 @@
 import time
 
 import rtc
-from flight.core import TemplateTask
 
 import flight.core.state_manager as SM
+from flight.core import TemplateTask
 
 
 class Task(TemplateTask):

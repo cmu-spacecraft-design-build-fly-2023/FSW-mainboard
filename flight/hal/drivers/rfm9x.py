@@ -934,7 +934,7 @@ class RFM9x(Diagnostics):
         return got_ack
 
     # pylint: disable=too-many-branches
-    def receive(        # noqa: C901
+    def receive(  # noqa: C901
         self,
         *,
         keep_listening=True,

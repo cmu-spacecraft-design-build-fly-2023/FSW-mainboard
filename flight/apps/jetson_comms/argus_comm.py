@@ -11,7 +11,7 @@ Author(s): Sachit Goyal, Harry Rosmann
 """
 from time import sleep
 
-from ..data_handler import DataHandler as DH
+from ...core.data_handler import DataHandler as DH
 from .msg import Definitions, Message
 
 MAX_RETRIES = 3
@@ -83,7 +83,7 @@ class ArgusComm:
 
         # do something with message type
         (message_type, num_packets) = Message.parse_header_payload(
-            header[Definitions.PKT_METADATA_SIZE:]
+            header[Definitions.PKT_METADATA_SIZE :]
         )
         # print("Metadata:", message_type, num_packets)
 
@@ -105,7 +105,10 @@ class ArgusComm:
                 packet
             )
 
-            if packet_type == Definitions.PKT_TYPE_DATA and seq_num == expected_seq_num:
+            if (
+                packet_type == Definitions.PKT_TYPE_DATA
+                and seq_num == expected_seq_num
+            ):
                 expected_seq_num += 1
                 retries = 0
                 # else:
@@ -115,7 +118,7 @@ class ArgusComm:
                 # clear uart buffer
                 retries += 1
             self.uart.write(Message.create_ack(expected_seq_num - 1))
-            payload = packet[Definitions.PKT_METADATA_SIZE:][:payload_size]
+            payload = packet[Definitions.PKT_METADATA_SIZE :][:payload_size]
             self.log_data(payload)
 
         self.close_logger()

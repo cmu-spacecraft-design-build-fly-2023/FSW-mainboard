@@ -2,12 +2,12 @@
 
 import time
 
-from apps.data_handler import DataHandler as DH
 from apps.sun import compute_body_sun_vector, in_eclipse
 from hal.configuration import SATELLITE
-from flight.core import TemplateTask
 
 import flight.core.state_manager as SM
+from flight.core import TemplateTask
+from flight.core.data_handler import DataHandler as DH
 
 
 class Task(TemplateTask):

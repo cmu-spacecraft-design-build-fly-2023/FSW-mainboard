@@ -13,7 +13,7 @@ LENGTH     : 1 byte
 Authors: DJ Morvay, Akshat Sahay
 """
 
-from apps.data_handler import DataHandler as DH
+from flight.core.data_handler import DataHandler as DH
 
 
 # Message ID definitions
@@ -61,7 +61,12 @@ def construct_message(lora_tx_message_ID):
 
     if lora_tx_message_ID == Definitions.SAT_HEARTBEAT_BATT:
         # Construct SAT heartbeat
-        lora_tx_message = [Definitions.REQ_ACK_NUM | Definitions.SAT_HEARTBEAT_BATT, 0x00, 0x00, 0x0A]
+        lora_tx_message = [
+            Definitions.REQ_ACK_NUM | Definitions.SAT_HEARTBEAT_BATT,
+            0x00,
+            0x00,
+            0x0A,
+        ]
 
         # Generate LoRa payload for SAT heartbeat
         # Add system status
@@ -101,7 +106,12 @@ def construct_message(lora_tx_message_ID):
 
     elif lora_tx_message_ID == Definitions.SAT_HEARTBEAT_SUN:
         # Construct SAT heartbeat
-        lora_tx_message = [Definitions.REQ_ACK_NUM | Definitions.SAT_HEARTBEAT_SUN, 0x00, 0x00, 0x12]
+        lora_tx_message = [
+            Definitions.REQ_ACK_NUM | Definitions.SAT_HEARTBEAT_SUN,
+            0x00,
+            0x00,
+            0x12,
+        ]
 
         # Generate LoRa payload for SAT heartbeat
         # Add system status
@@ -138,7 +148,12 @@ def construct_message(lora_tx_message_ID):
 
     elif lora_tx_message_ID == Definitions.SAT_HEARTBEAT_IMU:
         # Construct SAT heartbeat
-        lora_tx_message = [Definitions.REQ_ACK_NUM | Definitions.SAT_HEARTBEAT_IMU, 0x00, 0x00, 0x1E]
+        lora_tx_message = [
+            Definitions.REQ_ACK_NUM | Definitions.SAT_HEARTBEAT_IMU,
+            0x00,
+            0x00,
+            0x1E,
+        ]
 
         # Generate LoRa payload for SAT heartbeat
         # Add system status
@@ -186,7 +201,12 @@ def construct_message(lora_tx_message_ID):
     # GPS NOT IMPLEMENTED IN CURRENT VERSION!!!
     elif lora_tx_message_ID == Definitions.SAT_HEARTBEAT_GPS:
         # Construct SAT heartbeat
-        lora_tx_message = [Definitions.REQ_ACK_NUM | Definitions.SAT_HEARTBEAT_GPS, 0x00, 0x00, 0x36]
+        lora_tx_message = [
+            Definitions.REQ_ACK_NUM | Definitions.SAT_HEARTBEAT_GPS,
+            0x00,
+            0x00,
+            0x36,
+        ]
 
         # Generate LoRa payload for SAT heartbeat
         # Add system status
@@ -268,7 +288,12 @@ def construct_message(lora_tx_message_ID):
 
     else:
         # Construct SAT ACK
-        lora_tx_message = [Definitions.REQ_ACK_NUM | Definitions.SAT_ACK, 0x00, 0x00, 0x36]
+        lora_tx_message = [
+            Definitions.REQ_ACK_NUM | Definitions.SAT_ACK,
+            0x00,
+            0x00,
+            0x36,
+        ]
         lora_tx_message += [Definitions.GS_ACK, Definitions.GS_ACK, 0x00, 0x00]
 
     return bytes(lora_tx_message)

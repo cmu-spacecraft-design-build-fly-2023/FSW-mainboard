@@ -4,9 +4,10 @@ import sys
 import time
 
 from apps.comms.radio_helpers import SATELLITE_RADIO
-from apps.data_handler import DataHandler as DH
 from apps.jetson_comms.argus_comm import ArgusComm
 from hal.configuration import SATELLITE
+
+from flight.core.data_handler import DataHandler as DH
 
 for path in ["/hal", "/apps"]:
     if path not in sys.path:
