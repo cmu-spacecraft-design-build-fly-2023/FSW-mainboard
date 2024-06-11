@@ -1,5 +1,7 @@
 import sys
+
 from sm_configuration import SM_CONFIGURATION, TASK_REGISTRY
+
 import flight.core.state_manager as state_manager
 
 sys.path.append(".")
