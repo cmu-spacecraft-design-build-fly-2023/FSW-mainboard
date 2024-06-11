@@ -165,6 +165,12 @@ class Loop:
         else:
             self._debug = lambda *arg, **kwargs: None
 
+    def enable_debug_logging(self):
+        self.debug = True
+        self._debug = print
+        print("Tasko debug logging enabled")
+
+
     def add_task(self, awaitable_task, priority):
         """
         Add a concurrent task (known as a coroutine, implemented as a generator in CircuitPython)
