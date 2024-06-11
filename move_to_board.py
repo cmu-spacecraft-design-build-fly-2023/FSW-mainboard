@@ -74,7 +74,7 @@ if __name__ == "__main__":
         "-s",
         "--source_folder",
         type=str,
-        default="flight-software/build",
+        default="flight/build",
         help="Source folder path",
         required=False,
     )
@@ -90,5 +90,8 @@ if __name__ == "__main__":
 
     source_folder = args.source_folder
     destination_folder = args.destination_folder
+
+    print("SOURCE FOLDER: ", source_folder)
+    print("DESTINATION FOLDER: ", destination_folder)
 
     copy_folder(source_folder, destination_folder, show_identical_files=True)
