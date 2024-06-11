@@ -553,7 +553,7 @@ class BMX160(Diagnostics):
             BMX160_GYRO_CONFIG_ADDR,
             "gyroscope odr",
         )
-        if res != None:
+        if res is not None:
             self._gyro_odr = res[1]
 
     @property
@@ -638,7 +638,7 @@ class BMX160(Diagnostics):
             BMX160_ACCEL_CONFIG_ADDR,
             "accelerometer odr",
         )
-        if res != None:
+        if res is not None:
             self._accel_odr = res[1]
 
     @property
@@ -780,7 +780,7 @@ class BMX160(Diagnostics):
 
         error_list = list(set(error_list))
 
-        if not Diagnostics.NOERROR in error_list:
+        if Diagnostics.NOERROR not in error_list:
             self.errors_present = True
 
         return error_list
@@ -799,7 +799,7 @@ def find_nearest_valid(desired, possible_values):
         return next(
             filter(lambda x: (desired >= x[1]), enumerate(possible_values))
         )[0]
-    except:
+    except Exception:
         return -1
 
 

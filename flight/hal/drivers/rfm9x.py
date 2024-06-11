@@ -816,11 +816,11 @@ class RFM9x(Diagnostics):
             self.txrx[0].value = True
             self.txrx[1].value = False
 
-        l = len(data)
-        assert 0 < l <= 252
+        length = len(data)
+        assert 0 < length <= 252
         # pylint: enable=len-as-condition
         self.idle()  # Stop receiving to clear FIFO and keep it clear.
-        l += 4
+        length += 4
         # Fill the FIFO with a packet to send.
         self._write_u8(
             _RH_RF95_REG_0D_FIFO_ADDR_PTR, 0x00
@@ -830,7 +830,7 @@ class RFM9x(Diagnostics):
         if data == b"!":
             payload = bytearray(5)
         else:
-            payload = self.buffview[:l]
+            payload = self.buffview[:length]
 
         if destination is None:  # use attribute
             payload[0] = self.destination
@@ -863,7 +863,7 @@ class RFM9x(Diagnostics):
         # Write payload.
         self._write_from(_RH_RF95_REG_00_FIFO, payload)
         # Write payload and header length.
-        self._write_u8(_RH_RF95_REG_22_PAYLOAD_LENGTH, l)
+        self._write_u8(_RH_RF95_REG_22_PAYLOAD_LENGTH, length)
         # Turn on transmit mode to send out the packet.
         self.transmit()
         # Wait for tx done interrupt with explicit polling (not ideal but
@@ -934,7 +934,7 @@ class RFM9x(Diagnostics):
         return got_ack
 
     # pylint: disable=too-many-branches
-    def receive(
+    def receive(        # noqa: C901
         self,
         *,
         keep_listening=True,
@@ -1074,7 +1074,7 @@ class RFM9x(Diagnostics):
 
     def receive_all(self, only_for_me=True, debug=False):
         # msg=[]
-        l = 0
+        length = 0
         fifo_length = 0
         self.idle()
         if self.enable_crc and self.crc_error():
@@ -1107,10 +1107,10 @@ class RFM9x(Diagnostics):
                             # append first
                             packetindex.append(i)
                             i = i + 4
-                            l += 1
+                            length += 1
                             continue
                 i += 1
-            for i in range(l - 1):
+            for i in range(length - 1):
                 # assume packets are back-to-back (read till index of next one)
                 # if (packetindex[i+1]-packetindex[i]) <= 10:
                 # msg.append(bytes(self.buffview[packetindex[i]:packetindex[i+1]]))
@@ -1133,7 +1133,7 @@ class RFM9x(Diagnostics):
         # else:
         #     return msg
 
-    def send_fast(self, data, l):
+    def send_fast(self, data, length):
         self.idle()
         self._write_u8(
             _RH_RF95_REG_0D_FIFO_ADDR_PTR, 0x00
@@ -1141,7 +1141,7 @@ class RFM9x(Diagnostics):
         # Write payload.
         self._write_from(_RH_RF95_REG_00_FIFO, data)
         # Write payload and header length.
-        self._write_u8(_RH_RF95_REG_22_PAYLOAD_LENGTH, l)
+        self._write_u8(_RH_RF95_REG_22_PAYLOAD_LENGTH, length)
         # Turn on transmit mode to send out the packet.
         self.transmit()
         # Wait for tx done interrupt with explicit polling (not ideal but
@@ -1172,7 +1172,7 @@ class RFM9x(Diagnostics):
 
         error_list = list(set(error_list))
 
-        if not Diagnostics.NOERROR in error_list:
+        if Diagnostics.NOERROR not in error_list:
             self.errors_present = True
 
         return error_list
