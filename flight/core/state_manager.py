@@ -10,7 +10,6 @@ class StateManager:
         if cls._instance is None:
             cls._instance = super().__new__(cls, *args, **kwargs)
         return cls._instance
-    
 
     def __init__(self):
 
@@ -91,7 +90,7 @@ class StateManager:
 
         for task_name, props in state_config["Tasks"].items():
 
-            if 'ScheduleLater' in props:
+            if "ScheduleLater" in props:
                 schedule = scheduler.schedule_later
             else:
                 schedule = scheduler.schedule
