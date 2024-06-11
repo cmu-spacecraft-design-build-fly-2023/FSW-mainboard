@@ -5,23 +5,13 @@ import platform
 import shutil
 import subprocess
 
-MPY_CROSS_NAME = "mpy-cross"
-if platform.system() == "Darwin":
-    MPY_CROSS_NAME = "mpy-cross-macos"
-MPY_CROSS_PATH = f"{os.getcwd()}/{MPY_CROSS_NAME}"
-
 
 def check_directory_location(source_folder):
-    if not os.path.exists(MPY_CROSS_PATH):
-        raise FileNotFoundError(
-            f"MPY_CROSS_PATH folder {MPY_CROSS_PATH} not found"
-        )
-
     if not os.path.exists(f"{source_folder}"):
         raise FileNotFoundError(f"Source folder {source_folder} not found")
 
 
-def create_build(source_folder):
+def create_build(source_folder, emulator_folder):
     build_folder = os.path.join(source_folder, "build/")
     if os.path.exists(build_folder):
         shutil.rmtree(build_folder)
@@ -34,6 +24,8 @@ def create_build(source_folder):
         for file in files:
             # Exclude files in build folder
             if os.path.relpath(root, source_folder).startswith("build/"):
+                continue
+            if os.path.relpath(root, source_folder).startswith("hal/"):
                 continue
 
             if file.endswith(".py"):
@@ -57,6 +49,19 @@ def create_build(source_folder):
                     os.rename("main.py", "main_module.py")
 
                 os.chdir(current_dir)
+
+    # make emulator folder the hal folder
+    hal_folder = os.path.join(build_folder, "hal/")
+    print(hal_folder)
+    for root, dirs, files in os.walk(emulator_folder):
+        for file in files:
+            source_path = os.path.join(root, file)
+            build_path = os.path.join(
+                hal_folder, os.path.relpath(source_path, emulator_folder)
+            )
+            os.makedirs(os.path.dirname(build_path), exist_ok=True)
+            shutil.copy2(source_path, build_path)
+            print(f"Copied {source_path} to {build_path}")
 
     # Create main.py file with single import statement "import main_module"
     build_folder = os.path.join(build_folder, "..")
@@ -119,8 +124,17 @@ if __name__ == "__main__":
         help="Source folder path",
         required=False,
     )
+    parser.add_argument(
+        "-e",
+        "--emulator_folder",
+        type=str,
+        default="emulator",
+        help="emulator folder path",
+        required=False
+    )
     args = parser.parse_args()
 
     source_folder = args.source_folder
+    emulator_folder = args.emulator_folder
 
-    build_folder = create_build(source_folder)
+    build_folder = create_build(source_folder, emulator_folder)
