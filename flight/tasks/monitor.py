@@ -1,5 +1,5 @@
 """
-monitor.py 
+monitor.py
 ================
 Satellite monitoring task
 """
@@ -58,7 +58,7 @@ class Task(DebugTask):
 
         if SM.current_state == "NOMINAL":
             # If process not registered, register it
-            if DH.data_process_exists("monitor") == False:
+            if not DH.data_process_exists("monitor"):
                 DH.register_data_process(
                     "monitor", self.data_keys, "ffffb", True, line_limit=50
                 )

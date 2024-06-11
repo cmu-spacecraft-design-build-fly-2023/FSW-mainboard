@@ -1,17 +1,11 @@
 """
-jetson_comms.py 
+jetson_comms.py
 ================
 Task to interact with Jetson over UART
 """
 
-import gc
-import struct
-import sys
-import time
-
 from apps.data_handler import DataHandler as DH
-from apps.jetson_comms.argus_comm import *
-from apps.jetson_comms.message_id import *
+from apps.jetson_comms.argus_comm import ArgusComm
 
 # PyCubed Board Lib
 from hal.configuration import SATELLITE
@@ -40,13 +34,13 @@ class Task(DebugTask):
     async def main_task(self):
         # Only communicate if SAT in NOMINAL state
         if SM.current_state == "NOMINAL":
-            if DH.data_process_exists("jetson") == False:
+            if not DH.data_process_exists("jetson"):
                 DH.register_data_process(
                     "jetson", self.data_keys, "ffff", True, line_limit=40
                 )
 
             # Register image process
-            if DH.data_process_exists("img") == False:
+            if not DH.data_process_exists("img"):
                 DH.register_image_process()
 
             # Ask Jetson for image
@@ -54,7 +48,7 @@ class Task(DebugTask):
             # msg = Message(TRANSMIT_IMAGE, struct.pack(b, 0))
 
             # Wait for Jetson comms for 0.1s
-            if self.argus_comms.receive_message() == False:
+            if not self.argus_comms.receive_message():
                 # No message received
                 print(
                     f"[{self.ID}][{self.name}] No message received from Jetson"

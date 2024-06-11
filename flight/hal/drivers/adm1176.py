@@ -296,7 +296,7 @@ class ADM1176(Diagnostics):
 
         error_list = list(set(error_list))
 
-        if not Diagnostics.NOERROR in error_list:
+        if Diagnostics.NOERROR not in error_list:
             self.errors_present = True
 
         return error_list
