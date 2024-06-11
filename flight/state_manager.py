@@ -1,4 +1,4 @@
-import tasko 
+import flight.apps.task_scheduler as task_scheduler
 
 
 class StateManager:
@@ -10,15 +10,16 @@ class StateManager:
         self.previous_state = None
         self.scheduled_tasks = {}
         self.initialized = False
+        self.config = None
+        self.task_registry = None
 
-    def start(self, start_state: str):
+    def start(self, start_state: str, SM_CONFIGURATION: dict, TASK_REGISTRY: dict):
         """Starts the state machine
 
         Args:
         :param start_state: The state to start the state machine in
         :type start_state: str
         """
-        from sm_configuration import SM_CONFIGURATION, TASK_REGISTRY
 
         self.config = SM_CONFIGURATION
         self.task_registry = TASK_REGISTRY
@@ -33,7 +34,7 @@ class StateManager:
 
         # Will load all the tasks through the state switch
         self.switch_to(start_state)
-        tasko.run()
+        task_scheduler.run()
 
     def switch_to(self, new_state):
         """Switches to a new state and actiavte all corresponding tasks as defined in the SM_CONFIGURATION
@@ -75,9 +76,9 @@ class StateManager:
 
         for task_name, props in state_config["Tasks"].items():
             if props["ScheduleLater"]:
-                schedule = tasko.schedule_later
+                schedule = task_scheduler.schedule_later
             else:
-                schedule = tasko.schedule
+                schedule = task_scheduler.schedule
 
             frequency = props["Frequency"]
             priority = props["Priority"]

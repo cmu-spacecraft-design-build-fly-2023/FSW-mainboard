@@ -168,7 +168,7 @@ class Loop:
     def enable_debug_logging(self):
         self.debug = True
         self._debug = print
-        print("Tasko debug logging enabled")
+        print("Task scheduler debug logging enabled")
 
 
     def add_task(self, awaitable_task, priority):
@@ -197,7 +197,7 @@ class Loop:
         """
         Add a concurrent task, delayed by some seconds.
         Use:
-          tasko.run_later( seconds_to_delay=1.2, my_async_method() )
+          task_scheduler.run_later( seconds_to_delay=1.2, my_async_method() )
         :param seconds_to_delay: How long until the task should be kicked off?
         :param awaitable_task:   The coroutine to be concurrently driven to completion.
         """

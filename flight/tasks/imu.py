@@ -4,10 +4,10 @@ import time
 from apps.data_handler import DataHandler as DH
 from hal.configuration import SATELLITE
 from state_manager import state_manager as SM
-from tasks.template_task import DebugTask
+from tasks.template_task import TemplateTask
 
 
-class Task(DebugTask):
+class Task(TemplateTask):
 
     name = "IMU"
     ID = 0x03

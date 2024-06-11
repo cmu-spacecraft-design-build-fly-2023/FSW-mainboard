@@ -14,10 +14,10 @@ from hal.configuration import SATELLITE
 from state_manager import state_manager as SM
 
 # Template task from taskio
-from tasks.template_task import DebugTask
+from tasks.template_task import TemplateTask
 
 
-class Task(DebugTask):
+class Task(TemplateTask):
 
     name = "JETSON"
     ID = 0x13

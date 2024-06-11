@@ -36,7 +36,8 @@ print(str(gc.mem_free()) + " bytes free")
 
 try:
     # Run forever
-    state_manager.start("STARTUP")
+    from sm_configuration import SM_CONFIGURATION, TASK_REGISTRY
+    state_manager.start("STARTUP", SM_CONFIGURATION, TASK_REGISTRY)
     pass
 
 except Exception as e:

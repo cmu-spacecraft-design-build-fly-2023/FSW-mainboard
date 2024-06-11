@@ -1,7 +1,7 @@
 # TODO Logging
 
 
-class DebugTask:
+class TemplateTask:
     """
     A Task Object.
 
@@ -11,12 +11,12 @@ class DebugTask:
     """
 
     ID = 0xFF
-    name = "no"
+    name = "TEMPLATE TASK"
 
     def __init__(self):
         pass
 
-    def debug(self, msg, level=1):
+    def debug(self, msg):
         """
         Print a debug message formatted with the task name
 

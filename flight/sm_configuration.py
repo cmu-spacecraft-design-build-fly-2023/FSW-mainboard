@@ -70,7 +70,3 @@ SM_CONFIGURATION = {
         "Exit": ["print"],
     },
 }
-
-initial = None
-
-# Note: Ideally, switch to another configuration format. Don't want things to run on import
