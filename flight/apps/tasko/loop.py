@@ -82,7 +82,7 @@ class ScheduledTask:
         self._running = False
         self._scheduled_to_run = False
         self._priority = priority
-    
+
     def change_rate(self, hz):
         ### Update the task rate to a new frequency ###
         self._nanoseconds_per_invocation = (1 / hz) * 1000000000

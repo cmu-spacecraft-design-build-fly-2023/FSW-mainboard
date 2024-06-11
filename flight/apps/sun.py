@@ -1,5 +1,3 @@
-from ulab import numpy as np
-
 
 def compute_body_sun_vector(I_vec):
     """

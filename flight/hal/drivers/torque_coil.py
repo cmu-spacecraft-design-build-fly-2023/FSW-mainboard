@@ -1,7 +1,7 @@
 """
 torque_coil.py - TorqueCoil Management Class
 
-This class manages the torque for dual or single DRV8830 motor controllers. It provides a simple 
+This class manages the torque for dual or single DRV8830 motor controllers. It provides a simple
 interface to set the torque level on the motor(s) and enable or disable the torque coil.
 
 Authors: Gordonson Yan, Harry Rosmann

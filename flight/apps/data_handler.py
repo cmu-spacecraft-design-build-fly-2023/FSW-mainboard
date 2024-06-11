@@ -1,5 +1,5 @@
 """
-Onboard Data Handling (OBDH) Module 
+Onboard Data Handling (OBDH) Module
 
 ======================
 
@@ -451,7 +451,7 @@ class ImageProcess(DataProcess):
 
             tm_path = self.dir_path + transmit_file
 
-            if tm_path == self.current_path or path_exist(tm_path) == False:
+            if tm_path == self.current_path or not path_exist(tm_path):
                 return None
 
             self.excluded_paths.append(tm_path)
