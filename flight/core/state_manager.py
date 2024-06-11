@@ -78,7 +78,6 @@ class StateManager:
 
         # TODO transition functions
 
-        ## Scheduling
         self.stop_all_tasks()
         self.schedule_new_state_tasks(new_state)
 
@@ -91,7 +90,8 @@ class StateManager:
         state_config = self.config[new_state]
 
         for task_name, props in state_config["Tasks"].items():
-            if props["ScheduleLater"]:
+
+            if 'ScheduleLater' in props:
                 schedule = scheduler.schedule_later
             else:
                 schedule = scheduler.schedule

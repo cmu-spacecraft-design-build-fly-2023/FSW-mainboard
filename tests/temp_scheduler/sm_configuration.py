@@ -9,23 +9,69 @@ TASK_REGISTRY = {
 TASK_MAPPING_ID = {"SUN": 0x05, "TIMING": 0x01}
 
 
+        
 SM_CONFIGURATION = {
+
     "STARTUP": {
+
         "Tasks": {
-            "SUN": {"Frequency": 0.5, "Priority": 1, "ScheduleLater": False},
-            "TIMING": {"Frequency": 1, "Priority": 2, "ScheduleLater": False},
+            "SUN": {"Frequency": 0.5, "Priority": 1},
+            "TIMING": {"Frequency": 0.5, "Priority": 2, "ScheduleLater": True}
         },
-        "MovesTo": [
-            "NOMINAL",
-        ],
+
+        "MovesTo": ["NOMINAL"],
+            
     },
+
+
     "NOMINAL": {
+
         "Tasks": {
-            "TIMING": {"Frequency": 1, "Priority": 2, "ScheduleLater": False},
-            "SUN": {"Frequency": 0.5, "Priority": 5, "ScheduleLater": False},
+            "TIMING": {"Frequency": 1, "Priority": 2},
+            "SUN": {"Frequency": 0.5, "Priority": 5}
         },
-        "MovesTo": [
-            "SAFE",
-        ],
+
+        "MovesTo": ["DOWNLINK", "LOW_POWER", "SAFE"],
+
     },
+
+
+    "DOWNLINK": {
+
+        "Tasks": {
+            "TIMING": {"Frequency": 1, "Priority": 2},
+            "SUN": {"Frequency": 0.5, "Priority": 5}
+        },
+
+        "MovesTo": ["NOMINAL"]
+
+    },
+
+
+
+    "LOW_POWER": {
+
+        "Tasks": {
+            "TIMING": {"Frequency": 1, "Priority": 2},
+            "SUN": {"Frequency": 0.5, "Priority": 5}
+        },
+
+        "MovesTo": ["NOMINAL"]
+
+    },
+
+
+    "SAFE": {
+
+        "Tasks": {
+            "TIMING": {"Frequency": 1, "Priority": 2},
+            "SUN": {"Frequency": 0.5, "Priority": 5}
+        },
+        
+        "MovesTo": ["NOMINAL"]
+
+    }
+
+
+
 }
