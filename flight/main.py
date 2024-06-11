@@ -7,10 +7,10 @@ for path in ["/hal", "/apps"]:
     if path not in sys.path:
         sys.path.append(path)
 
-import gc
+# import gc
 
-gc.collect()
-print(str(gc.mem_free()) + " bytes free")
+# gc.collect()
+# print(str(gc.mem_free()) + " bytes free")
 
 print("Booting ARGUS-1...")
 boot_errors = SATELLITE.boot_sequence()
@@ -34,16 +34,16 @@ from apps.data_handler import DataHandler as DH
 DH.delete_all_files()
 """
 
-gc.collect()
-print(str(gc.mem_free()) + " bytes free")
+# gc.collect()
+# print(str(gc.mem_free()) + " bytes free")
 
-import comms_test.py
+# import comms_test.py
 
-# try:
-#     # Run forever
-#     state_manager.start("STARTUP")
-#     pass
+try:
+    # Run forever
+    state_manager.start("STARTUP")
+    pass
 
-# except Exception as e:
-#     print("ERROR:", e)
-#     # TODO Log the error
+except Exception as e:
+    print("ERROR:", e)
+    # TODO Log the error

@@ -42,7 +42,7 @@ Implementation Notes
   https://github.com/adafruit/circuitpython/releases
 
 """
-from time import struct_time
+from time import sleep, struct_time
 
 from digitalio import DigitalInOut
 from micropython import const
@@ -535,7 +535,7 @@ class GPS(Diagnostics):
             if success:
                 return Diagnostics.NOERROR
 
-            time.sleep(1)
+            sleep(1)
 
         return Diagnostics.GPS_UPDATE_CHECK_FAILED
 

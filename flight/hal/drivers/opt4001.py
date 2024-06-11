@@ -209,7 +209,7 @@ class OPT4001(Diagnostics):
 
     def __init__(
         self,
-        i2c_bus: I2C,
+        i2c_bus,
         address: int = 0x44,
         package: int = 0,
         quick_wakeup: bool = False,

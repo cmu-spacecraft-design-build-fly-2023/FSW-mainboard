@@ -2,6 +2,7 @@ import asyncio
 import queue
 import random
 
+
 class RadioDebug:
 
     def __init__(self, radio):
@@ -23,6 +24,7 @@ class RadioDebug:
     def clear_rx_queue(self):
         """Debug function to clear the rx queue"""
         self.radio._rx_queue = queue.Queue()
+
 
 class Radio:
     def __init__(self):
