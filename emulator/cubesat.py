@@ -1,4 +1,4 @@
-from emulator.drivers.diagnostics.diagnostics import Diagnostics
+from drivers.diagnostics.diagnostics import Diagnostics
 
 
 class CubeSat:

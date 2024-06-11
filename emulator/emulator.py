@@ -1,13 +1,13 @@
 from numpy import array
 
-from emulator.cubesat import CubeSat
-from emulator.drivers.burnwire import BurnWires
-from emulator.drivers.imu import IMU
-from emulator.drivers.payload import Payload
-from emulator.drivers.power_monitor import PowerMonitor
-from emulator.drivers.radio import Radio
-from emulator.drivers.sd import SD
-from emulator.drivers.sun_sensor import SunSensor
+from cubesat import CubeSat
+from drivers.burnwire import BurnWires
+from drivers.imu import IMU
+from drivers.payload import Payload
+from drivers.power_monitor import PowerMonitor
+from drivers.radio import Radio
+from drivers.sd import SD
+from drivers.sun_sensor import SunSensor
 
 
 class device:
@@ -69,3 +69,9 @@ class satellite(CubeSat):
 
         self.__jetson_monitor = PowerMonitor(4, 0.05)
         self.__battery_monitor = PowerMonitor(4.2, 0.04)
+
+    def boot_sequence(self) -> list[int]:
+        pass
+
+    def run_system_diagnostics(self) -> list[int] | None:
+        pass
