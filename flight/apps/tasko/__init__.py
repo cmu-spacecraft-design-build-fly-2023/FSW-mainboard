@@ -1,7 +1,5 @@
 from .loop import Loop
 
-
-
 __global_event_loop = None
 
 

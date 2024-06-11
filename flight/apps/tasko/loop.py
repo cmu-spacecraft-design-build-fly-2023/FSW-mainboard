@@ -178,7 +178,8 @@ class Loop:
           scheduler.add_task( my_async_method() )
         :param awaitable_task:  The coroutine to be concurrently driven to completion.
         """
-        self._debug("adding task ", awaitable_task)
+        if self.debug:
+            self._debug("adding task ", awaitable_task)
         # Added a priority parameter
         self._tasks.append(Task(awaitable_task, priority))
 
@@ -311,14 +312,15 @@ class Loop:
                 )
             )
             self._step()
-            self._debug("\n")
+            if self.debug:
+                self._debug("\n")
             self._loopnum += 1
-        # while self._tasks or self._sleeping:
-        # self._step()
-        self._debug("Loop completed", self._tasks, self._sleeping)
+        if self.debug:
+            self._debug("Loop completed", self._tasks, self._sleeping)
 
     def _step(self):
-        self._debug("  stepping over ", len(self._tasks), " tasks")
+        if self.debug:
+            self._debug("  stepping over ", len(self._tasks), " tasks")
 
         # Sort tasks by priority
         self._tasks.sort(key=Task.priority_sort)
@@ -365,12 +367,13 @@ class Loop:
                 # and nothing else is scheduled to run for this long.
                 # This is the real sleep. If/when interrupts are implemented this will likely need to change.
                 sleep_seconds = sleep_nanos / 1000000000.0
-                self._debug(
-                    "  No active tasks.  Sleeping for ",
-                    sleep_seconds,
-                    "s. \n",
-                    self._sleeping,
-                )
+                if self.debug:
+                    self._debug(
+                        "  No active tasks.  Sleeping for ",
+                        sleep_seconds,
+                        "s. \n",
+                        self._sleeping,
+                    )
 
                 time.sleep(sleep_seconds)
 
@@ -383,14 +386,16 @@ class Loop:
         try:
 
             task.coroutine.send(None)
-            self._debug("  current", self._current)
+            if self.debug:
+                self._debug("  current", self._current)
             # Sleep gate here, in case the current task suspended.
             # If a sleeping task re-suspends it will have already put itself in the sleeping queue.
             if self._current is not None:
                 self._tasks.append(task)
         except StopIteration:
             # This task is all done.
-            self._debug("  task complete")
+            if self.debug:
+                self._debug("  task complete")
             pass
         finally:
             self._current = None
@@ -404,7 +409,8 @@ class Loop:
             self._current is not None
         ), "You can only sleep from within a task"
         self._sleeping.append(Sleeper(target_run_nanos, self._current))
-        self._debug("  sleeping ", self._current)
+        if self.debug:
+            self._debug("  sleeping ", self._current)
         self._current = None
         # Pretty subtle here.  This yields once, then it continues next time the task scheduler executes it.
         # The async function is parked at this point.
