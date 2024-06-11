@@ -3,7 +3,6 @@ import filecmp
 import os
 import platform
 import shutil
-import subprocess
 
 MPY_CROSS_NAME = "mpy-cross"
 if platform.system() == "Darwin":

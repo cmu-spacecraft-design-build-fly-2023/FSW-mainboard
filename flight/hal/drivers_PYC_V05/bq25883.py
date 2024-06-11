@@ -12,7 +12,7 @@ Implementation Notes
 """
 
 from adafruit_bus_device.i2c_device import I2CDevice
-from adafruit_register.i2c_bit import ROBit, RWBit
+from adafruit_register.i2c_bit import RWBit
 from adafruit_register.i2c_bits import ROBits, RWBits
 from micropython import const
 
@@ -119,7 +119,7 @@ class BQ25883:
 
     @charging.setter
     def charging(self, value):
-        assert type(value) == bool
+        assert isinstance(value, bool)
         self._en_chrg = value
 
     @property
@@ -148,7 +148,7 @@ class BQ25883:
 
     @led.setter
     def led(self, value):
-        assert type(value) == bool
+        assert isinstance(value, bool)
         self._stat_dis = not value
 
     # def measure_current(self):

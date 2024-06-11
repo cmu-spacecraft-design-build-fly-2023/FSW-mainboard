@@ -1,9 +1,9 @@
 """
 'radio_helpers.py'
 ======================
-Satellite radio class for Argus-1 CubeSat. 
+Satellite radio class for Argus-1 CubeSat.
 Message packing/unpacking for telemetry/image TX
-and acknowledgement RX. 
+and acknowledgement RX.
 
 Authors: DJ Morvay, Akshat Sahay
 """
@@ -13,7 +13,7 @@ import os
 import time
 
 # Argus-1 Lib
-from apps.comms.radio_protocol import *
+from apps.comms.radio_protocol import IMAGES, Definitions, construct_message
 
 # PyCubed Board Lib
 from hal.cubesat import CubeSat
@@ -43,9 +43,9 @@ class SATELLITE_RADIO:
         self.sat_req_ack = 0x0
 
         self.heartbeat_seq = [
-            SAT_HEARTBEAT_BATT,
-            SAT_HEARTBEAT_SUN,
-            SAT_HEARTBEAT_IMU,
+            Definitions.SAT_HEARTBEAT_BATT,
+            Definitions.SAT_HEARTBEAT_SUN,
+            Definitions.SAT_HEARTBEAT_IMU,
         ]
         self.heartbeat_curr = 0
         self.heartbeat_max = len(self.heartbeat_seq)
@@ -131,7 +131,7 @@ class SATELLITE_RADIO:
         send_bytes.close()
 
     def image_done_transmitting(self) -> bool:
-        return self.gs_req_message_ID == SAT_DEL_IMG1
+        return self.gs_req_message_ID == Definitions.SAT_DEL_IMG1
 
     """
         Name: unpack_message
@@ -153,18 +153,18 @@ class SATELLITE_RADIO:
         lora_rx_message[0] = lora_rx_message[0] & 0b01111111
         # deconstruct_message(lora_rx_message)
 
-        if self.rx_message_ID == GS_ACK:
+        if self.rx_message_ID == Definitions.GS_ACK:
             # GS acknowledged and sent command
             self.gs_rx_message_ID = int.from_bytes(packet[4:5], "big")
             self.gs_req_message_ID = int.from_bytes(packet[5:6], "big")
             self.gs_req_seq_count = int.from_bytes(packet[6:8], "big")
 
-            if self.gs_req_message_ID == SAT_DEL_IMG1:
+            if self.gs_req_message_ID == Definitions.SAT_DEL_IMG1:
                 # Delete image currently on satellite
                 self.image_num = (self.image_num + 1) % len(self.image_strs)
                 self.image_get_info()
 
-            if self.gs_req_message_ID == GS_STOP:
+            if self.gs_req_message_ID == Definitions.GS_STOP:
                 # Kill comms with GS
                 # print("GS stopped comms with SAT!")
                 self.heartbeat_sent = False
@@ -175,10 +175,10 @@ class SATELLITE_RADIO:
                 self.gs_req_seq_count = 0
                 self.sat_req_ack = 0x0
 
-        if self.rx_message_ID == GS_OTA_REQ:
+        if self.rx_message_ID == Definitions.GS_OTA_REQ:
             # GS sent OTA update
             packets_remaining = int.from_bytes(packet[4:6], "big")
-            self.gs_req_message_ID = SAT_OTA_RES
+            self.gs_req_message_ID = Definitions.SAT_OTA_RES
 
             if self.ota_sequence_count == self.rx_message_sequence_count:
                 # Sequence count is synchronized on SAT and GS
@@ -205,7 +205,7 @@ class SATELLITE_RADIO:
 
             if (packets_remaining <= 0) and (self.ota_rec_success == 1):
                 # Create file name
-                filename = f"/sd/IMAGES/OTA_SIM.jpg"
+                filename = "/sd/IMAGES/OTA_SIM.jpg"
 
                 rec_bytes = open(filename, "wb")
 
@@ -238,7 +238,7 @@ class SATELLITE_RADIO:
                 if crc_check > 0:
                     self.crc_count += 1
 
-                rssi = self.sat.RADIO.rssi(raw=True)
+                # rssi = self.sat.RADIO.rssi(raw=True)
                 # print(f"Received signal strength: {rssi} dBm")
                 self.unpack_message(my_packet)
 
@@ -258,7 +258,7 @@ class SATELLITE_RADIO:
         while send_multiple:
             time.sleep(0.15)
             # Check if currently transmitting an image and CRC error has been 0
-            if (self.gs_req_message_ID == SAT_IMG1_CMD) and (
+            if (self.gs_req_message_ID == Definitions.SAT_IMG1_CMD) and (
                 self.crc_count == 0
             ):
                 target_sequence_count = self.sat_images.image_message_count
@@ -282,10 +282,10 @@ class SATELLITE_RADIO:
                     self.sat_req_ack = 0x0
                 else:
                     send_multiple = False
-                    self.sat_req_ack = REQ_ACK_NUM
+                    self.sat_req_ack = Definitions.REQ_ACK_NUM
             else:
                 send_multiple = False
-                self.sat_req_ack = REQ_ACK_NUM
+                self.sat_req_ack = Definitions.REQ_ACK_NUM
 
             # If GS did not acknowledge within timeout / on boot, send heartbeat
             if (not self.heartbeat_sent) or (self.crc_count > 0):
@@ -301,23 +301,23 @@ class SATELLITE_RADIO:
 
                 self.heartbeat_sent = True
 
-            elif self.gs_req_message_ID == SAT_IMAGES:
+            elif self.gs_req_message_ID == Definitions.SAT_IMAGES:
                 # Transmit stored image info
                 tx_header = bytes(
-                    [(self.sat_req_ack | SAT_IMAGES), 0x0, 0x0, 0x18]
+                    [(self.sat_req_ack | Definitions.SAT_IMAGES), 0x0, 0x0, 0x18]
                 )
                 tx_payload = self.image_pack_info()
                 tx_message = tx_header + tx_payload
 
-            elif self.gs_req_message_ID == SAT_DEL_IMG1:
+            elif self.gs_req_message_ID == Definitions.SAT_DEL_IMG1:
                 # Transmit successful deletion of stored image 1
                 tx_header = bytes(
-                    [(self.sat_req_ack | SAT_DEL_IMG1), 0x0, 0x0, 0x1]
+                    [(self.sat_req_ack | Definitions.SAT_DEL_IMG1), 0x0, 0x0, 0x1]
                 )
                 tx_payload = bytes([0x1])
                 tx_message = tx_header + tx_payload
 
-            elif self.gs_req_message_ID == SAT_IMG1_CMD:
+            elif self.gs_req_message_ID == Definitions.SAT_IMG1_CMD:
                 # Transmit image in multiple packets
                 # Header
                 tx_header = (
@@ -340,10 +340,10 @@ class SATELLITE_RADIO:
                 # Pack entire message
                 tx_message = tx_header + tx_payload
 
-            elif self.gs_req_message_ID == SAT_OTA_RES:
+            elif self.gs_req_message_ID == Definitions.SAT_OTA_RES:
                 # Transmit response to OTA update
                 tx_header = bytes(
-                    [(self.sat_req_ack | SAT_OTA_RES), 0x0, 0x0, 0x3]
+                    [(self.sat_req_ack | Definitions.SAT_OTA_RES), 0x0, 0x0, 0x3]
                 )
                 tx_payload = self.ota_rec_success.to_bytes(
                     1, "big"
