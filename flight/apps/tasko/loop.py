@@ -47,8 +47,8 @@ class Sleeper:
 
 
 class Task:
+    """Represents an asynchronous task with a priority."""
     def __init__(self, coroutine, priority):
-        # Added a priority level
         self.coroutine = coroutine
         self.priority = priority
 
@@ -62,21 +62,7 @@ class Task:
 
 
 class ScheduledTask:
-    def change_rate(self, hz):
-        ### Update the task rate to a new frequency ###
-        self._nanoseconds_per_invocation = (1 / hz) * 1000000000
-
-    def stop(self):
-        ### Stop the task (does not interrupt a currently running task) ###
-        self._stop = True
-
-    def start(self):
-        ### Schedule the task (if it's not already scheduled) ###
-        self._stop = False
-        if not self._scheduled_to_run:
-            # Don't double-up the task if it's still in the run list!
-            # print("Added task to loop._task")
-            self._loop.add_task(self._run_at_fixed_rate(), self._priority)
+    """Manages tasks that should run at a fixed rate."""
 
     def __init__(
         self,
@@ -96,6 +82,22 @@ class ScheduledTask:
         self._running = False
         self._scheduled_to_run = False
         self._priority = priority
+    
+    def change_rate(self, hz):
+        ### Update the task rate to a new frequency ###
+        self._nanoseconds_per_invocation = (1 / hz) * 1000000000
+
+    def stop(self):
+        ### Stop the task (does not interrupt a currently running task) ###
+        self._stop = True
+
+    def start(self):
+        ### Schedule the task (if it's not already scheduled) ###
+        self._stop = False
+        if not self._scheduled_to_run:
+            # Don't double-up the task if it's still in the run list!
+            # print("Added task to loop._task")
+            self._loop.add_task(self._run_at_fixed_rate(), self._priority)
 
     async def _run_at_fixed_rate(self):
         self._scheduled_to_run = True
@@ -147,13 +149,9 @@ class ScheduledTask:
     __str__ = __repr__
 
 
-class TaskCanceledException(Exception):
-    pass
-
-
 class Loop:
     """
-    It's your task host.  You run() it and it manages your main application loop.
+    Core event loop class.  With run(), it manages your main application loop.
     """
 
     def __init__(self, debug=False):
