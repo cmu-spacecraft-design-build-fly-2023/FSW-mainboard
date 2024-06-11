@@ -1,8 +1,8 @@
+import gc
 import sys
 
 from hal.configuration import SATELLITE
 from state_manager import state_manager
-import gc
 
 for path in ["/hal", "/apps"]:
     if path not in sys.path:
