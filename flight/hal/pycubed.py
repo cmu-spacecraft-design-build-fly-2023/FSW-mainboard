@@ -1,6 +1,6 @@
 """
-CircuitPython driver for the modified PyCubed satellite board 
-PyCubed Hardware Version: mainboard-v05 
+CircuitPython driver for the modified PyCubed satellite board
+PyCubed Hardware Version: mainboard-v05
 CircuitPython Version: 7.0.0 alpha
 """
 
@@ -26,7 +26,7 @@ from .drivers_PYC_V05 import bq25883  # USB Charger
 from .drivers_PYC_V05 import rfm9x  # Radio
 
 # Common CircuitPython Libs
-from .drivers_PYC_V05.bitflags import bitFlag, multiBitFlag, multiByte
+from .drivers_PYC_V05.bitflags import bitFlag, multiBitFlag
 
 # NVM register numbers
 _BOOTCNT = const(0)
