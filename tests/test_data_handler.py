@@ -1,9 +1,10 @@
+# isort: skip_file
 import os
 
 import pytest
 
+import tests.cp_mock    # noqa: F401
 import flight.apps.data_handler as dh
-import tests.cp_mock  # noqa: F401
 from flight.apps.data_handler import DataProcess as DP
 
 
