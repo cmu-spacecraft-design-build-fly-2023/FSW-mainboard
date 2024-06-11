@@ -17,7 +17,28 @@ from hal.drivers.burnwire import BurnWires
 from hal.drivers.diagnostics.diagnostics import Diagnostics
 from hal.drivers.drv8830 import DRV8830
 from hal.drivers.gps import GPS
-from hal.drivers.middleware.exceptions import *
+from hal.drivers.middleware.exceptions import (
+    battery_power_monitor_fatal_exception,
+    burn_wire_fatal_exception,
+    charger_fatal_exception,
+    gps_fatal_exception,
+    imu_fatal_exception,
+    jetson_power_monitor_fatal_exception,
+    payload_uart_fatal_exception,
+    radio_fatal_exception,
+    rtc_fatal_exception,
+    sun_sensor_xm_fatal_exception,
+    sun_sensor_xp_fatal_exception,
+    sun_sensor_ym_fatal_exception,
+    sun_sensor_yp_fatal_exception,
+    sun_sensor_zm_fatal_exception,
+    sun_sensor_zp_fatal_exception,
+    torque_xm_fatal_exception,
+    torque_xp_fatal_exception,
+    torque_ym_fatal_exception,
+    torque_yp_fatal_exception,
+    torque_z_fatal_exception,
+)
 from hal.drivers.middleware.middleware import Middleware
 from hal.drivers.opt4001 import OPT4001
 from hal.drivers.payload import PayloadUART
