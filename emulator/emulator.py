@@ -1,13 +1,13 @@
 from numpy import array
 
-from cubesat import CubeSat
-from drivers.burnwire import BurnWires
-from drivers.imu import IMU
-from drivers.payload import Payload
-from drivers.power_monitor import PowerMonitor
-from drivers.radio import Radio
-from drivers.sd import SD
-from drivers.sun_sensor import SunSensor
+from .cubesat import CubeSat
+from .drivers.burnwire import BurnWires
+from .drivers.imu import IMU
+from .drivers.payload import Payload
+from .drivers.power_monitor import PowerMonitor
+from .drivers.radio import Radio
+from .drivers.sd import SD
+from .drivers.sun_sensor import SunSensor
 
 
 class device:
