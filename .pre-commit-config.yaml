@@ -20,6 +20,4 @@ repos:
     hooks:
       - id: isort
         args: [--line-length=79]
-        exclude: 
-          - ^flight/build/
-          - ^tests/
+        exclude: ^(flight/build/|tests/)

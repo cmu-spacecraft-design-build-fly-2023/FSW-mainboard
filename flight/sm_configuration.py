@@ -78,9 +78,3 @@ SM_CONFIGURATION = {
         "MovesTo": ["NOMINAL"],
     },
 }
-
-# TODO later: Attributes to add 
-# - start
-# - duration
-# - internal state of the task
-# - timeout
