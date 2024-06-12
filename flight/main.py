@@ -9,8 +9,8 @@ for path in ["/hal", "/apps"]:
         sys.path.append(path)
 
 
-# gc.collect()
-# print(str(gc.mem_free()) + " bytes free")
+gc.collect()
+print(str(gc.mem_free()) + " bytes free")
 
 print("Booting ARGUS-1...")
 boot_errors = SATELLITE.boot_sequence()
@@ -31,8 +31,8 @@ from apps.data_handler import DataHandler as DH
 DH.delete_all_files()
 """
 
-# gc.collect()
-# print(str(gc.mem_free()) + " bytes free")
+gc.collect()
+print(str(gc.mem_free()) + " bytes free")
 
 try:
     # Run forever
