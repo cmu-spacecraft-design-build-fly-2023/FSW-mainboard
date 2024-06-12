@@ -1,9 +1,7 @@
 import argparse
 import filecmp
 import os
-import platform
 import shutil
-import subprocess
 
 
 def check_directory_location(source_folder):
