@@ -2,8 +2,8 @@
 
 import time
 
-from flight.core import state_manager as SM
 from flight.core import TemplateTask
+from flight.core import state_manager as SM
 
 
 class Task(TemplateTask):

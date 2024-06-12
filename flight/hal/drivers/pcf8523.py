@@ -53,7 +53,6 @@ from adafruit_register import (
     i2c_bit,
     i2c_bits,
 )
-
 from hal.drivers.diagnostics.diagnostics import Diagnostics
 
 try:

@@ -12,9 +12,8 @@ Author: Harry Rosmann
 
 """
 
-from micropython import const
-
 from hal.drivers.diagnostics.diagnostics import Diagnostics
+from micropython import const
 
 # The default number of retries for the middleware
 # NOTE: Keep this value low to prevent loss of timing
@@ -87,11 +86,11 @@ class Middleware:
             try:
                 return method(*args, **kwargs)
             except Exception as e:
-                ## Try to handle fault
+                # Try to handle fault
                 if not self.handle_fault(method, *args, **kwargs):
                     raise self.exception(e)
 
-                ## Second layer of exception handling
+                # Second layer of exception handling
                 try:
                     return method(*args, **kwargs)
                 except Exception as e:

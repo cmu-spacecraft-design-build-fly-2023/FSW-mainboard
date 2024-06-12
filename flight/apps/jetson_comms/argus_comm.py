@@ -11,8 +11,8 @@ Author(s): Sachit Goyal, Harry Rosmann
 """
 from time import sleep
 
-from core.data_handler import DataHandler as DH
 from apps.jetson_comms.msg import Definitions, Message
+from core.data_handler import DataHandler as DH
 
 MAX_RETRIES = 3
 

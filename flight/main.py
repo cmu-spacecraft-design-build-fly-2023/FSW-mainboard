@@ -1,11 +1,9 @@
 import gc
 import sys
 
-from hal.configuration import SATELLITE
-
-from sm_configuration import SM_CONFIGURATION, TASK_REGISTRY
-
 from core import state_manager
+from hal.configuration import SATELLITE
+from sm_configuration import SM_CONFIGURATION, TASK_REGISTRY
 
 for path in ["/hal", "/apps", "/core"]:
     if path not in sys.path:

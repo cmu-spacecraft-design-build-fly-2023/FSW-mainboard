@@ -9,9 +9,8 @@ Author: Harry Rosmann
 
 """
 
-from micropython import const
-
 from hal.drivers.bitflags import bitFlag, multiBitFlag
+from micropython import const
 
 
 class StateFlags:
