@@ -17,6 +17,7 @@ from micropython import const
 from .diagnostics.diagnostics import Diagnostics
 from .middleware.generic_driver import Driver
 
+
 def _to_signed(num):
     if num > 0x7FFF:
         num -= 0x10000

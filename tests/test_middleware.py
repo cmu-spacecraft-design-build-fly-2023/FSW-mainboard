@@ -3,8 +3,8 @@ import sys
 # sys.path.insert(0, './flight-software/hal/drivers/middleware')
 sys.path.insert(0, "./emulator/drivers/")
 
-from middleware.middleware import Middleware
 from middleware.generic_driver import Driver
+from middleware.middleware import Middleware
 
 """
 setting up things for an emulated test

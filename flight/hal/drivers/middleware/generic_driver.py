@@ -1,6 +1,5 @@
-from hal.drivers.diagnostics.diagnostics import Diagnostics
 from digitalio import DigitalInOut
-
+from hal.drivers.diagnostics.diagnostics import Diagnostics
 
 FAULT_HANDLE_RETRIES = 3
 
