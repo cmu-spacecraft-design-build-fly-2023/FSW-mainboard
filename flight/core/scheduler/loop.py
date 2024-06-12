@@ -111,7 +111,6 @@ class ScheduledTask:
                 iteration = self._forward_async_fn(
                     *self._forward_args, **self._forward_kwargs
                 )
-                self._loop._debug("  iteration ", iteration)
 
                 self._running = True
                 try:
@@ -160,15 +159,14 @@ class Loop:
         self._sleeping = []
         self._ready = []
         self._current = None
-        self.debug = debug
-        if debug:
-            self._debug = print
-        else:
-            self._debug = lambda *arg, **kwargs: None
+        self._debug = debug
+
+    @property
+    def debug(self):
+        return self._debug
 
     def enable_debug_logging(self):
-        self.debug = True
-        self._debug = print
+        self._debug = True
         print("Task scheduler debug logging enabled")
 
     def add_task(self, awaitable_task, priority):
@@ -178,8 +176,8 @@ class Loop:
           scheduler.add_task( my_async_method() )
         :param awaitable_task:  The coroutine to be concurrently driven to completion.
         """
-        if self.debug:
-            self._debug("adding task ", awaitable_task)
+        if self._debug:
+            print("adding task ", awaitable_task)
         # Added a priority parameter
         self._tasks.append(PriorityTask(awaitable_task, priority))
 
@@ -306,21 +304,21 @@ class Loop:
         ), "Loop can only be advanced by 1 stack frame at a time."
         self._loopnum = 0
         while self._tasks or self._sleeping:
-            self._debug(
+            print(
                 "[{}] ---- sleeping: {}, active: {}".format(
                     self._loopnum, len(self._sleeping), len(self._tasks)
                 )
             )
             self._step()
-            if self.debug:
-                self._debug("\n")
+            if self._debug:
+                print("\n")
             self._loopnum += 1
-        if self.debug:
-            self._debug("Loop completed", self._tasks, self._sleeping)
+        if self._debug:
+            print("Loop completed", self._tasks, self._sleeping)
 
     def _step(self):
-        if self.debug:
-            self._debug("  stepping over ", len(self._tasks), " tasks")
+        if self._debug:
+            print("  stepping over ", len(self._tasks), " tasks")
 
         # Sort tasks by priority
         self._tasks.sort(key=PriorityTask.priority_sort)
@@ -329,10 +327,10 @@ class Loop:
             task = self._tasks.pop(0)
             self._run_task(task)
 
-        if self.debug:
-            self._debug("  sleeping list (unsorted):")
+        if self._debug:
+            print("  sleeping list (unsorted):")
             for i in self._sleeping:
-                self._debug("    {}".format(i))
+                print("    {}".format(i))
 
         # Create the ready list based on whichever tasks are ready to be executed
         self._ready = [
@@ -341,10 +339,10 @@ class Loop:
         # Sort the ready tasks based on priority
         self._ready.sort(key=lambda x: x.task.priority)
 
-        if self.debug:
-            self._debug("  ready list (sorted)")
+        if self._debug:
+            print("  ready list (sorted)")
             for i in self._ready:
-                self._debug("    {}".format(i))
+                print("    {}".format(i))
 
         # Run the ready tasks, and simultaneously remove them from the _sleeping and _ready lists
         for i in range(len(self._ready)):
@@ -367,8 +365,8 @@ class Loop:
                 # and nothing else is scheduled to run for this long.
                 # This is the real sleep. If/when interrupts are implemented this will likely need to change.
                 sleep_seconds = sleep_nanos / 1000000000.0
-                if self.debug:
-                    self._debug(
+                if self._debug:
+                    print(
                         "  No active tasks.  Sleeping for ",
                         sleep_seconds,
                         "s. \n",
@@ -386,16 +384,16 @@ class Loop:
         try:
 
             task.coroutine.send(None)
-            if self.debug:
-                self._debug("  current", self._current)
+            if self._debug:
+                print("  current", self._current)
             # Sleep gate here, in case the current task suspended.
             # If a sleeping task re-suspends it will have already put itself in the sleeping queue.
             if self._current is not None:
                 self._tasks.append(task)
         except StopIteration:
             # This task is all done.
-            if self.debug:
-                self._debug("  task complete")
+            if self._debug:
+                print("  task complete")
             pass
         finally:
             self._current = None
@@ -409,8 +407,8 @@ class Loop:
             self._current is not None
         ), "You can only sleep from within a task"
         self._sleeping.append(Sleeper(target_run_nanos, self._current))
-        if self.debug:
-            self._debug("  sleeping ", self._current)
+        if self._debug:
+            print("  sleeping ", self._current)
         self._current = None
         # Pretty subtle here.  This yields once, then it continues next time the task scheduler executes it.
         # The async function is parked at this point.
