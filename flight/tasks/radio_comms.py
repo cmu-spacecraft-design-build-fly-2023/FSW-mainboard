@@ -1,13 +1,11 @@
 """
-radio_comms.py 
+radio_comms.py
 ================
 Comms FSW Task
 """
 
-import time
-
 # Argus-1 Radio Libs
-from apps.comms.radio_helpers import *
+from apps.comms.radio_helpers import SATELLITE_RADIO
 from apps.data_handler import DataHandler as DH
 
 # PyCubed Board Lib
@@ -36,15 +34,15 @@ class Task(DebugTask):
             self.flag_ground_station_pass = True
 
             """
-            Heartbeats transmitted every 20s based on task frequency 
-            Once transmitted, run receive_message, waits for 1s 
+            Heartbeats transmitted every 20s based on task frequency
+            Once transmitted, run receive_message, waits for 1s
             """
 
-            while self.flag_ground_station_pass == True:
+            while self.flag_ground_station_pass:
                 # Check if an image is available for downlinking
-                if DH.data_process_exists("img") == True:
+                if DH.data_process_exists("img"):
                     tm_path = DH.request_TM_path_image()
-                    if tm_path != None:
+                    if tm_path is not None:
                         # Image available, change filepath
                         print(
                             f"[{self.ID}][{self.name}] Onboard image at:",

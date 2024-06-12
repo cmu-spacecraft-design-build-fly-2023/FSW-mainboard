@@ -1,10 +1,9 @@
-import struct
 import time
 
 from adafruit_bus_device.i2c_device import I2CDevice
-from adafruit_register.i2c_bit import ROBit, RWBit
+from adafruit_register.i2c_bit import ROBit
 from adafruit_register.i2c_bits import ROBits, RWBits
-from adafruit_register.i2c_struct import Struct, UnaryStruct
+from adafruit_register.i2c_struct import Struct
 
 # from adafruit_bus_device.spi_device import SPIDevice
 from micropython import const
@@ -525,7 +524,7 @@ class BMX160:
             BMX160_GYRO_CONFIG_ADDR,
             "gyroscope odr",
         )
-        if res != None:
+        if res is not None:
             self._gyro_odr = res[1]
 
     @property
@@ -610,7 +609,7 @@ class BMX160:
             BMX160_ACCEL_CONFIG_ADDR,
             "accelerometer odr",
         )
-        if res != None:
+        if res is not None:
             self._accel_odr = res[1]
 
     @property
@@ -722,7 +721,7 @@ class BMX160_I2C(BMX160):
 
         try:
             self.i2c_device = I2CDevice(i2c, BMX160_I2C_ADDR, probe=False)
-        except:
+        except Exception:
             self.i2c_device = I2CDevice(i2c, BMX160_I2C_ALT_ADDR, probe=False)
 
         super().__init__()
@@ -788,7 +787,7 @@ def find_nearest_valid(desired, possible_values):
         return next(
             filter(lambda x: (desired >= x[1]), enumerate(possible_values))
         )[0]
-    except:
+    except Exception:
         return -1
 
 

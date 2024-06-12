@@ -20,9 +20,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-"""
 
-"""
 CircuitPython driver for the OPT4001 ALS
     SOT-5X3 variant and PicoStar variant
 
@@ -37,6 +35,7 @@ Thomas Damiani
     https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 * Adafruit Register Library
     https://github.com/adafruit/Adafruit_CircuitPython_Register
+
 """
 
 from time import monotonic, sleep
@@ -533,7 +532,7 @@ class OPT4001(Diagnostics):
 
         error_list = list(set(error_list))
 
-        if not Diagnostics.NOERROR in error_list:
+        if Diagnostics.NOERROR not in error_list:
             self.errors_present = True
 
         return error_list

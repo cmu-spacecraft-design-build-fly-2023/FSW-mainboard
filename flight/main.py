@@ -1,3 +1,4 @@
+import gc
 import sys
 
 from hal.configuration import SATELLITE
@@ -7,7 +8,6 @@ for path in ["/hal", "/apps"]:
     if path not in sys.path:
         sys.path.append(path)
 
-# import gc
 
 # gc.collect()
 # print(str(gc.mem_free()) + " bytes free")
@@ -33,8 +33,6 @@ DH.delete_all_files()
 
 # gc.collect()
 # print(str(gc.mem_free()) + " bytes free")
-
-# import comms_test.py
 
 try:
     # Run forever

@@ -20,9 +20,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-"""
 
-"""
 CircuitPython driver for the OPT4001 ALS
     SOT-5X3 variant and PicoStar variant
 
@@ -49,8 +47,6 @@ from adafruit_register.i2c_bits import RWBits
 
 
 try:
-    import typing
-
     from busio import I2C
     from typing_extensions import Literal
 except ImportError:

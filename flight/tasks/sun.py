@@ -24,7 +24,7 @@ class Task(DebugTask):
 
         if SM.current_state == "NOMINAL":
 
-            if DH.data_process_exists("sun") == False:
+            if not DH.data_process_exists("sun"):
                 DH.register_data_process(
                     "sun", self.data_keys, "ffffb", True, line_limit=50
                 )

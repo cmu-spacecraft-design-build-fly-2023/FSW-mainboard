@@ -32,7 +32,7 @@ class Task(DebugTask):
 
         if SM.current_state == "NOMINAL":
 
-            if DH.data_process_exists("imu") == False:
+            if not DH.data_process_exists("imu"):
                 DH.register_data_process(
                     "imu", self.data_keys, "ffffffffff", True, line_limit=40
                 )
