@@ -498,10 +498,7 @@ class OPT4001(Driver):
 
     @property
     def status(self):
-        res = (self.overload_flag << 3 |
-               (not self.conversion_ready_flag) << 2 |
-               self.flag_h << 1 |
-               self.flag_L)
+        res = (self.overload_flag << 3 | (not self.conversion_ready_flag) << 2 | self.flag_h << 1 | self.flag_L)
         return res
 
     """

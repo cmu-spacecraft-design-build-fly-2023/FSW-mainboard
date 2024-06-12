@@ -11,7 +11,6 @@ from digitalio import DigitalInOut, DriveMode
 from micropython import const
 from pwmio import PWMOut
 
-from .diagnostics.diagnostics import Diagnostics
 from .middleware.generic_driver import Driver
 
 

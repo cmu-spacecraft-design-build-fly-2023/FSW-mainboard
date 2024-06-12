@@ -1,10 +1,8 @@
 import sys
 
-# sys.path.insert(0, './flight-software/hal/drivers/middleware')
 sys.path.insert(0, "./emulator/drivers/")
 
-from middleware.generic_driver import Driver
-from middleware.middleware import Middleware
+from middleware.generic_driver import Driver  # noqa: E402
 
 """
 setting up things for an emulated test
@@ -42,7 +40,7 @@ class TestClass(Driver):
             # best we can do is try again
             raise TestException("Critical Error")
         return self.int_val
-    
+
     @test_int.setter
     def test_int(self, input: int) -> None:
         self.int_val = input

@@ -283,7 +283,6 @@ class DRV8830(Driver):
     @property
     def get_flags(self):
         flags = {}
-        status = self._fault
         if self._fault:
             if self._ocp:
                 flags['ocp'] = None
