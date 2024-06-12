@@ -15,6 +15,7 @@ from adafruit_bus_device.i2c_device import I2CDevice
 from micropython import const
 
 from .diagnostics.diagnostics import Diagnostics
+from .middleware.generic_driver import Driver
 
 
 def _to_signed(num):
@@ -65,7 +66,7 @@ CONTROL_REG_ADDR = const(0x83)
 CONTROL_SWOFF = const(0x1 << 0)
 
 
-class ADM1176(Diagnostics):
+class ADM1176(Driver):
     def __init__(self, i2c_bus, addr=0x4A):
         self.i2c_device = I2CDevice(i2c_bus, addr, probe=False)
         self.i2c_addr = addr
@@ -206,6 +207,27 @@ class ADM1176(Diagnostics):
         with self.i2c_device as i2c:
             i2c.write(_cmd)
         return _STATUS[0]
+
+    """
+    ----------------------- HANDLER METHODS -----------------------
+    """
+    @property
+    def get_flags(self):
+        flags = {}
+        status = self.status
+        if status & 0b1:
+            flags['ADC_OC'] = None
+        if status & 0b10:
+            flags['ADC_ALERT'] = None
+        if status & 0b100:
+            flags['HS_OC'] = None
+        if status & 0b1000:
+            flags['HS_ALERT'] = None
+        if status & 0b10000:
+            flags['OFF_STATUS'] = None
+        if status & 0b100000:
+            flags['OFF_ALERT'] = None
+        return flags
 
     ######################### DIAGNOSTICS #########################
 

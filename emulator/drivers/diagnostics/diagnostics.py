@@ -117,7 +117,7 @@ class Diagnostics:
     def error_present(self) -> bool:
         return self.errors_present
 
-    def run_diagnostics(self) -> list[int] | None:
+    def run_diagnostics(self) -> list:
         """run_diagnostic_test: Run all tests for the component"""
         raise NotImplementedError(
             "Subclasses must implement run_diagnostic_test method"
@@ -146,7 +146,7 @@ class Diagnostics:
             self._enable.value = False
 
     @staticmethod
-    def convert_errors_to_byte_array(errors: list[int]) -> bytes:
+    def convert_errors_to_byte_array(errors: list) -> bytes:
         """convert_errors_to_byte_array: Convert a list of errors to a packed set of bytes.
         Each bit represents a corresponding error.
 

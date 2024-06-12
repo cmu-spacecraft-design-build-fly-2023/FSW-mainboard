@@ -17,6 +17,7 @@ from adafruit_register.i2c_bits import ROBits, RWBits
 from micropython import const
 
 from .diagnostics.diagnostics import Diagnostics
+from .middleware.generic_driver import Driver
 
 # Registers
 _BATV_LIM = const(0x00)
@@ -65,7 +66,7 @@ def _to_signed(num):
     return num
 
 
-class BQ25883(Diagnostics):
+class BQ25883(Driver):
     """BQ25883: The"""
 
     _pn = ROBits(4, _PART_INFO, 3, 1, False)
@@ -147,6 +148,23 @@ class BQ25883(Diagnostics):
     @en_led.setter
     def led(self, value: bool) -> None:
         self._stat_dis = not value
+
+    """
+    ----------------------- HANDLER METHODS -----------------------
+    """
+    @property
+    def get_flags(self):
+        flags = {}
+        status = self.fault_status
+        if (status & 0x10):
+            flags['VBUS_OVP_STAT'] = None
+        if (status & (0x1 << 5)):
+            flags['TSHUT_STAT'] = None
+        if (status & (0x1 << 6)):
+            flags['BATOVP_STAT'] = None
+        if (status & (0x1 << 7)):
+            flags['TMR_STAT'] = None
+        return flags
 
     ######################### DIAGNOSTICS #########################
 

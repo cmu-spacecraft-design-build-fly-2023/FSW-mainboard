@@ -48,6 +48,7 @@ from digitalio import DigitalInOut
 from micropython import const
 
 from .diagnostics.diagnostics import Diagnostics
+from .middleware.generic_driver import Driver
 
 __version__ = "3.5.1"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_GPS.git"
@@ -87,7 +88,7 @@ def _parse_str(nmea_data):
 
 # lint warning about too many attributes disabled
 # pylint: disable-msg=R0902
-class GPS(Diagnostics):
+class GPS(Driver):
     """GPS parsing module.  Can parse simple NMEA data sentences from serial
     GPS modules to read latitude, longitude, and more.
     """
@@ -518,6 +519,13 @@ class GPS(Diagnostics):
     def disable(self) -> None:
         """Disable the GPS module through the enable pin"""
         self.__enable = False
+
+    """
+    ----------------------- HANDLER METHODS -----------------------
+    """
+    @property
+    def get_flags(self):
+        return {}
 
     ######################### DIAGNOSTICS #########################
 

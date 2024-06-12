@@ -11,10 +11,10 @@ from digitalio import DigitalInOut, DriveMode
 from micropython import const
 from pwmio import PWMOut
 
-from .diagnostics.diagnostics import Diagnostics
+from .middleware.generic_driver import Driver
 
 
-class BurnWires(Diagnostics):
+class BurnWires(Driver):
     """
     The BurnWires class provides functionality for controlling burn wires.
 
@@ -237,3 +237,10 @@ class BurnWires(Diagnostics):
         Burns the negative Y-axis wire.
         """
         self.__burn(self.__burn_ym)
+
+    """
+    ----------------------- HANDLER METHODS -----------------------
+    """
+    @property
+    def get_flags(self):
+        return {}

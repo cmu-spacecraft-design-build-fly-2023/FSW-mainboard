@@ -10,6 +10,7 @@ from digitalio import DigitalInOut
 from micropython import const
 
 from .diagnostics.diagnostics import Diagnostics
+from .middleware.generic_driver import Driver
 
 # Chip ID
 BMX160_CHIP_ID = const(0xD8)
@@ -309,7 +310,7 @@ class _ScaledReadOnlyStruct(Struct):
 # scale factor can be changed as a function of range mode
 
 
-class BMX160(Diagnostics):
+class BMX160(Driver):
     """
     Driver for the BMX160 accelerometer, magnetometer, gyroscope.
 
@@ -421,6 +422,13 @@ class BMX160(Diagnostics):
         self.init_mag()
         self.init_accel()
         self.init_gyro()
+
+    """
+    ----------------------- HANDLER METHODS -----------------------
+    """
+    @property
+    def get_flags(self):
+        return {}
 
     ######################## I2C HELPERS ########################
     def read_u8(self, address):
