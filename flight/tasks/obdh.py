@@ -1,7 +1,7 @@
 # Onboard Data Handling (OBDH) Task
 
-import core.state_manager as SM
 from core import TemplateTask
+from core import state_manager as SM
 from core.data_handler import DataHandler as DH
 
 

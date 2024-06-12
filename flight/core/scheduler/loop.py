@@ -85,15 +85,15 @@ class ScheduledTask:
         self._priority = priority
 
     def change_rate(self, hz):
-        ### Update the task rate to a new frequency ###
+        # Update the task rate to a new frequency ###
         self._nanoseconds_per_invocation = (1 / hz) * 1000000000
 
     def stop(self):
-        ### Stop the task (does not interrupt a currently running task) ###
+        # Stop the task (does not interrupt a currently running task) ###
         self._stop = True
 
     def start(self):
-        ### Schedule the task (if it's not already scheduled) ###
+        # Schedule the task (if it's not already scheduled) ###
         self._stop = False
         if not self._scheduled_to_run:
             # Don't double-up the task if it's still in the run list!
@@ -304,14 +304,13 @@ class Loop:
         ), "Loop can only be advanced by 1 stack frame at a time."
         self._loopnum = 0
         while self._tasks or self._sleeping:
-            print(
-                "[{}] ---- sleeping: {}, active: {}".format(
-                    self._loopnum, len(self._sleeping), len(self._tasks)
-                )
-            )
-            self._step()
             if self._debug:
-                print("\n")
+                print(
+                    "[{}] ---- sleeping: {}, active: {}\n".format(
+                        self._loopnum, len(self._sleeping), len(self._tasks)
+                    )
+                )
+            self._step()
             self._loopnum += 1
         if self._debug:
             print("Loop completed", self._tasks, self._sleeping)

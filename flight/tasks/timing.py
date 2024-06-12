@@ -4,9 +4,8 @@
 import time
 
 import rtc
-
-import core.state_manager as SM
 from core import TemplateTask
+from core import state_manager as SM
 
 
 class Task(TemplateTask):

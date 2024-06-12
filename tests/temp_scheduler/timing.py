@@ -2,7 +2,7 @@
 
 import time
 
-import flight.core.state_manager as SM
+from flight.core import state_manager as SM
 from flight.core import TemplateTask
 
 

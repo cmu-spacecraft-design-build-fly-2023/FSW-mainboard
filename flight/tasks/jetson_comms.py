@@ -5,12 +5,12 @@ Task to interact with Jetson over UART
 """
 
 from apps.jetson_comms.argus_comm import ArgusComm
-from hal.configuration import SATELLITE
 
 # State manager and OBDH
-import core.state_manager as SM
 from core import TemplateTask
+from core import state_manager as SM
 from core.data_handler import DataHandler as DH
+from hal.configuration import SATELLITE
 
 
 class Task(TemplateTask):

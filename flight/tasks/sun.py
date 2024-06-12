@@ -3,11 +3,10 @@
 import time
 
 from apps.sun import compute_body_sun_vector, in_eclipse
-from hal.configuration import SATELLITE
-
-import core.state_manager as SM
 from core import TemplateTask
+from core import state_manager as SM
 from core.data_handler import DataHandler as DH
+from hal.configuration import SATELLITE
 
 
 class Task(TemplateTask):
