@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     import numpy  # noqa: F401
 
-    sys.path.append("tests/cp")
+    sys.path.append("emulator/cp")
     sys.modules["micropython"] = __import__("micropython_mock")
     sys.modules["ulab"] = __import__("ulab_mock")
 

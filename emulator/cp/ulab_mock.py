@@ -1,3 +1,1 @@
-# flake8: noqa
-
-import numpy
+import numpy  # noqa: F401
