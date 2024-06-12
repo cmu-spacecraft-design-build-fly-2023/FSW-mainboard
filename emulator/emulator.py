@@ -66,6 +66,7 @@ class satellite(CubeSat):
         mag = array([4.0, 3.0, 1.0])
         gyro = array([0.0, 0.0, 0.0])
         self._imu = IMU(accel=accel, mag=mag, gyro=gyro, temp=20)
+        self._imu.enable()
 
         self._jetson_monitor = PowerMonitor(4, 0.05)
         self._battery_monitor = PowerMonitor(4.2, 0.04)
