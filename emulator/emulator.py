@@ -51,12 +51,15 @@ class satellite(CubeSat):
         self._gps = None
         self._charger = None
 
-        self._sun_sensor_xp = SunSensor(900)
-        self._sun_sensor_xm = SunSensor(48000)
-        self._sun_sensor_yp = SunSensor(85000)
-        self._sun_sensor_ym = SunSensor(200)
-        self._sun_sensor_zp = SunSensor(12000)
-        self._sun_sensor_zm = SunSensor(5000)
+        sun_sensor_p = SunSensor(900,85000,12000)
+        sun_sensor_m = SunSensor(48000,200,5000)
+
+        self._sun_sensor_xp = sun_sensor_p.x
+        self._sun_sensor_xm = sun_sensor_m.x
+        self._sun_sensor_yp = sun_sensor_p.y
+        self._sun_sensor_ym = sun_sensor_m.y
+        self._sun_sensor_zp = sun_sensor_p.z
+        self._sun_sensor_zm = sun_sensor_m.z
 
         self._torque_x = None
         self._torque_y = None

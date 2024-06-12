@@ -62,7 +62,7 @@ class DataProcess:
         persistent (bool): Whether the data should be logged to a file (default is True).
         line_limit (int): The maximum number of data lines allowed in the file (default is 1000).
         new_config_file (bool): Whether to create a new configuration file (default is False).
-        home_path (str): The home path for the file (default is "/sd/").
+        home_path (str): The home path for the file (default is "sd/").
         status (str): The status of the file ("CLOSED" or "OPEN").
         file (file): The file object.
         dir_path (str): The directory path for the file.
@@ -93,7 +93,7 @@ class DataProcess:
         persistent: bool = True,
         line_limit: int = 1000,
         new_config_file: bool = False,
-        home_path: str = "/sd",
+        home_path: str = "sd",
     ) -> None:
         """
         Initializes a DataProcess object.
@@ -105,7 +105,7 @@ class DataProcess:
             persistent (bool, optional): Whether the file should be persistent or not (default is True).
             line_limit (int, optional): The maximum number of data lines allowed in the file (default is 1000).
             new_config_file (bool, optional): Whether to create a new configuration file (default is False).
-            home_path (str, optional): The home path for the file (default is "/sd/").
+            home_path (str, optional): The home path for the file (default is "sd/").
         """
 
         self.tag_name = tag_name
@@ -387,7 +387,7 @@ class DataProcess:
 
 
 class ImageProcess(DataProcess):
-    def __init__(self, tag_name: str, home_path: str = "/sd"):
+    def __init__(self, tag_name: str, home_path: str = "sd"):
 
         self.tag_name = tag_name
         self.file = None
@@ -479,7 +479,7 @@ class DataHandler:
     Failure to do so can prevent the SD card from being recognized until it is powered off or re-inserted.
     """
 
-    sd_path = "/sd"
+    sd_path = "sd"
     # Keep track of all file processes
     data_process_registry = dict()
 
@@ -813,7 +813,7 @@ class DataHandler:
             cls.data_process_registry[tag_name].clean_up()
 
     @classmethod
-    def delete_all_files(cls, path="/sd"):
+    def delete_all_files(cls, path="sd"):
         try:
             for file_name in os.listdir(path):
                 file_path = path + "/" + file_name
@@ -845,7 +845,7 @@ class DataHandler:
             print(f"Error: {e}")
 
     @classmethod
-    def compute_total_size_files(cls, root_path: str = "/sd") -> int:
+    def compute_total_size_files(cls, root_path: str = "sd") -> int:
         """
         Computes the total size of all files under the sd_path.
 
@@ -866,12 +866,12 @@ class DataHandler:
 
     # DEBUG ONLY
     @classmethod
-    def print_directory(cls, path: str = "/sd", tabs: int = 0) -> None:
+    def print_directory(cls, path: str = "sd", tabs: int = 0) -> None:
         """
         Prints the directory contents recursively.
 
         Parameters:
-            path (str, optional): The path of the directory. Defaults to "/sd".
+            path (str, optional): The path of the directory. Defaults to "sd".
             tabs (int, optional): The number of tabs for indentation. Defaults to 0.
 
         Returns:
