@@ -39,7 +39,7 @@ class Task(DebugTask):
 
             # print(f"[{self.ID}][{self.name}] Reading BMX160.")
 
-            SATELLITE.IMU.enable()
+            # SATELLITE.IMU.enable()
 
             readings = {
                 "accel": SATELLITE.IMU.accel,
@@ -47,7 +47,7 @@ class Task(DebugTask):
                 "gyro": SATELLITE.IMU.gyro,
             }
 
-            SATELLITE.IMU.disable()
+            # SATELLITE.IMU.disable()
 
             log_data = {
                 "time": time.time(),
