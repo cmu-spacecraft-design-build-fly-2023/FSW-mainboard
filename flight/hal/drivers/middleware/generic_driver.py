@@ -1,4 +1,4 @@
-from diagnostics.diagnostics import Diagnostics
+from hal.drivers.diagnostics.diagnostics import Diagnostics
 from digitalio import DigitalInOut
 
 

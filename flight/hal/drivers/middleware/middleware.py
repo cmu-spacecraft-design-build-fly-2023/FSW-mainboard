@@ -12,7 +12,7 @@ Author: Harry Rosmann
 
 """
 
-from diagnostics.diagnostics import Diagnostics
+from hal.drivers.diagnostics.diagnostics import Diagnostics
 from micropython import const
 
 # The default number of retries for the middleware
