@@ -1,6 +1,4 @@
 from diagnostics.diagnostics import Diagnostics
-from digitalio import DigitalInOut
-
 
 FAULT_HANDLE_RETRIES = 3
 
@@ -22,7 +20,7 @@ class Driver(Diagnostics):
     # set of strings containing method names
     # dict of method name to checker function and method-specific exception to give to middlware
 
-    def __init__(self, enable: DigitalInOut = None) -> None:
+    def __init__(self, enable=None) -> None:
         self.handleable = {}
         self.checkers = {}
         super().__init__(enable)

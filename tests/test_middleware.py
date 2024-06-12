@@ -1,9 +1,7 @@
 import sys
 
 # sys.path.insert(0, './flight-software/hal/drivers/middleware')
-sys.path.insert(0, './flight-software/hal/drivers/')
-
-# import flight_software
+sys.path.insert(0, "./emulator/drivers/")
 
 from middleware.middleware import Middleware
 from middleware.generic_driver import Driver
@@ -11,6 +9,8 @@ from middleware.generic_driver import Driver
 """
 setting up things for an emulated test
 """
+
+
 class TestException(Exception):
     def __init__(self, exception: Exception):
         self.exception = exception
@@ -65,7 +65,7 @@ class TestClass(Driver):
             # critical flag is raised
             res['critical'] = self.retry
         return res
-    
+
     def fixer(self):
         # remove the fixable flag
         self.flags = self.flags & 0b01
