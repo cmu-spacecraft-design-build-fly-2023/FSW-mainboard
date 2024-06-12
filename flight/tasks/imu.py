@@ -1,13 +1,13 @@
 # from hal.pycubed import hardware
 import time
 
-from apps.data_handler import DataHandler as DH
+from core import TemplateTask
+from core import state_manager as SM
+from core.data_handler import DataHandler as DH
 from hal.configuration import SATELLITE
-from state_manager import state_manager as SM
-from tasks.template_task import DebugTask
 
 
-class Task(DebugTask):
+class Task(TemplateTask):
 
     name = "IMU"
     ID = 0x03

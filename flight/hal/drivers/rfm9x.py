@@ -16,9 +16,8 @@ from time import monotonic, sleep
 
 import adafruit_bus_device.spi_device as spidev
 from digitalio import DigitalInOut, Pull
+from hal.drivers.diagnostics.diagnostics import Diagnostics
 from micropython import const
-
-from .diagnostics.diagnostics import Diagnostics
 
 # pylint: disable=bad-whitespace
 # Internal constants:
@@ -934,7 +933,7 @@ class RFM9x(Diagnostics):
         return got_ack
 
     # pylint: disable=too-many-branches
-    def receive(        # noqa: C901
+    def receive(  # noqa: C901
         self,
         *,
         keep_listening=True,

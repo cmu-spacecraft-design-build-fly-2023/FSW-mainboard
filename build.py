@@ -4,6 +4,8 @@ import os
 import platform
 import shutil
 
+ROOT_PATH = os.getcwd()
+
 MPY_CROSS_NAME = "mpy-cross"
 if platform.system() == "Darwin":
     MPY_CROSS_NAME = "mpy-cross-macos"
@@ -21,7 +23,7 @@ def check_directory_location(source_folder):
 
 
 def create_build(source_folder):
-    build_folder = os.path.join(source_folder, "build/")
+    build_folder = "build/"
     if os.path.exists(build_folder):
         shutil.rmtree(build_folder)
 
@@ -59,12 +61,8 @@ def create_build(source_folder):
                     # Extract file name
                     file_name = os.path.basename(file)
 
-                relative_path = os.path.relpath(source_folder, build_path)
-
                 try:
-                    os.system(
-                        f"{relative_path}/{MPY_CROSS_NAME} {file_name} -O3"
-                    )
+                    os.system(f"{ROOT_PATH}/{MPY_CROSS_NAME} {file_name} -O3")
                 except Exception as e:
                     print(
                         f"Error occurred while compiling {file_name}: {str(e)}"
@@ -82,7 +80,6 @@ def create_build(source_folder):
 
     # Create SD folder
     os.makedirs(os.path.join(build_folder, "sd/"), exist_ok=True)
-
     return build_folder
 
 
@@ -139,5 +136,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     source_folder = args.source_folder
+
+    check_directory_location(source_folder)
 
     build_folder = create_build(source_folder)

@@ -304,7 +304,12 @@ class SATELLITE_RADIO:
             elif self.gs_req_message_ID == Definitions.SAT_IMAGES:
                 # Transmit stored image info
                 tx_header = bytes(
-                    [(self.sat_req_ack | Definitions.SAT_IMAGES), 0x0, 0x0, 0x18]
+                    [
+                        (self.sat_req_ack | Definitions.SAT_IMAGES),
+                        0x0,
+                        0x0,
+                        0x18,
+                    ]
                 )
                 tx_payload = self.image_pack_info()
                 tx_message = tx_header + tx_payload
@@ -312,7 +317,12 @@ class SATELLITE_RADIO:
             elif self.gs_req_message_ID == Definitions.SAT_DEL_IMG1:
                 # Transmit successful deletion of stored image 1
                 tx_header = bytes(
-                    [(self.sat_req_ack | Definitions.SAT_DEL_IMG1), 0x0, 0x0, 0x1]
+                    [
+                        (self.sat_req_ack | Definitions.SAT_DEL_IMG1),
+                        0x0,
+                        0x0,
+                        0x1,
+                    ]
                 )
                 tx_payload = bytes([0x1])
                 tx_message = tx_header + tx_payload
@@ -343,7 +353,12 @@ class SATELLITE_RADIO:
             elif self.gs_req_message_ID == Definitions.SAT_OTA_RES:
                 # Transmit response to OTA update
                 tx_header = bytes(
-                    [(self.sat_req_ack | Definitions.SAT_OTA_RES), 0x0, 0x0, 0x3]
+                    [
+                        (self.sat_req_ack | Definitions.SAT_OTA_RES),
+                        0x0,
+                        0x0,
+                        0x3,
+                    ]
                 )
                 tx_payload = self.ota_rec_success.to_bytes(
                     1, "big"

@@ -74,7 +74,7 @@ if __name__ == "__main__":
         "-s",
         "--source_folder",
         type=str,
-        default="flight/build",
+        default="build",
         help="Source folder path",
         required=False,
     )

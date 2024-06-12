@@ -8,10 +8,9 @@ Date: March 28, 2024
 from time import sleep
 
 from digitalio import DigitalInOut, DriveMode
+from hal.drivers.diagnostics.diagnostics import Diagnostics
 from micropython import const
 from pwmio import PWMOut
-
-from .diagnostics.diagnostics import Diagnostics
 
 
 class BurnWires(Diagnostics):

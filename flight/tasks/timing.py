@@ -4,11 +4,11 @@
 import time
 
 import rtc
-from state_manager import state_manager as SM
-from tasks.template_task import DebugTask
+from core import TemplateTask
+from core import state_manager as SM
 
 
-class Task(DebugTask):
+class Task(TemplateTask):
 
     name = "TIMING"
     ID = 0x01

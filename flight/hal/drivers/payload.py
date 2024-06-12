@@ -9,8 +9,7 @@ Author(s): Harry Rosmann
 """
 
 from digitalio import DigitalInOut
-
-from .diagnostics.diagnostics import Diagnostics
+from hal.drivers.diagnostics.diagnostics import Diagnostics
 
 
 class PayloadUART(Diagnostics):

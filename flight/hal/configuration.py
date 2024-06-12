@@ -19,7 +19,7 @@ if HARDWARE_VERSION == PYCUBED_V05:
     SATELLITE = PyCubed()
 
 elif HARDWARE_VERSION == ARGUS_V1:
-    from .argus_v1 import ArgusV1
+    from hal.argus_v1 import ArgusV1
 
     SATELLITE = ArgusV1(enable_middleware=EN_MIDDLEWARE, debug=DEBUG_MODE)
 

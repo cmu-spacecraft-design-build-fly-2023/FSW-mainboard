@@ -4,20 +4,16 @@ jetson_comms.py
 Task to interact with Jetson over UART
 """
 
-from apps.data_handler import DataHandler as DH
 from apps.jetson_comms.argus_comm import ArgusComm
 
-# PyCubed Board Lib
+# State manager and OBDH
+from core import TemplateTask
+from core import state_manager as SM
+from core.data_handler import DataHandler as DH
 from hal.configuration import SATELLITE
 
-# State manager and OBDH
-from state_manager import state_manager as SM
 
-# Template task from taskio
-from tasks.template_task import DebugTask
-
-
-class Task(DebugTask):
+class Task(TemplateTask):
 
     name = "JETSON"
     ID = 0x13

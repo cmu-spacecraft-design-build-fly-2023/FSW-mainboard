@@ -1,11 +1,11 @@
 # Onboard Data Handling (OBDH) Task
 
-from apps.data_handler import DataHandler as DH
-from state_manager import state_manager as SM
-from tasks.template_task import DebugTask
+from core import TemplateTask
+from core import state_manager as SM
+from core.data_handler import DataHandler as DH
 
 
-class Task(DebugTask):
+class Task(TemplateTask):
 
     name = "OBDH"
     ID = 0x02
