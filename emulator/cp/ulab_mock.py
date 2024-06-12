@@ -1,1 +1,1 @@
-import numpy    # noqa: F401
+import numpy  # noqa: F401
