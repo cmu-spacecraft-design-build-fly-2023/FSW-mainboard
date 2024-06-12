@@ -45,7 +45,7 @@ from adafruit_register.i2c_bit import ROBit, RWBit
 from adafruit_register.i2c_bits import RWBits
 from micropython import const
 
-from .diagnostics.diagnostics import Diagnostics
+from hal.drivers.diagnostics.diagnostics import Diagnostics
 
 try:
     from typing_extensions import Literal

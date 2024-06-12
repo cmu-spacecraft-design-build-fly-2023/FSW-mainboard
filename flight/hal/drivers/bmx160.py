@@ -9,7 +9,7 @@ from digitalio import DigitalInOut
 # from adafruit_bus_device.spi_device import SPIDevice
 from micropython import const
 
-from .diagnostics.diagnostics import Diagnostics
+from hal.drivers.diagnostics.diagnostics import Diagnostics
 
 # Chip ID
 BMX160_CHIP_ID = const(0xD8)

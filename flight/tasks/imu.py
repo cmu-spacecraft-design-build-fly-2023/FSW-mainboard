@@ -3,9 +3,9 @@ import time
 
 from hal.configuration import SATELLITE
 
-import flight.core.state_manager as SM
-from flight.core import TemplateTask
-from flight.core.data_handler import DataHandler as DH
+import core.state_manager as SM
+from core import TemplateTask
+from core.data_handler import DataHandler as DH
 
 
 class Task(TemplateTask):

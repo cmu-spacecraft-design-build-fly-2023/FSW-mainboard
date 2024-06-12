@@ -54,7 +54,7 @@ from adafruit_register import (
     i2c_bits,
 )
 
-from .diagnostics.diagnostics import Diagnostics
+from hal.drivers.diagnostics.diagnostics import Diagnostics
 
 try:
     import typing  # noqa: F401

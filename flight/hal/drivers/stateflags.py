@@ -11,7 +11,7 @@ Author: Harry Rosmann
 
 from micropython import const
 
-from .bitflags import bitFlag, multiBitFlag
+from hal.drivers.bitflags import bitFlag, multiBitFlag
 
 
 class StateFlags:

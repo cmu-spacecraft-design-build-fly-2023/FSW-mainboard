@@ -1,4 +1,4 @@
-from .loop import Loop
+from core.scheduler.loop import Loop
 
 __global_event_loop = None
 

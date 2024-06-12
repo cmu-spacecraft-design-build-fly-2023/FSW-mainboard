@@ -1,4 +1,4 @@
-import flight.core.scheduler as scheduler
+import core.scheduler as scheduler
 
 
 class StateManager:

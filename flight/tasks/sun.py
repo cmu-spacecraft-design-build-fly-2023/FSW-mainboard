@@ -5,9 +5,9 @@ import time
 from apps.sun import compute_body_sun_vector, in_eclipse
 from hal.configuration import SATELLITE
 
-import flight.core.state_manager as SM
-from flight.core import TemplateTask
-from flight.core.data_handler import DataHandler as DH
+import core.state_manager as SM
+from core import TemplateTask
+from core.data_handler import DataHandler as DH
 
 
 class Task(TemplateTask):

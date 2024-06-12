@@ -11,7 +11,7 @@ from digitalio import DigitalInOut, DriveMode
 from micropython import const
 from pwmio import PWMOut
 
-from .diagnostics.diagnostics import Diagnostics
+from hal.drivers.diagnostics.diagnostics import Diagnostics
 
 
 class BurnWires(Diagnostics):

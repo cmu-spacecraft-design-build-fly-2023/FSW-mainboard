@@ -13,7 +13,7 @@ LENGTH     : 1 byte
 Authors: DJ Morvay, Akshat Sahay
 """
 
-from flight.core.data_handler import DataHandler as DH
+from core.data_handler import DataHandler as DH
 
 
 # Message ID definitions

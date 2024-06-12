@@ -18,7 +18,7 @@ import adafruit_bus_device.spi_device as spidev
 from digitalio import DigitalInOut, Pull
 from micropython import const
 
-from .diagnostics.diagnostics import Diagnostics
+from hal.drivers.diagnostics.diagnostics import Diagnostics
 
 # pylint: disable=bad-whitespace
 # Internal constants:

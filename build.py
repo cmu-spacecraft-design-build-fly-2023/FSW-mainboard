@@ -81,7 +81,7 @@ def create_build(source_folder):
         f.write("import main_module\n")
 
     # Create SD folder
-    os.makedirs(os.path.join(build_folder, "sd/"), exist_ok=True)
+    os.makedirs(os.path.join(build_folder, "sd/"), exist_ok=True) # TODO remove this
 
     return build_folder
 

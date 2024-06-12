@@ -49,7 +49,7 @@ from adafruit_bus_device.i2c_device import I2CDevice
 from adafruit_register.i2c_bit import ROBit, RWBit
 from adafruit_register.i2c_bits import RWBits
 
-from .diagnostics.diagnostics import Diagnostics
+from hal.drivers.diagnostics.diagnostics import Diagnostics
 
 # DEVICE REGISTER MAP
 _CONTROL = 0x00  # Control Register      -W

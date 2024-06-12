@@ -11,11 +11,11 @@ from apps.comms.radio_helpers import SATELLITE_RADIO
 from hal.configuration import SATELLITE
 
 # State manager and OBDH
-import flight.core.state_manager as SM
+import core.state_manager as SM
 
 # Template task from taskio
-from flight.core import TemplateTask
-from flight.core.data_handler import DataHandler as DH
+from core import TemplateTask
+from core.data_handler import DataHandler as DH
 
 
 class Task(TemplateTask):
