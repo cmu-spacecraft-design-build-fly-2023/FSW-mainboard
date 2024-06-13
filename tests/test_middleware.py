@@ -2,7 +2,8 @@ import sys
 
 sys.path.insert(0, "./emulator/drivers/")
 
-from middleware.generic_driver import Driver  # noqa: E402
+from middleware.generic_driver import Driver
+from middleware.middleware import Middleware
 
 """
 setting up things for an emulated test
@@ -18,7 +19,7 @@ class TestException(Exception):
         return f"{type(self.exception).__name__}: {self.exception}"
 
 
-class TestClass(Driver):
+class TestDevice(Driver):
     def __init__(self, flags: int):
         """
         flags: 2 bit flag register
@@ -27,11 +28,13 @@ class TestClass(Driver):
         """
         self.flags = flags
         self.int_val = 8
+        self.update_int = 0
 
-        super.__init__()
+        super().__init__()
 
         self.handleable = {
-            'test_int': (self.int_checker, TestException)
+            'test_int': (True, self.int_checker, TestException),
+            'test_method': (False, lambda x, y: x, TestException)
         }
 
     @property
@@ -46,12 +49,16 @@ class TestClass(Driver):
         self.int_val = input
 
     def int_checker(self, result, flags):
-        if flags & 0b10:
+        if 'fixable' in flags:
             # fixable has occured
             raise TestException("Fixable Error")
         if result > 9:
             raise TestException("Erroneous Result")
         return result
+
+    def test_method(self):
+        self.update_int += 1
+        return 9
 
     @property
     def get_flags(self):
@@ -67,3 +74,24 @@ class TestClass(Driver):
     def fixer(self):
         # remove the fixable flag
         self.flags = self.flags & 0b01
+
+
+class TestClass:
+    def test_method_call(self):
+        device = TestDevice(0b00)
+        mid = Middleware(device)
+        assert mid.test_method() == device.test_method()
+        assert mid.update_int == 2
+
+    def test_property_call(self):
+        device = TestDevice(0b00)
+        mid = Middleware(device)
+        assert mid.test_int == 8
+        mid.test_int = 5
+        assert mid.test_int == 5
+
+    def test_exceptions(self):
+        # initialize device with "fixable error"
+        device = TestDevice(0b10)
+        mid = Middleware(device)
+        assert mid.test_int == 8
