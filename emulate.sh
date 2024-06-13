@@ -1,2 +1,2 @@
-cd flight/build && python3 main.py
+cd build && python3 main.py
 cd -

@@ -10,7 +10,7 @@ def check_directory_location(source_folder):
 
 
 def create_build(source_folder, emulator_folder):
-    build_folder = os.path.join(source_folder, "build/")
+    build_folder = "build/"
     if os.path.exists(build_folder):
         shutil.rmtree(build_folder)
 
