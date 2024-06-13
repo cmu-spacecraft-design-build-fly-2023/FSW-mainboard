@@ -1,15 +1,14 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
-import brahe
+import astrodynamics as astro
+import drag as drag
 import numpy as np
+import spaceweather
 from brahe import frames
 from brahe.epoch import Epoch
 from brahe.orbit_dynamics.gravity import accel_gravity, accel_thirdbody_moon, accel_thirdbody_sun
 from scipy.linalg import expm
-
-import simulation.astrodynamics as astro
-import simulation.drag as drag
-from simulation.transformations import L, R
+from transformations import L, R
 
 
 class Spacecraft:
@@ -96,7 +95,6 @@ class Spacecraft:
             self.J = self.DEFAULTS["inertia"]
             self.invJ = np.linalg.inv(self.J)
 
-        # TODO default values
         if "gravity_order" in configuration:
             self._gravity_order = configuration["gravity_order"]
         else:
@@ -111,6 +109,7 @@ class Spacecraft:
             self._drag = configuration["drag"]
         else:
             self._drag = self.DEFAULTS["drag"]
+        self.space_weather = spaceweather.sw_daily(update=True)
 
         if "third_body" in configuration:
             self._third_body = configuration["third_body"]
@@ -181,9 +180,6 @@ class Spacecraft:
         )
 
         if self._drag:
-            # r_sun = brahe.sun_position(self.epoch)
-            # rho = density_harris_priester(x_eci[0:6], r_sun)
-            # print("rho ", rho)
             a += drag.accel_drag(
                 self.epoch_dt,
                 x_eci[0:6],
@@ -191,7 +187,7 @@ class Spacecraft:
                 self._crossA,
                 self._Cd,
                 R_i2b,
-                self.sw,
+                self.space_weather,
             )
 
         if self._third_body:
@@ -229,10 +225,14 @@ class Spacecraft:
 
         self._state = self._state + (1 / 6) * (k1 + 2 * k2 + 2 * k3 + k4)
         self._state[6:10] = np.dot(
-            expm(R(self.H.dot(0.5 * self._dt * ω + (self._dt / 6) * (k1[10:13] + k2[10:13] + k3[10:13])))),
-            q,
+            expm(R(self.H.dot(0.5 * self._dt * ω + (self._dt / 6) * (k1[10:13] + k2[10:13] + k3[10:13])))), q
         )
-        self._epoch = self._epoch + self._dt
+
+        self._advance_epoch()
+
+    def _advance_epoch(self):
+        self._epoch += self._dt
+        self.epoch_dt += timedelta(seconds=self._dt)
 
 
 # Temporary local testing
@@ -252,8 +252,8 @@ if __name__ == "__main__":
     }
 
     spacecraft = Spacecraft(config)
+    u = np.zeros(3)
 
     for i in range(10):
-        u = np.zeros(3)
         spacecraft.advance(u)
         print(spacecraft.state)
