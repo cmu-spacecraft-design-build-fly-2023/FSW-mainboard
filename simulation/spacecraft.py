@@ -143,8 +143,12 @@ class Spacecraft:
         return self._epoch
 
     @property
-    def attitude(self):
+    def attitude_states(self):
         return self._state[6:13]
+
+    @property
+    def attitude(self):
+        return self._state[6:10]
 
     @property
     def orbit_eci(self):
