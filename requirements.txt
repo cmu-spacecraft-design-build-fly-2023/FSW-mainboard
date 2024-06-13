@@ -6,3 +6,6 @@ flake8
 black
 isort
 pre-commit
+brahe @ git+https://github.com/duncaneddy/brahe@d51764092a1b423a99ac25dd47aaa100b53a21e3
+meshcat>=0.3.2
+scipy>=1.3.3
