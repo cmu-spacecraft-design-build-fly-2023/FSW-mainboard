@@ -7,7 +7,6 @@ References:
 
 """
 
-import brahe
 import numpy as np
 import pandas as pd
 from brahe import coordinates

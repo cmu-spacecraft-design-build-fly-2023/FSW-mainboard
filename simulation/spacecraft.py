@@ -19,7 +19,7 @@ class Spacecraft:
 
     DEFAULTS = {
         "gravity_order": 10,  # Setting both order and degree at once
-        "drag": True,
+        "drag": False,
         "third-body": True,
         "solar-radiation": True,
         "gravity-gradient": True,
