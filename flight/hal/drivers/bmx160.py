@@ -5,11 +5,11 @@ from adafruit_register.i2c_bit import ROBit
 from adafruit_register.i2c_bits import ROBits, RWBits
 from adafruit_register.i2c_struct import Struct
 from digitalio import DigitalInOut
+from hal.drivers.diagnostics.diagnostics import Diagnostics
 
 # from adafruit_bus_device.spi_device import SPIDevice
 from micropython import const
 
-from .diagnostics.diagnostics import Diagnostics
 from .middleware.generic_driver import Driver
 
 # Chip ID

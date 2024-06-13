@@ -48,8 +48,8 @@ Implementation Notes
 from adafruit_bus_device.i2c_device import I2CDevice
 from adafruit_register.i2c_bit import ROBit, RWBit
 from adafruit_register.i2c_bits import RWBits
+from hal.drivers.diagnostics.diagnostics import Diagnostics
 
-from .diagnostics.diagnostics import Diagnostics
 from .middleware.generic_driver import Driver
 
 # DEVICE REGISTER MAP

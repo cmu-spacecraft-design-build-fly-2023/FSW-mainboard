@@ -1,4 +1,3 @@
-
 def compute_body_sun_vector(I_vec):
     """
     Get unit sun vector expressed in the body frame from solar flux values.

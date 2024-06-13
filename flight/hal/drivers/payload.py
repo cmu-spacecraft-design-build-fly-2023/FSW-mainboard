@@ -9,8 +9,8 @@ Author(s): Harry Rosmann
 """
 
 from digitalio import DigitalInOut
+from hal.drivers.diagnostics.diagnostics import Diagnostics
 
-from .diagnostics.diagnostics import Diagnostics
 from .middleware.generic_driver import Driver
 
 

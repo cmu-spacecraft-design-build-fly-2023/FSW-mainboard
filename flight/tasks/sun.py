@@ -2,14 +2,14 @@
 
 import time
 
-from apps.data_handler import DataHandler as DH
 from apps.sun import compute_body_sun_vector, in_eclipse
+from core import TemplateTask
+from core import state_manager as SM
+from core.data_handler import DataHandler as DH
 from hal.configuration import SATELLITE
-from state_manager import state_manager as SM
-from tasks.template_task import DebugTask
 
 
-class Task(DebugTask):
+class Task(TemplateTask):
 
     name = "SUN"
     ID = 0x11

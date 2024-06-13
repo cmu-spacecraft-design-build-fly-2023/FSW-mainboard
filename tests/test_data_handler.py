@@ -4,8 +4,8 @@ import os
 import pytest
 
 import tests.cp_mock    # noqa: F401
-import flight.apps.data_handler as dh
-from flight.apps.data_handler import DataProcess as DP
+import flight.core.data_handler as dh
+from flight.core.data_handler import DataProcess as DP
 
 
 @pytest.mark.parametrize(

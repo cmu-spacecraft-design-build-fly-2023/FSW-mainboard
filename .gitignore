@@ -166,5 +166,5 @@ assets/*
 
 *.html
 
-# VS code settings
-.vscode
+
+flight/build/

@@ -45,9 +45,9 @@ Implementation Notes
 from time import sleep, struct_time
 
 from digitalio import DigitalInOut
+from hal.drivers.diagnostics.diagnostics import Diagnostics
 from micropython import const
 
-from .diagnostics.diagnostics import Diagnostics
 from .middleware.generic_driver import Driver
 
 __version__ = "3.5.1"

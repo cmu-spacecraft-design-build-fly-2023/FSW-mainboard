@@ -12,9 +12,9 @@ Implementation Notes
 """
 
 from adafruit_bus_device.i2c_device import I2CDevice
+from hal.drivers.diagnostics.diagnostics import Diagnostics
 from micropython import const
 
-from .diagnostics.diagnostics import Diagnostics
 from .middleware.generic_driver import Driver
 
 
