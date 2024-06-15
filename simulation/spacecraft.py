@@ -147,6 +147,10 @@ class Spacecraft:
     @property
     def attitude(self):
         return self._state[6:10]
+    
+    @property
+    def angular_velocity(self):
+        return self._state[10:13]
 
     @property
     def orbit_eci(self):
@@ -252,13 +256,16 @@ if __name__ == "__main__":
     spacecraft = Spacecraft(config)
     u = np.zeros(3)
 
-    from sensors import Magnetometer
+    from sensors import Magnetometer, Gyroscope
     mag = Magnetometer(2.0)
+    gyro = Gyroscope(0.01, 0.2, 0.5)
 
 
     for i in range(10):
         spacecraft.advance(u)
         print("Orbit (ECI): ", spacecraft.orbit_eci)
         print("Attitude: ", spacecraft.attitude)
+        print("Angular Velocity: ", spacecraft.angular_velocity)
+        print("Gyroscope: ", gyro.measure(spacecraft))
         print("Magnetometer: ", mag.measure(spacecraft))
 

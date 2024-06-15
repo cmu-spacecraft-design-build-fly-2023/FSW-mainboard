@@ -22,29 +22,31 @@ def apply_SO3_noise(vec, std):
 
 class Magnetometer:
     def __init__(self, noise_std_deg, offset=None):
-        self.std = np.deg2rad(noise_std_deg)
+        self.std_noise = np.deg2rad(noise_std_deg)
         if offset == None:
-            self.offset = dcm_from_phi(np.deg2rad(noise_std_deg)*np.random.randn(3))
+            self.offset = dcm_from_phi(self.std_noise*np.random.randn(3))
         else:
             self.offset = offset
 
     def measure(self, spacecraft):
         B_ECI = get_magnetic_field_ECI(spacecraft.epoch, spacecraft.orbit_eci)
         B_body = dcm_from_q(spacecraft.attitude) @ B_ECI
-        return apply_SO3_noise(self.offset @ B_body, self.std) 
+        return apply_SO3_noise(self.offset @ B_body, self.std_noise) 
     
 
 
 class Gyroscope:
-    def __init__(self, rotate_std_deg, noise_std_degps, initial_bias_deg):
-        # TODO bias dynamics
+    def __init__(self, rotate_std_deg, noise_std_deg, initial_bias_deg, bias_std_noise=1e-3):
         self.offset = dcm_from_phi(np.deg2rad(rotate_std_deg) * np.random.randn(3))
-        self.bias = np.deg2rad(initial_bias_deg) * np.random.randn(3) / np.linalg.norm(np.random.randn(3))
-        self.noise = np.deg2rad(noise_std_degps) * np.random.randn(3)
+        self.std_noise = np.deg2rad(noise_std_deg) 
+
+        randvec = np.random.randn(3)
+        self.bias = np.deg2rad(initial_bias_deg) * randvec / np.linalg.norm(randvec) # TODO bias dynamics
+        self.bias_std_noise = bias_std_noise
 
     def measure(self, spacecraft):
-        measured_value = self.offset * spacecraft.state[10:13] + self.bias + self.noise
-        return measured_value
+        measurement = self.offset @ spacecraft.angular_velocity + self.std_noise * np.random.randn(3) + self.bias + self.bias_std_noise * np.random.randn(3)
+        return measurement
 
 
 class Accelerometer:
