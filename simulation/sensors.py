@@ -1,7 +1,8 @@
 import brahe
 import numpy as np
 
-from simulation.transformations import dcm_from_phi, dcm_from_q
+from magnetic import get_magnetic_field_ECI
+from transformations import dcm_from_phi, dcm_from_q
 
 
 def apply_SO3_noise(vec, std):
@@ -18,6 +19,42 @@ def apply_SO3_noise(vec, std):
     noise = std * np.random.randn(3)
     return dcm_from_phi(noise) @ vec
 
+
+class Magnetometer:
+    def __init__(self, noise_std_deg, offset=None):
+        self.std = np.deg2rad(noise_std_deg)
+        if offset == None:
+            self.offset = dcm_from_phi(np.deg2rad(noise_std_deg)*np.random.randn(3))
+        else:
+            self.offset = offset
+
+    def measure(self, spacecraft):
+        B_ECI = get_magnetic_field_ECI(spacecraft.epoch, spacecraft.orbit_eci)
+        B_body = dcm_from_q(spacecraft.attitude) @ B_ECI
+        return apply_SO3_noise(self.offset @ B_body, self.std) 
+    
+
+
+class Gyroscope:
+    def __init__(self, rotate_std_deg, noise_std_degps, initial_bias_deg):
+        # TODO bias dynamics
+        self.offset = dcm_from_phi(np.deg2rad(rotate_std_deg) * np.random.randn(3))
+        self.bias = np.deg2rad(initial_bias_deg) * np.random.randn(3) / np.linalg.norm(np.random.randn(3))
+        self.noise = np.deg2rad(noise_std_degps) * np.random.randn(3)
+
+    def measure(self, spacecraft):
+        measured_value = self.offset * spacecraft.state[10:13] + self.bias + self.noise
+        return measured_value
+
+
+class Accelerometer:
+    # Not useful given our lack of propulsion but migth be helpful for ground testing / debugging
+
+    def __init__():
+        pass
+
+    def measure(self, spacecraft):
+        pass
 
 class SunSensor:
     def __init__(self, std_deg, offset=None):
@@ -45,18 +82,6 @@ class GPS:
 
     def measure(self, spacecraft):
         pass
-
-
-class Gyroscope:
-    def __init__(self, rotate_std_deg, noise_std_degps, initial_bias_deg):
-        # TODO bias dynamics
-        self.offset = dcm_from_phi(np.deg2rad(rotate_std_deg) * np.random.randn(3))
-        self.bias = np.deg2rad(initial_bias_deg) * np.random.randn(3) / np.linalg.norm(np.random.randn(3))
-        self.noise = np.deg2rad(noise_std_degps) * np.random.randn(3)
-
-    def measure(self, spacecraft):
-        measured_value = self.offset * spacecraft.state[10:13] + self.bias + self.noise
-        return measured_value
 
 
 # TODO other sensors

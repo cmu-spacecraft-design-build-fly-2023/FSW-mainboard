@@ -252,14 +252,13 @@ if __name__ == "__main__":
     spacecraft = Spacecraft(config)
     u = np.zeros(3)
 
-    from magnetic import *
-    ss = [6.91958323e+06,  7.58941648e+04, -1.41030408e-03, -8.33529795e+01, 7.58913536e+03, -2.81961356e-04]
-    epc = Epoch(datetime(2024, 6, 1, 12, 0, 0, 0))
-
-    b_eci = get_magnetic_field_ECI(epc, ss)
-    print(b_eci)
+    from sensors import Magnetometer
+    mag = Magnetometer(2.0)
 
 
-    """for i in range(10):
+    for i in range(10):
         spacecraft.advance(u)
-        print(spacecraft.state)"""
+        print("Orbit (ECI): ", spacecraft.orbit_eci)
+        print("Attitude: ", spacecraft.attitude)
+        print("Magnetometer: ", mag.measure(spacecraft))
+
