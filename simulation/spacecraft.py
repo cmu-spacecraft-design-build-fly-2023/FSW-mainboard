@@ -5,10 +5,13 @@ import drag as drag
 import numpy as np
 from brahe import frames
 from brahe.epoch import Epoch
+
 from brahe.orbit_dynamics.gravity import accel_gravity, accel_thirdbody_moon, accel_thirdbody_sun
 from scipy.linalg import expm
 from transformations import L, R
 
+from brahe import EOP
+EOP.load("simulation/data/finals.all.iau2000.txt")
 
 class Spacecraft:
 
@@ -101,8 +104,8 @@ class Spacecraft:
 
         # TODO let the user define
         # Found bugs in underlying pysofa in brahe ~
-        self._epoch = Epoch(2022, 11, 26, 12, 0, 5, 0)
-        self.epoch_dt = datetime(2022, 11, 26, 12, 0, 5, 0)
+        self._epoch = Epoch(2024, 3, 26, 12, 0, 5, 0)
+        self.epoch_dt = datetime(2024, 3, 26, 12, 0, 5, 0)
 
         if "drag" in configuration:
             self._drag = configuration["drag"]
