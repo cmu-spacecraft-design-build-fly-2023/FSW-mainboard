@@ -10,9 +10,11 @@ References:
 import numpy as np
 import pandas as pd
 from brahe import coordinates
+import spaceweather
 from nrlmsise00 import msise_flat
 
 OMEGA_EARTH = 7.292115146706979e-5  # [rad/s] (Vallado 4th Ed page 222)
+_SW = spaceweather.sw_daily(update=True)
 
 
 def density_harris_priester(x, r_sun):
@@ -261,14 +263,14 @@ def retrieve_sw_data(epoch_dt, sw):
     return ap, f107, f107a
 
 
-def compute_rho(epoch_dt, altitude, latitude, longitude, sw):
-    ap, f107, f107a = retrieve_sw_data(epoch_dt, sw)
+def compute_rho(epoch_dt, altitude, latitude, longitude): 
+    ap, f107, f107a = retrieve_sw_data(epoch_dt, _SW)
     rho = msise_flat(epoch_dt, altitude, latitude, longitude, f107a, f107, ap, method="gt7d")[5]
     rho = rho * 1000
     return rho
 
 
-def accel_drag(epoch_dt, x, mass, area, Cd, T, sw):
+def accel_drag(epoch_dt, x, mass, area, Cd, T):
     """
     Computes the perturbing, non-conservative acceleration caused by atmospheric
     drag assuming that the ballistic properties of the spacecraft are captured by
@@ -298,7 +300,11 @@ def accel_drag(epoch_dt, x, mass, area, Cd, T, sw):
 
     longitude, latitude, altitude = coordinates.sECEFtoGEOC(r_ecef, use_degrees="true")
 
-    rho = compute_rho(epoch_dt, altitude / 1000, latitude, longitude, sw)
+    print('longitude', longitude)
+    print('latitude', latitude)
+    print('altitude', altitude)
+
+    rho = compute_rho(epoch_dt, altitude / 1000, latitude, longitude)
     # print('rho', rho)
 
     # Acceleration

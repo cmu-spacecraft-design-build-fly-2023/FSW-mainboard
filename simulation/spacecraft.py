@@ -109,7 +109,7 @@ class Spacecraft:
             self._drag = configuration["drag"]
         else:
             self._drag = self.DEFAULTS["drag"]
-        self.space_weather = spaceweather.sw_daily(update=True)
+        # self.space_weather = spaceweather.sw_daily(update=True)
 
         if "third_body" in configuration:
             self._third_body = configuration["third_body"]
@@ -186,8 +186,7 @@ class Spacecraft:
                 self._mass,
                 self._crossA,
                 self._Cd,
-                R_i2b,
-                self.space_weather,
+                R_i2b
             )
 
         if self._third_body:
