@@ -19,6 +19,7 @@ class Spacecraft:
     H = np.vstack([np.zeros(3), np.eye(3)])
 
     DEFAULTS = {
+        "epoch": datetime(2024, 1, 1, 0, 0, 0, 0),
         "gravity_order": 10,  # Setting both order and degree at once
         "drag": True,
         "third-body": True,
@@ -27,6 +28,7 @@ class Spacecraft:
         "inertia": np.array([[0.0033, 0.0, 0.0], [0.0, 0.0033, 0.0], [0.0, 0.0, 0.0033]]),
         "Cd": 2,
         "crossA": 0.01,  # m^2
+        "flexible": False
     }
 
     µ = 3.986004418e14
@@ -65,23 +67,24 @@ class Spacecraft:
             self._dt = configuration["dt"]
         else:
             raise ValueError("Negative dt value")
+        
+        # Epoch
+        if "epoch" in configuration:
+            if isinstance(configuration["epoch"], datetime):
+                self._epoch = Epoch(configuration["epoch"])
+                self.epoch_dt = configuration["epoch"]
+            else:
+                raise ValueError("Epoch must be a datetime object.")
+        else:
+            self._epoch = Epoch(self.DEFAULTS["epoch"])
+            self.epoch_dt = self.DEFAULTS["epoch"]
 
         # Inertia
         if "inertia" in configuration:
             if len(configuration["inertia"]) == 6:
 
                 Iv = configuration["inertia"]
-                inertia = np.array(
-                    [
-                        [
-                            Iv[0],
-                            Iv[3],
-                            Iv[4],
-                        ],
-                        [Iv[3], Iv[1], Iv[5]],
-                        [Iv[4], Iv[5], Iv[2]],
-                    ]
-                )
+                inertia = np.array([[Iv[0],Iv[3],Iv[4]],[Iv[3], Iv[1], Iv[5]],[Iv[4], Iv[5], Iv[2]]])
 
                 # Check positive-definiteness
                 if np.all(np.linalg.eigvals(inertia) > 0):
@@ -101,11 +104,6 @@ class Spacecraft:
             self._gravity_order = configuration["gravity_order"]
         else:
             self._gravity_order = self.DEFAULTS["gravity_order"]
-
-        # TODO let the user define
-        # Found bugs in underlying pysofa in brahe ~
-        self._epoch = Epoch(2024, 3, 26, 12, 0, 5, 0)
-        self.epoch_dt = datetime(2024, 3, 26, 12, 0, 5, 0)
 
         if "drag" in configuration:
             self._drag = configuration["drag"]
@@ -242,13 +240,13 @@ if __name__ == "__main__":
         "mass": 2.0,
         "inertia": [10, 20, 30, 0.0, 0.0, 0.0],
         "dt": 1.0,
-        "flexible": False,
+        "epoch": datetime(2024, 6, 1, 12, 0, 0, 0),
         "initial_attitude": [1.0, 0, 0, 0, 0.1, 0.1, 0.1],
         "initial_orbit_oe": [6.92e6, 0, 0, 0, 0, 0],
         "gravity_order": 5,
         "gravity_degree": 5,
         "drag": True,
-        "third_body": True,
+        "third_body": True
     }
 
     spacecraft = Spacecraft(config)
