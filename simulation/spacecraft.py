@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 import astrodynamics as astro
 import drag as drag
 import numpy as np
-import spaceweather
 from brahe import frames
 from brahe.epoch import Epoch
 from brahe.orbit_dynamics.gravity import accel_gravity, accel_thirdbody_moon, accel_thirdbody_sun
@@ -18,7 +17,7 @@ class Spacecraft:
 
     DEFAULTS = {
         "gravity_order": 10,  # Setting both order and degree at once
-        "drag": False,
+        "drag": True,
         "third-body": True,
         "solar-radiation": True,
         "gravity-gradient": True,
@@ -109,7 +108,6 @@ class Spacecraft:
             self._drag = configuration["drag"]
         else:
             self._drag = self.DEFAULTS["drag"]
-        # self.space_weather = spaceweather.sw_daily(update=True)
 
         if "third_body" in configuration:
             self._third_body = configuration["third_body"]
