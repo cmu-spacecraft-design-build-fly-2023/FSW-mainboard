@@ -104,6 +104,20 @@ class SunVector:
 
   
 
+class GPS:
+    def __init__(self, position_noise_std, velocity_noise_std):
+        self.pos_std = position_noise_std
+        self.vel_std = velocity_noise_std
+
+    def measure(self, spacecraft):
+        x_ecef = brahe.frames.sECItoECEF(spacecraft.epoch, spacecraft.orbit_eci)
+        x_ecef[:3] += self.pos_std * np.random.randn(3)
+        x_ecef[3:] += self.vel_std * np.random.randn(3)
+        return x_ecef
+
+
+
+
 class LightSensor:
     def __init__(self, noise_std_deg, rotation_offset_deg):
         self.noise_std = np.deg2rad(noise_std_deg)
@@ -120,13 +134,3 @@ class Accelerometer:
 
     def measure(self, spacecraft):
         pass
-
-class GPS:
-    def __init__(self, std):
-        self.std = std
-
-    def measure(self, spacecraft):
-        pass
-
-
-# TODO other sensors

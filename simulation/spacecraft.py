@@ -270,10 +270,11 @@ if __name__ == "__main__":
     spacecraft = Spacecraft(config)
     u = np.zeros(3)
 
-    from sensors import Magnetometer, Gyroscope, SunVector
+    from sensors import Magnetometer, Gyroscope, SunVector, GPS
     mag = Magnetometer(2.0)
     gyro = Gyroscope(0.01, 0.2, 0.5)
     sun_vec = SunVector(0.1, 0.0)
+    gps = GPS(10, 0.1)
 
 
     for i in range(10):
@@ -285,4 +286,5 @@ if __name__ == "__main__":
         print("Magnetometer: ", mag.measure(spacecraft))
         print("Measured Lux: ", sun_vec.measure_lux(spacecraft))
         print("Measured Sun Vector: ", sun_vec.measure(spacecraft))
+        print("GPS (ECEF): ", gps.measure(spacecraft))
         
