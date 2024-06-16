@@ -275,6 +275,8 @@ if __name__ == "__main__":
     gyro = Gyroscope(0.01, 0.2, 0.5)
     sun_vec = SunVector(0.1, 0.0)
     gps = GPS(10, 0.1)
+    from magnetorquer import Magnetorquer
+    torquer = Magnetorquer()
 
 
     for i in range(10):
@@ -287,4 +289,6 @@ if __name__ == "__main__":
         print("Measured Lux: ", sun_vec.measure_lux(spacecraft))
         print("Measured Sun Vector: ", sun_vec.measure(spacecraft))
         print("GPS (ECEF): ", gps.measure(spacecraft))
+        print("Dipole Moment (voltage): ", torquer.set_dipole_moment_voltage(4))
+        print("Dipole Moment (current): ", torquer.set_dipole_moment_current(0.32))
         
