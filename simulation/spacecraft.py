@@ -33,6 +33,16 @@ class Spacecraft:
 
     µ = 3.986004418e14
 
+    # Normalized surface normals
+    __surface_normals = np.array([
+                        [1.0, 0.0, 0.0],
+                        [-1.0, 0.0, 0.0],
+                        [0.0, 1.0, 0.0],
+                        [0.0, -1.0, 0.0],
+                        [0.0, 0.0, 1.0],
+                        [0.0, 0.0, -1.0]
+                    ])
+
     def __init__(self, configuration):
 
         # Check if all required keys are provided in the configuration
@@ -155,6 +165,10 @@ class Spacecraft:
     @property
     def orbit_eci(self):
         return self._state[0:6]
+    
+    @property
+    def surface_normals(self):
+        return self.__surface_normals
 
     @property
     def orbit_oe(self):
@@ -245,7 +259,7 @@ if __name__ == "__main__":
         "inertia": [10, 20, 30, 0.0, 0.0, 0.0],
         "dt": 1.0,
         "epoch": datetime(2024, 6, 1, 12, 0, 0, 0),
-        "initial_attitude": [1.0, 0, 0, 0, 0.1, 0.1, 0.1],
+        "initial_attitude": [1.0, 0, 0, 0, 0.1, -0.2, 0.3],
         "initial_orbit_oe": [6.92e6, 0, 0, 0, 0, 0],
         "gravity_order": 5,
         "gravity_degree": 5,
@@ -256,9 +270,10 @@ if __name__ == "__main__":
     spacecraft = Spacecraft(config)
     u = np.zeros(3)
 
-    from sensors import Magnetometer, Gyroscope
+    from sensors import Magnetometer, Gyroscope, SunVector
     mag = Magnetometer(2.0)
     gyro = Gyroscope(0.01, 0.2, 0.5)
+    sun_vec = SunVector(0.1, 0.0)
 
 
     for i in range(10):
@@ -268,4 +283,6 @@ if __name__ == "__main__":
         print("Angular Velocity: ", spacecraft.angular_velocity)
         print("Gyroscope: ", gyro.measure(spacecraft))
         print("Magnetometer: ", mag.measure(spacecraft))
-
+        print("Measured Lux: ", sun_vec.measure_lux(spacecraft))
+        print("Measured Sun Vector: ", sun_vec.measure(spacecraft))
+        

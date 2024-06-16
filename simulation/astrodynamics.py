@@ -1,6 +1,7 @@
 import brahe
 import numpy as np
 
+R_EARTH = 6378.0e3  # m
 
 def semi_major_axis(rp, ra):
     """
