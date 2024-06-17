@@ -1,4 +1,5 @@
 import sys
+
 import pytest
 
 sys.path.insert(0, "./emulator/drivers/")
@@ -56,6 +57,8 @@ class TestDevice(Driver):
         if 'fixable' in flags:
             # fixable has occured
             raise TestException("Fixable Error")
+        if 'hidden' in flags:
+            raise TestException("Hidden Error")
         if result > 9:
             raise TestException("Erroneous Result")
         return result
@@ -74,7 +77,7 @@ class TestDevice(Driver):
             res['fixable'] = self.fixer
         if self.flags & 0b001:
             # critical flag is raised
-            res['critical'] = self.retry
+            res['critical'] = None
         return res
 
     def fixer(self):
