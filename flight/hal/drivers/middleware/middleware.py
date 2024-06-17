@@ -12,8 +12,6 @@ Author: Harry Rosmann
 
 """
 
-from typing import Any
-
 from hal.drivers.diagnostics.diagnostics import Diagnostics
 from micropython import const
 
@@ -53,7 +51,7 @@ class Middleware:
         """get_instance: Get the wrapped instance of the driver."""
         return self._wrapped_instance
 
-    def __getattr__(self, name: str) -> Any:
+    def __getattr__(self, name: str):
         """__getattr__: Get the attribute of the driver instance.
 
         :param name: The name of the attribute to get
