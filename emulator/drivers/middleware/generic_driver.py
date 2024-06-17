@@ -37,7 +37,7 @@ class Driver(Diagnostics):
                 if checker(res, flags):
                     return res
                 else:
-                    raise m_exception("erroneus result")
+                    raise m_exception(f"erroneus result: {res}")
             except Exception:
                 flags = self.get_flags
                 for flag in flags:
