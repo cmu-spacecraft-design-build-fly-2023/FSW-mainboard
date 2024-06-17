@@ -1,4 +1,5 @@
 import sys
+import pytest
 
 sys.path.insert(0, "./emulator/drivers/")
 
@@ -25,6 +26,7 @@ class TestDevice(Driver):
         flags: 2 bit flag register
             - 0: ciritcal error
             - 1: fixable error
+            - 2: fixable, hidden error
         """
         self.flags = flags
         self.int_val = 8
@@ -39,9 +41,11 @@ class TestDevice(Driver):
 
     @property
     def test_int(self) -> int:
-        if self.flags & 0b01:
+        if self.flags & 0b001:
             # best we can do is try again
             raise TestException("Critical Error")
+        if self.flags & 0b010:
+            raise TestException("Fixable Error")
         return self.int_val
 
     @test_int.setter
@@ -63,17 +67,19 @@ class TestDevice(Driver):
     @property
     def get_flags(self):
         res = {}
-        if self.flags & 0b10:
+        if self.flags & 0b100:
+            res['hidden'] = self.fixer
+        if self.flags & 0b010:
             # fixable flag is raised
             res['fixable'] = self.fixer
-        if self.flags & 0b01:
+        if self.flags & 0b001:
             # critical flag is raised
             res['critical'] = self.retry
         return res
 
     def fixer(self):
         # remove the fixable flag
-        self.flags = self.flags & 0b01
+        self.flags = self.flags & 0b001
 
 
 class TestClass:
@@ -91,7 +97,21 @@ class TestClass:
         assert mid.test_int == 5
 
     def test_exceptions(self):
-        # initialize device with "fixable error"
-        device = TestDevice(0b10)
+        """
+        This test ensures that the middleware can call the flag fixer functions in order to
+        get a correct result from the device.
+        """
+        device = TestDevice(0b010)
+        mid = Middleware(device)
+        with pytest.raises(TestException):
+            device.test_int
+        assert mid.test_int == 8
+
+        device = TestDevice(0b100)
         mid = Middleware(device)
         assert mid.test_int == 8
+
+        device = TestDevice(0b001)
+        mid = Middleware(device)
+        with pytest.raises(TestException):
+            mid.test_int

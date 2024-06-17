@@ -13,6 +13,7 @@ Author: Harry Rosmann
 """
 
 from typing import Any
+
 from diagnostics.diagnostics import Diagnostics
 
 # The default number of retries for the middleware

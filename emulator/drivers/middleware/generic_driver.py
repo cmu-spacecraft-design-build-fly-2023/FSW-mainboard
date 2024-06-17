@@ -66,7 +66,7 @@ class Driver(Diagnostics):
                 return res
             else:
                 raise m_exception("erroneus result")
-        except Exception as e:
+        except Exception:
             flags = self.get_flags
             for flag in flags:
                 fixer = flags[flag]
