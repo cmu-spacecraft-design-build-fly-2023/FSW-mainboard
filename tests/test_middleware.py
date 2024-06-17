@@ -3,9 +3,8 @@ import sys
 import pytest
 
 sys.path.insert(0, "./emulator/drivers/")
-
-from middleware.generic_driver import Driver
-from middleware.middleware import Middleware
+from middleware.generic_driver import Driver  # noqa: E402
+from middleware.middleware import Middleware  # noqa: E402
 
 """
 setting up things for an emulated test
