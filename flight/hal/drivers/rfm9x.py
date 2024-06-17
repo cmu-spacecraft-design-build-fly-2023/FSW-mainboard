@@ -17,6 +17,7 @@ from time import monotonic, sleep
 import adafruit_bus_device.spi_device as spidev
 from digitalio import DigitalInOut, Pull
 from hal.drivers.diagnostics.diagnostics import Diagnostics
+from hal.drivers.middleware.generic_driver import Driver
 from micropython import const
 
 # pylint: disable=bad-whitespace
@@ -119,7 +120,7 @@ _bigbuffer = bytearray(256)
 bw_bins = (7800, 10400, 15600, 20800, 31250, 41700, 62500, 125000, 250000)
 
 
-class RFM9x(Diagnostics):
+class RFM9x(Driver):
     """Interface to a RFM95/6/7/8 LoRa radio module.  Allows sending and
     receivng bytes of data in long range LoRa mode at a support board frequency
     (433/915mhz).
@@ -1152,6 +1153,13 @@ class RFM9x(Diagnostics):
         # Clear interrupt.
         self._write_u8(_RH_RF95_REG_12_IRQ_FLAGS, 0xFF)
         return
+
+    """
+    ----------------------- HANDLER METHODS -----------------------
+    """
+    @property
+    def get_flags(self):
+        return {}
 
     ######################### DIAGNOSTICS #########################
     def _read_frequency(self) -> bool:

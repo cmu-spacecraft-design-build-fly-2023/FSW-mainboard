@@ -479,7 +479,7 @@ class DataHandler:
     Failure to do so can prevent the SD card from being recognized until it is powered off or re-inserted.
     """
 
-    sd_path = "/sd"
+    sd_path = "sd"
     # Keep track of all file processes
     data_process_registry = dict()
 

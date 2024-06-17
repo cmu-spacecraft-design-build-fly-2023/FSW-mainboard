@@ -12,12 +12,13 @@ Author: Harry Rosmann
 
 """
 
-from hal.drivers.diagnostics.diagnostics import Diagnostics
-from micropython import const
+from typing import Any
+
+from diagnostics.diagnostics import Diagnostics
 
 # The default number of retries for the middleware
 # NOTE: Keep this value low to prevent loss of timing
-FAULT_HANDLE_RETRIES = const(1)
+FAULT_HANDLE_RETRIES = 1
 
 
 class Middleware:
@@ -51,7 +52,7 @@ class Middleware:
         """get_instance: Get the wrapped instance of the driver."""
         return self._wrapped_instance
 
-    def __getattr__(self, name: str):
+    def __getattr__(self, name: str) -> Any:
         """__getattr__: Get the attribute of the driver instance.
 
         :param name: The name of the attribute to get
