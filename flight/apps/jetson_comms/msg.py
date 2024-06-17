@@ -56,10 +56,7 @@ class Message:
         self.data = data
 
         if self.data_len % Definitions.PAYLOAD_PER_PACKET != 0:
-            self.data += bytearray(
-                Definitions.PAYLOAD_PER_PACKET
-                - (self.data_len % Definitions.PAYLOAD_PER_PACKET)
-            )
+            self.data += bytearray(Definitions.PAYLOAD_PER_PACKET - (self.data_len % Definitions.PAYLOAD_PER_PACKET))
 
         self.data_len = len(self.data)
         self.num_packets = self.data_len // Definitions.PAYLOAD_PER_PACKET
@@ -71,11 +68,7 @@ class Message:
             raise ValueError("Data too large to send")
 
         self.packets = [
-            self.data[
-                i
-                * Definitions.PAYLOAD_PER_PACKET : (i + 1)
-                * Definitions.PAYLOAD_PER_PACKET
-            ]
+            self.data[i * Definitions.PAYLOAD_PER_PACKET : (i + 1) * Definitions.PAYLOAD_PER_PACKET]
             for i in range(self.num_packets)
         ]
 
@@ -109,17 +102,13 @@ class Message:
             raise ValueError("Data Packet number out of range")
 
         if packet_seq == self.num_packets:
-            packet_payload_size = (
-                self.data_len % Definitions.PAYLOAD_PER_PACKET
-            )
+            packet_payload_size = self.data_len % Definitions.PAYLOAD_PER_PACKET
             if packet_payload_size == 0:
                 packet_payload_size = Definitions.PAYLOAD_PER_PACKET
         else:
             packet_payload_size = Definitions.PAYLOAD_PER_PACKET
 
-        metadata = pack(
-            "@HBB", packet_seq, Definitions.PKT_TYPE_DATA, packet_payload_size
-        )
+        metadata = pack("@HBB", packet_seq, Definitions.PKT_TYPE_DATA, packet_payload_size)
         current_packet = self.packets[packet_seq - 1][:packet_payload_size]
         return metadata + current_packet
 
@@ -147,7 +136,7 @@ class Message:
         return pack("@HBB", 0x00, Definitions.PKT_TYPE_RESET, 0x00)
 
     @staticmethod
-    def parse_packet_meta(metadata: bytearray) -> tuple[int, int, int]:
+    def parse_packet_meta(metadata: bytearray):
         """parse_packet_meta: parses the metadata of a packet
 
         Args:
@@ -170,7 +159,7 @@ class Message:
         return seq_num, packet_type, payload_size
 
     @staticmethod
-    def parse_header_payload(header_payload: bytearray) -> tuple[int, int]:
+    def parse_header_payload(header_payload: bytearray):
         """parse_header_payload: parses the payload of the header
 
         Args:
