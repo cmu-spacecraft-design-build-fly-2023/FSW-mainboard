@@ -1,5 +1,3 @@
-from numpy import array
-
 from hal.cubesat import CubeSat
 from hal.drivers.burnwire import BurnWires
 from hal.drivers.imu import IMU
@@ -8,6 +6,7 @@ from hal.drivers.payload import Payload
 from hal.drivers.power_monitor import PowerMonitor
 from hal.drivers.radio import Radio
 from hal.drivers.sd import SD
+from numpy import array
 
 
 class device:
