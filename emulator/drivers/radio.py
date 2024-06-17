@@ -54,11 +54,9 @@ class Radio:
             return None
         return self._rx_queue.get().observe()
 
-    @property
     def last_rssi(self):
         return self._last_rssi
 
-    @property
     def frequency_error(self):
         return self._frequency_error
 
