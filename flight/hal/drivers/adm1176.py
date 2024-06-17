@@ -13,9 +13,8 @@ Implementation Notes
 
 from adafruit_bus_device.i2c_device import I2CDevice
 from hal.drivers.diagnostics.diagnostics import Diagnostics
+from hal.drivers.middleware.generic_driver import Driver
 from micropython import const
-
-from .middleware.generic_driver import Driver
 
 
 def _to_signed(num):

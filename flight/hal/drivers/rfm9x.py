@@ -17,9 +17,8 @@ from time import monotonic, sleep
 import adafruit_bus_device.spi_device as spidev
 from digitalio import DigitalInOut, Pull
 from hal.drivers.diagnostics.diagnostics import Diagnostics
+from hal.drivers.middleware.generic_driver import Driver
 from micropython import const
-
-from .middleware.generic_driver import Driver
 
 # pylint: disable=bad-whitespace
 # Internal constants:

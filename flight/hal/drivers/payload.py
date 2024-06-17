@@ -10,8 +10,7 @@ Author(s): Harry Rosmann
 
 from digitalio import DigitalInOut
 from hal.drivers.diagnostics.diagnostics import Diagnostics
-
-from .middleware.generic_driver import Driver
+from hal.drivers.middleware.generic_driver import Driver
 
 
 class PayloadUART(Driver):

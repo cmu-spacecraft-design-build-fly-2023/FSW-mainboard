@@ -6,11 +6,10 @@ from adafruit_register.i2c_bits import ROBits, RWBits
 from adafruit_register.i2c_struct import Struct
 from digitalio import DigitalInOut
 from hal.drivers.diagnostics.diagnostics import Diagnostics
+from hal.drivers.middleware.generic_driver import Driver
 
 # from adafruit_bus_device.spi_device import SPIDevice
 from micropython import const
-
-from .middleware.generic_driver import Driver
 
 # Chip ID
 BMX160_CHIP_ID = const(0xD8)

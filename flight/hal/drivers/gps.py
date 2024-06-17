@@ -46,9 +46,8 @@ from time import sleep, struct_time
 
 from digitalio import DigitalInOut
 from hal.drivers.diagnostics.diagnostics import Diagnostics
+from hal.drivers.middleware.generic_driver import Driver
 from micropython import const
-
-from .middleware.generic_driver import Driver
 
 __version__ = "3.5.1"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_GPS.git"

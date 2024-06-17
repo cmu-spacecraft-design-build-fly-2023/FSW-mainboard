@@ -15,9 +15,8 @@ from adafruit_bus_device.i2c_device import I2CDevice
 from adafruit_register.i2c_bit import RWBit
 from adafruit_register.i2c_bits import ROBits, RWBits
 from hal.drivers.diagnostics.diagnostics import Diagnostics
+from hal.drivers.middleware.generic_driver import Driver
 from micropython import const
-
-from .middleware.generic_driver import Driver
 
 # Registers
 _BATV_LIM = const(0x00)
