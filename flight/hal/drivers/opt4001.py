@@ -44,6 +44,7 @@ from adafruit_bus_device.i2c_device import I2CDevice
 from adafruit_register.i2c_bit import ROBit, RWBit
 from adafruit_register.i2c_bits import RWBits
 from hal.drivers.diagnostics.diagnostics import Diagnostics
+from hal.drivers.middleware.generic_driver import Driver
 from micropython import const
 
 try:
@@ -71,7 +72,7 @@ SOT_5X3 = const(0)
 PICOSTAR = const(1)
 
 
-class OPT4001(Diagnostics):
+class OPT4001(Driver):
     """
     Driver for the OPT4001 ambient light sensor
 
@@ -494,10 +495,32 @@ class OPT4001(Diagnostics):
         register_h, register_l = channels[id]
         return self.read_from_fifo(register_h, register_l, False)
 
+    @property
+    def status(self):
+        res = (self.overload_flag << 3 | (not self.conversion_ready_flag) << 2 | self.flag_h << 1 | self.flag_L)
+        return res
+
+    """
+    ----------------------- HANDLER METHODS -----------------------
+    """
+    @property
+    def get_flags(self):
+        flags = {}
+        if self.flag_h:
+            flags['flag_H'] = None
+        if self.flag_L:
+            flags['flag_L'] = None
+        if self.overload_flag:
+            flags['overload_flag'] = None
+        if self.conversion_ready_flag:
+            flags['conversion_ready_flag'] = None
+        return flags
+
     ######################### DIAGNOSTICS #########################
 
     def __check_id_test(self) -> int:
-        """Checks the opt4001 id to ensure that we can interface with the devices
+        """
+        Checks the opt4001 id to ensure that we can interface with the devices
 
         :return: True if read successful, otherwise false
         """

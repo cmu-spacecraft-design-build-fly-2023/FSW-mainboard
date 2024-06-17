@@ -8,12 +8,12 @@ Date: March 28, 2024
 from time import sleep
 
 from digitalio import DigitalInOut, DriveMode
-from hal.drivers.diagnostics.diagnostics import Diagnostics
+from hal.drivers.middleware.generic_driver import Driver
 from micropython import const
 from pwmio import PWMOut
 
 
-class BurnWires(Diagnostics):
+class BurnWires(Driver):
     """
     The BurnWires class provides functionality for controlling burn wires.
 
@@ -236,3 +236,10 @@ class BurnWires(Diagnostics):
         Burns the negative Y-axis wire.
         """
         self.__burn(self.__burn_ym)
+
+    """
+    ----------------------- HANDLER METHODS -----------------------
+    """
+    @property
+    def get_flags(self):
+        return {}

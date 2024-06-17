@@ -54,6 +54,7 @@ from adafruit_register import (
     i2c_bits,
 )
 from hal.drivers.diagnostics.diagnostics import Diagnostics
+from hal.drivers.middleware.generic_driver import Driver
 
 try:
     import typing  # noqa: F401
@@ -67,7 +68,7 @@ STANDARD_BATTERY_SWITCHOVER_AND_DETECTION = 0b000
 BATTERY_SWITCHOVER_OFF = 0b111
 
 
-class PCF8523(Diagnostics):
+class PCF8523(Driver):
     """Interface to the PCF8523 RTC.
 
     :param ~busio.I2C i2c_bus: The I2C bus the device is connected to
@@ -189,6 +190,18 @@ class PCF8523(Diagnostics):
         # Automatically sets lost_power to false.
         self.power_management = STANDARD_BATTERY_SWITCHOVER_AND_DETECTION
         self.datetime_register = value
+
+    """
+    ----------------------- HANDLER METHODS -----------------------
+    """
+    @property
+    def get_flags(self):
+        flags = {}
+        if self.lost_power:
+            flags['lost_power'] = None
+        if self.battery_low:
+            flags['battery_low'] = None
+        return flags
 
     ######################### DIAGNOSTICS #########################
 

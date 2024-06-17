@@ -10,9 +10,10 @@ Author(s): Harry Rosmann
 
 from digitalio import DigitalInOut
 from hal.drivers.diagnostics.diagnostics import Diagnostics
+from hal.drivers.middleware.generic_driver import Driver
 
 
-class PayloadUART(Diagnostics):
+class PayloadUART(Driver):
     """Payload: Payload uart driver for the ARGUS-1 CubeSat"""
 
     def __init__(self, uart, enable_pin):
@@ -34,6 +35,13 @@ class PayloadUART(Diagnostics):
 
     def reset_input_buffer(self) -> None:
         self.__uart.reset_input_buffer()
+
+    """
+    ----------------------- HANDLER METHODS -----------------------
+    """
+    @property
+    def get_flags(self):
+        return {}
 
     def run_diagnostics(self) -> list[int] | None:
         """run_diagnostic_test: Run all tests for the component"""
