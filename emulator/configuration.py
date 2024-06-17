@@ -1,5 +1,5 @@
-from .cubesat import CubeSat
-from .emulator import satellite
+from hal.cubesat import CubeSat
+from hal.cubesat import satellite
 
 # Enable for Middleware
 DEBUG_MODE = True

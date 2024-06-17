@@ -1,4 +1,4 @@
-from .drivers.diagnostics.diagnostics import Diagnostics
+from hal.drivers.diagnostics.diagnostics import Diagnostics
 
 
 class CubeSat:
