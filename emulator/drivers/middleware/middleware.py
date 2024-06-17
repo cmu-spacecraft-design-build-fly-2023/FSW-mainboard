@@ -13,6 +13,7 @@ Author: Harry Rosmann
 """
 
 from typing import Any
+from types import MethodType
 
 from middleware.generic_driver import Driver
 
@@ -36,8 +37,8 @@ class Middleware:
         :param cls_instance: The instance of the driver class to wrap
         :param exception: The unique exception raised if fault not handled
         """
-        self._wrapped_instance = cls_instance
         self._wrapped_attributes = {}
+        self._wrapped_instance = cls_instance
         self.wrap_handleable()
 
     def wrap_handleable(self):
@@ -45,6 +46,8 @@ class Middleware:
             attr = getattr(self._wrapped_instance, name)
             if callable(attr):
                 self._wrapped_attributes[name] = self.wrap_method(attr)
+            else:
+                self.wrap_property(name)
 
     def get_instance(self):
         """get_instance: Get the wrapped instance of the driver."""
@@ -59,13 +62,26 @@ class Middleware:
             return self._wrapped_attributes[name]
         return getattr(self._wrapped_instance, name)
 
-    def wrap_property(self, attr, ref):
-        return property(
-            fget=self.wrap_method(attr.fget) if attr.fget else None,
-            fset=self.wrap_method(attr.fset) if attr.fset else None,
-            fdel=self.wrap_method(attr.fdel) if attr.fdel else None,
-            doc=attr.__doc__,
+    def wrap_property(self, name):
+        try:
+            getter = MethodType(getattr(type(self._wrapped_instance), name).fget, self._wrapped_instance)
+        except Exception:
+            getter = None
+        try:
+            setter = MethodType(getattr(type(self._wrapped_instance), name).fset, self._wrapped_instance)
+        except Exception:
+            setter = None
+        try:
+            deleter = MethodType(getattr(type(self._wrapped_instance), name).fdel, self._wrapped_instance)
+        except Exception:
+            deleter = None
+        prop = property(
+            fget=getter,
+            fset=setter,
+            fdel=deleter,
+            doc=None,
         )
+        setattr(self, name, prop)
 
     def wrap_method(self, method):
         """wrap_method: Wrap the method of the driver instance.

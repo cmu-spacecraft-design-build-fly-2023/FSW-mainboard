@@ -32,13 +32,15 @@ class TestDevice(Driver):
         self.int_val = 8
         self.__test_str = "test"
         self.update_int = 0
+        self.__property = 89
 
         super().__init__()
 
         self.handleable = {
             'get_test_int': (self.int_checker, TestException),
             'set_test_int': (lambda x, y: True, TestException),
-            'test_method': (lambda x, y: x, TestException)
+            'test_method': (lambda x, y: x, TestException),
+            'test_property': (lambda x, y: True, TestException)
         }
 
     def get_test_int(self) -> int:
@@ -48,6 +50,14 @@ class TestDevice(Driver):
         if self.flags & 0b010:
             raise TestException("Fixable Error")
         return self.int_val
+
+    @property
+    def test_property(self):
+        return self.__property
+    
+    @test_property.setter
+    def test_property(self, input):
+        self.__property = input
 
     def set_test_int(self, input: int) -> None:
         self.int_val = input
@@ -107,7 +117,7 @@ class TestClass:
         assert mid.unhandled_method(9) == 10
         assert mid.unhandled_method(1) == device.unhandled_method(1)
 
-    def test_property(self):
+    def test_method_2(self):
         # test handled property test_int
         device = TestDevice(0)
         mid = Middleware(device)
@@ -142,3 +152,10 @@ class TestClass:
         mid = Middleware(device)
         with pytest.raises(TestException):
             mid.get_test_int()
+
+    def test_property(self):
+        device = TestDevice(0b000)
+        mid = Middleware(device)
+
+        mid.test_property.fset(90)
+        print(mid.__dict__)
