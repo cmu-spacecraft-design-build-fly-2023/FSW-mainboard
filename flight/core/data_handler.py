@@ -560,6 +560,7 @@ class DataHandler:
                 data_format,
                 persistent=persistent,
                 line_limit=line_limit,
+                home_path=cls.sd_path
             )
         else:
             raise ValueError("Line limit must be a positive integer.")
@@ -813,7 +814,9 @@ class DataHandler:
             cls.data_process_registry[tag_name].clean_up()
 
     @classmethod
-    def delete_all_files(cls, path="/sd"):
+    def delete_all_files(cls, path=None):
+        if path is None:
+            path = cls.sd_path
         try:
             for file_name in os.listdir(path):
                 file_path = path + "/" + file_name
@@ -845,13 +848,15 @@ class DataHandler:
             print(f"Error: {e}")
 
     @classmethod
-    def compute_total_size_files(cls, root_path: str = "/sd") -> int:
+    def compute_total_size_files(cls, root_path: str = None) -> int:
         """
         Computes the total size of all files under the sd_path.
 
         Returns:
         - The total size in bytes.
         """
+        if root_path is None:
+            root_path = cls.sd_path
         total_size: int = 0
         for entry in os.listdir(root_path):
             file_path: str = join_path(root_path, entry)
@@ -866,7 +871,7 @@ class DataHandler:
 
     # DEBUG ONLY
     @classmethod
-    def print_directory(cls, path: str = "/sd", tabs: int = 0) -> None:
+    def print_directory(cls, path: str = None, tabs: int = 0) -> None:
         """
         Prints the directory contents recursively.
 
@@ -877,6 +882,8 @@ class DataHandler:
         Returns:
             None
         """
+        if path is None:
+            path = cls.sd_path
         for file in os.listdir(path):
             stats = os.stat(path + "/" + file)
             filesize = stats[6]
