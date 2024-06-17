@@ -12,6 +12,8 @@ Author: Harry Rosmann
 
 """
 
+from typing import Any
+
 from hal.drivers.diagnostics.diagnostics import Diagnostics
 from micropython import const
 
