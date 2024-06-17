@@ -1,3 +1,5 @@
+from typing import List, Optional
+
 from hal.cubesat import CubeSat
 from hal.drivers.burnwire import BurnWires
 from hal.drivers.imu import IMU
@@ -70,8 +72,8 @@ class satellite(CubeSat):
         self._jetson_monitor = PowerMonitor(4, 0.05)
         self._battery_monitor = PowerMonitor(4.2, 0.04)
 
-    def boot_sequence(self) -> list[int]:
+    def boot_sequence(self) -> List[int]:
         pass
 
-    def run_system_diagnostics(self) -> list[int] | None:
+    def run_system_diagnostics(self) -> Optional[List[int]]:
         pass

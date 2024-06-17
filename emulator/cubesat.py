@@ -1,3 +1,5 @@
+from typing import List, Optional
+
 from hal.drivers.diagnostics.diagnostics import Diagnostics
 
 
@@ -6,10 +8,10 @@ class CubeSat:
 
     def __init__(self):
         # List of successfully initialized devices
-        self._device_list: list[Diagnostics] = []
+        self._device_list: List[Diagnostics] = []
 
         # List of errors from most recent system diagnostic test
-        self._recent_errors: list[int] = [Diagnostics.NOERROR]
+        self._recent_errors: List[int] = [Diagnostics.NOERROR]
 
         # State flags
         self._state_flags = None
@@ -46,17 +48,17 @@ class CubeSat:
         # Debugging
         self._neopixel = None
 
-    ## ABSTRACT METHOD ##
-    def boot_sequence(self) -> list[int]:
+    # ABSTRACT METHOD #
+    def boot_sequence(self) -> List[int]:
         """boot_sequence: Boot sequence for the CubeSat."""
         raise NotImplementedError("CubeSats must implement boot method")
 
-    ## ABSTRACT METHOD ##
-    def run_system_diagnostics(self) -> list[int] | None:
+    # ABSTRACT METHOD #
+    def run_system_diagnostics(self) -> Optional[List[int]]:
         """run_diagnostic_test: Run all tests for the component"""
         raise NotImplementedError("CubeSats must implement diagnostics method")
 
-    def get_recent_errors(self) -> list[int]:
+    def get_recent_errors(self) -> List[int]:
         """get_recent_errors: Get the most recent errors from the system"""
         return self._recent_errors
 
