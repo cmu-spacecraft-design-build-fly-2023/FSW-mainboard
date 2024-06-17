@@ -1,4 +1,4 @@
-class SunSensor:
+class LightSensor:
     def __init__(self, lux) -> None:
         self.__lux = lux
 
