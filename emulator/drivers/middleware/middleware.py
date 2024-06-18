@@ -13,7 +13,6 @@ Author: Harry Rosmann
 """
 
 from typing import Any
-from types import MethodType
 
 from middleware.generic_driver import Driver, driver_cant_handle_exception
 
