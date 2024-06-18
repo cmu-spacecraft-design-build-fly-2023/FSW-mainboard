@@ -130,12 +130,10 @@ class ADM1176(Driver):
             i2c.write(_extcmd)
         self.config("V_CONT,I_CONT")
 
-    @property
     def device_on(self) -> bool:
         return self._on
 
-    @device_on.setter
-    def device_on(self, turn_on: bool) -> None:
+    def set_device_on(self, turn_on: bool) -> None:
         if turn_on:
             self.__turn_on()
         else:
@@ -145,7 +143,6 @@ class ADM1176(Driver):
     def device_on(self) -> bool:
         return (self.status & STATUS_OFF_STATUS) != STATUS_OFF_STATUS
 
-    @property
     def overcurrent_level(self) -> int:
         """overcurrent_level: Sets the overcurrent level
 
@@ -154,8 +151,7 @@ class ADM1176(Driver):
         """
         return self._overcurrent_level
 
-    @overcurrent_level.setter
-    def overcurrent_level(self, value: int = 0xFF) -> None:
+    def set_overcurrent_level(self, value: int = 0xFF) -> None:
         # enable over current alert
         _extcmd[0] = ALERT_EN_EXT_REG_ADDR
         _extcmd[1] |= ALERT_EN_EN_ADC_OC4
@@ -171,11 +167,10 @@ class ADM1176(Driver):
 
         self._overcurrent_level = value
 
-    @overcurrent_level.getter
-    def overcurrent_level(self) -> int:
-        return self._overcurrent_level
+    # @overcurrent_level.getter
+    # def overcurrent_level(self) -> int:
+    #     return self._overcurrent_level
 
-    @property
     def clear(self) -> None:
         """clear: Clears the alerts after status register read"""
         _extcmd[0] = ALERT_EN_EXT_REG_ADDR
@@ -185,7 +180,6 @@ class ADM1176(Driver):
             i2c.write(_extcmd)
         _extcmd[1] = temp
 
-    @property
     def status(self) -> int:
         """status: Returns the status register values
 
@@ -210,7 +204,6 @@ class ADM1176(Driver):
     """
     ----------------------- HANDLER METHODS -----------------------
     """
-    @property
     def get_flags(self):
         flags = {}
         status = self.status
