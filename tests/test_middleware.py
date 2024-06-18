@@ -39,8 +39,7 @@ class TestDevice(Driver):
         self.handleable = {
             'get_test_int': (self.int_checker, TestException),
             'set_test_int': (lambda x, y: True, TestException),
-            'test_method': (lambda x, y: x, TestException),
-            'test_property': (lambda x, y: True, TestException)
+            'test_method': (lambda x, y: x, TestException)
         }
 
     def get_test_int(self) -> int:
@@ -50,14 +49,6 @@ class TestDevice(Driver):
         if self.flags & 0b010:
             raise TestException("Fixable Error")
         return self.int_val
-
-    @property
-    def test_property(self):
-        return self.__property
-    
-    @test_property.setter
-    def test_property(self, input):
-        self.__property = input
 
     def set_test_int(self, input: int) -> None:
         self.int_val = input
@@ -69,14 +60,11 @@ class TestDevice(Driver):
         self.__test_str = input
 
     def int_checker(self, result, flags):
-        if 'fixable' in flags:
-            # fixable has occured
-            raise TestException("Fixable Error")
         if 'hidden' in flags:
-            raise TestException("Hidden Error")
+            return False
         if result > 9:
-            raise TestException("Erroneous Result")
-        return result
+            return False
+        return True
 
     def test_method(self):
         self.update_int += 1
@@ -85,7 +73,6 @@ class TestDevice(Driver):
     def unhandled_method(self, num):
         return num + 1
 
-    @property
     def get_flags(self):
         res = {}
         if self.flags & 0b100:
@@ -108,7 +95,11 @@ class TestClass:
         device = TestDevice(0)
         mid = Middleware(device)
 
-        # test handled method test_method
+        # test normal handled method
+        assert mid.get_test_int() == device.get_test_int()
+        assert mid.get_test_int() == 8
+
+        # test handled method with side effects
         assert mid.test_method() == 9
         assert mid.test_method() == device.test_method()
         assert mid.update_int == 3
@@ -117,7 +108,7 @@ class TestClass:
         assert mid.unhandled_method(9) == 10
         assert mid.unhandled_method(1) == device.unhandled_method(1)
 
-    def test_method_2(self):
+    def test_method_setters(self):
         # test handled property test_int
         device = TestDevice(0)
         mid = Middleware(device)
@@ -152,10 +143,3 @@ class TestClass:
         mid = Middleware(device)
         with pytest.raises(TestException):
             mid.get_test_int()
-
-    def test_property(self):
-        device = TestDevice(0b000)
-        mid = Middleware(device)
-
-        mid.test_property.fset(90)
-        print(mid.__dict__)

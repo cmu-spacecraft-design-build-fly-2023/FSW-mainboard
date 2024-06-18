@@ -15,7 +15,7 @@ Author: Harry Rosmann
 from typing import Any
 from types import MethodType
 
-from middleware.generic_driver import Driver
+from middleware.generic_driver import Driver, driver_cant_handle_exception
 
 # The default number of retries for the middleware
 # NOTE: Keep this value low to prevent loss of timing
@@ -47,7 +47,7 @@ class Middleware:
             if callable(attr):
                 self._wrapped_attributes[name] = self.wrap_method(attr)
             else:
-                self.wrap_property(name)
+                raise driver_cant_handle_exception("not a method")
 
     def get_instance(self):
         """get_instance: Get the wrapped instance of the driver."""
@@ -61,27 +61,6 @@ class Middleware:
         if name in self._wrapped_attributes:
             return self._wrapped_attributes[name]
         return getattr(self._wrapped_instance, name)
-
-    def wrap_property(self, name):
-        try:
-            getter = MethodType(getattr(type(self._wrapped_instance), name).fget, self._wrapped_instance)
-        except Exception:
-            getter = None
-        try:
-            setter = MethodType(getattr(type(self._wrapped_instance), name).fset, self._wrapped_instance)
-        except Exception:
-            setter = None
-        try:
-            deleter = MethodType(getattr(type(self._wrapped_instance), name).fdel, self._wrapped_instance)
-        except Exception:
-            deleter = None
-        prop = property(
-            fget=getter,
-            fset=setter,
-            fdel=deleter,
-            doc=None,
-        )
-        setattr(self, name, prop)
 
     def wrap_method(self, method):
         """wrap_method: Wrap the method of the driver instance.

@@ -33,20 +33,20 @@ class Driver(Diagnostics):
         def handle(*args, **kwargs):
             try:
                 res = method(*args, **kwargs)
-                flags = self.get_flags
+                flags = self.get_flags()
                 if checker(res, flags):
                     return res
                 else:
                     raise m_exception(f"erroneus result: {res}")
             except Exception:
-                flags = self.get_flags
+                flags = self.get_flags()
                 for flag in flags:
                     fixer = flags[flag]
                     if fixer is not None:
                         fixer()
                 try:
                     if val := self.retry(method, *args, **kwargs):
-                        flags = self.get_flags
+                        flags = self.get_flags()
                         if checker(val, flags):
                             return val
                         else:
@@ -58,34 +58,33 @@ class Driver(Diagnostics):
 
         return handle
 
-    def handle_property(self, name):
-        checker, m_exception = self.handleable[name]
-        try:
-            res = getattr(self, name)
-            flags = self.get_flags
-            if checker(res, flags):
-                return res
-            else:
-                raise m_exception("erroneus result")
-        except Exception:
-            flags = self.get_flags
-            for flag in flags:
-                fixer = flags[flag]
-                if fixer is not None:
-                    fixer()
-            try:
-                if val := self.retry(name, None, None):
-                    flags = self.get_flags
-                    if checker(val, flags):
-                        return val
-                    else:
-                        raise m_exception("erroneus result")
-                else:
-                    raise m_exception("couldn't retry")
-            except Exception as e:
-                raise m_exception(e)
+    # def handle_property(self, name):
+    #     checker, m_exception = self.handleable[name]
+    #     try:
+    #         res = getattr(self, name)
+    #         flags = self.get_flags
+    #         if checker(res, flags):
+    #             return res
+    #         else:
+    #             raise m_exception("erroneus result")
+    #     except Exception:
+    #         flags = self.get_flags
+    #         for flag in flags:
+    #             fixer = flags[flag]
+    #             if fixer is not None:
+    #                 fixer()
+    #         try:
+    #             if val := self.retry(name, None, None):
+    #                 flags = self.get_flags
+    #                 if checker(val, flags):
+    #                     return val
+    #                 else:
+    #                     raise m_exception("erroneus result")
+    #             else:
+    #                 raise m_exception("couldn't retry")
+    #         except Exception as e:
+    #             raise m_exception(e)
 
-    @property
     def get_flags(self) -> dict:
         """
         should return a dictionary of (raised flag -> fixer function)
