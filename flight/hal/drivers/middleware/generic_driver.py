@@ -1,7 +1,7 @@
 from digitalio import DigitalInOut
 from hal.drivers.diagnostics.diagnostics import Diagnostics
 
-FAULT_HANDLE_RETRIES = 3
+FAULT_HANDLE_RETRIES = 1
 
 
 class driver_cant_handle_exception(Exception):
