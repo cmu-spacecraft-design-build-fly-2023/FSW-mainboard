@@ -31,12 +31,12 @@ class Task(TemplateTask):
 
             # TODO: Access Sun Sensor Readings - Satellite must return the array directly
             lux_readings = [
-                SATELLITE.SUN_SENSOR_XP.lux,
-                SATELLITE.SUN_SENSOR_XM.lux,
-                SATELLITE.SUN_SENSOR_YP.lux,
-                SATELLITE.SUN_SENSOR_YM.lux,
-                SATELLITE.SUN_SENSOR_ZP.lux,
-                SATELLITE.SUN_SENSOR_ZM.lux,
+                SATELLITE.SUN_SENSOR_XP.lux(),
+                SATELLITE.SUN_SENSOR_XM.lux(),
+                SATELLITE.SUN_SENSOR_YP.lux(),
+                SATELLITE.SUN_SENSOR_YM.lux(),
+                SATELLITE.SUN_SENSOR_ZP.lux(),
+                SATELLITE.SUN_SENSOR_ZM.lux(),
             ]
 
             # TODO Fake sun vector that always moves infinitesimally
