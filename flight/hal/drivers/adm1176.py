@@ -16,15 +16,6 @@ from hal.drivers.diagnostics.diagnostics import Diagnostics
 from hal.drivers.middleware.generic_driver import Driver
 from micropython import const
 
-"""
-properties list
-device_on
-overcurrent_level
-clear
-status
-get_flags
-"""
-
 
 def _to_signed(num):
     if num > 0x7FFF:
