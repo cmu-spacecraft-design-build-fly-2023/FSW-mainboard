@@ -39,7 +39,6 @@ class PayloadUART(Driver):
     """
     ----------------------- HANDLER METHODS -----------------------
     """
-    @property
     def get_flags(self):
         return {}
 
