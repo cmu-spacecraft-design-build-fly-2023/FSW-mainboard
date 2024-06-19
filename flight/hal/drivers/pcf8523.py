@@ -179,14 +179,12 @@ class PCF8523(Driver):
 
         super().__init__()
 
-    @property
     def datetime(self) -> struct_time:
         """Gets the current date and time or sets the current date and time then starts the
         clock."""
         return self.datetime_register
 
-    @datetime.setter
-    def datetime(self, value: struct_time):
+    def set_datetime(self, value: struct_time):
         # Automatically sets lost_power to false.
         self.power_management = STANDARD_BATTERY_SWITCHOVER_AND_DETECTION
         self.datetime_register = value
@@ -194,7 +192,6 @@ class PCF8523(Driver):
     """
     ----------------------- HANDLER METHODS -----------------------
     """
-    @property
     def get_flags(self):
         flags = {}
         if self.lost_power:

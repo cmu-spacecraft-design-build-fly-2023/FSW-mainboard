@@ -353,31 +353,24 @@ class BMX160(Driver):
     fatal_err = ROBit(BMX160_ERROR_REG_ADDR, 0)
 
     # straight from the datasheet. Need to be renamed and better explained
-    @property
     def drdy_acc(self):
         return (self.status >> 7) & 1
 
-    @property
     def drdy_gyr(self):
         return (self.status >> 6) & 1
 
-    @property
     def drdy_mag(self):
         return (self.status >> 5) & 1
 
-    @property
     def nvm_rdy(self):
         return (self.status >> 4) & 1
 
-    @property
     def foc_rdy(self):
         return (self.status >> 3) & 1
 
-    @property
     def mag_man_op(self):
         return (self.status >> 2) & 1
 
-    @property
     def gyro_self_test_ok(self):
         return (self.status >> 1) & 1
 
@@ -425,7 +418,6 @@ class BMX160(Driver):
     """
     ----------------------- HANDLER METHODS -----------------------
     """
-    @property
     def get_flags(self):
         return {}
 
@@ -459,35 +451,28 @@ class BMX160(Driver):
     # @property
     # def error_status(self):
     #     return format_binary(self._error_status)
-    @property
     def query_error(self):
         return format_binary(self._error_status)
 
     ### ACTUAL API
-    @property
     def gyro(self):
         # deg/s
         return tuple(x * self.GYR_SCALAR for x in self._gyro)
 
-    @property
     def accel(self):
         # m/s^2
         return tuple(x * self.ACC_SCALAR for x in self._accel)
 
-    @property
     def mag(self):
         # uT
         return tuple(x * self.MAG_SCALAR for x in self._mag)
 
-    @property
     def temperature(self):
         return self._temp[0] * self.TEMP_SCALAR + 23
 
-    @property
     def temp(self):
         return self._temp[0] * self.TEMP_SCALAR + 23
 
-    @property
     def sensortime(self):
         tbuf = self.read_bytes(BMX160_SENSOR_TIME_ADDR, 3, self._smallbuf)
         t0, t1, t2 = tbuf[:3]
@@ -511,12 +496,10 @@ class BMX160(Driver):
         self.gyro_odr = 25
         self.gyro_powermode = BMX160_GYRO_NORMAL_MODE
 
-    @property
     def gyro_range(self):
         return self._gyro_range
 
-    @gyro_range.setter
-    def gyro_range(self, rangeconst):
+    def set_gyro_range(self, rangeconst):
         """
         The input is expected to be the BMX160-constant associated with the range.
 
@@ -542,12 +525,10 @@ class BMX160(Driver):
         else:
             pass
 
-    @property
     def gyro_odr(self):
         return self._gyro_odr
 
-    @gyro_odr.setter
-    def gyro_odr(self, odr):
+    def set_gyro_odr(self, odr):
         """
         Set the output data rate of the gyroscope. The possible ODRs are 1600, 800, 400, 200, 100,
         50, 25, 12.5, 6.25, 3.12, 1.56, and 0.78 Hz. Note, setting a value between the listed ones
@@ -563,12 +544,10 @@ class BMX160(Driver):
         if res is not None:
             self._gyro_odr = res[1]
 
-    @property
     def gyro_powermode(self):
         return self._gyro_powermode
 
-    @gyro_powermode.setter
-    def gyro_powermode(self, powermode):
+    def set_gyro_powermode(self, powermode):
         """
         Set the power mode of the gyroscope. Unlike other setters, this one has to directly take the
         BMX160-const associated with the power mode. The possible modes are:
@@ -581,7 +560,7 @@ class BMX160(Driver):
             return
 
         self.write_u8(BMX160_COMMAND_REG_ADDR, powermode)
-        if int(self.query_error) == 0:
+        if int(self.query_error()) == 0:
             self._gyro_powermode = powermode
         else:
             settingswarning("gyroscope power mode")
@@ -601,12 +580,10 @@ class BMX160(Driver):
         self.accel_odr = 25
         self.accel_powermode = BMX160_ACCEL_NORMAL_MODE
 
-    @property
     def accel_range(self):
         return self._accel_range
 
-    @accel_range.setter
-    def accel_range(self, rangeconst):
+    def set_accel_range(self, rangeconst):
         """
         The input is expected to be the BMX160-constant associated with the range.
 
@@ -632,12 +609,10 @@ class BMX160(Driver):
         else:
             pass
 
-    @property
     def accel_odr(self):
         return self._accel_odr
 
-    @accel_odr.setter
-    def accel_odr(self, odr):
+    def set_accel_odr(self, odr):
         res = self.generic_setter(
             odr,
             BMX160_ACCEL_ODR_VALUES,
@@ -648,12 +623,10 @@ class BMX160(Driver):
         if res is not None:
             self._accel_odr = res[1]
 
-    @property
     def accel_powermode(self):
         return self._accel_powermode
 
-    @accel_powermode.setter
-    def accel_powermode(self, powermode):
+    def set_accel_powermode(self, powermode):
         """
         Set the power mode of the accelerometer. Unlike other setters, this one has to directly take the
         BMX160-const associated with the power mode. The possible modes are:
@@ -666,7 +639,7 @@ class BMX160(Driver):
             return
 
         self.write_u8(BMX160_COMMAND_REG_ADDR, powermode)
-        if int(self.query_error) == 0:
+        if int(self.query_error()) == 0:
             self._accel_powermode = powermode
         else:
             settingswarning("accelerometer power mode")
@@ -702,12 +675,10 @@ class BMX160(Driver):
         self.write_u8(BMX160_COMMAND_REG_ADDR, BMX160_MAG_LOWPOWER_MODE)
         sleep(0.1)  # takes this long to warm up (empirically)
 
-    @property
     def mag_powermode(self):
         return self._mag_powermode
 
-    @mag_powermode.setter
-    def mag_powermode(self, powermode):
+    def set_mag_powermode(self, powermode):
         """
         Set the power mode of the magnetometer. Unlike other setters, this one has to directly take the
         BMX160-const associated with the power mode. The possible modes are:
@@ -720,7 +691,7 @@ class BMX160(Driver):
         #     return
 
         self.write_u8(BMX160_COMMAND_REG_ADDR, powermode)
-        if int(self.query_error) == 0:
+        if int(self.query_error()) == 0:
             self._mag_powermode = powermode
         else:
             settingswarning("mag power mode")
@@ -760,7 +731,7 @@ class BMX160(Driver):
 
         error_list = []
 
-        error_reg = self.query_error
+        error_reg = self.query_error()
         if error_reg != NO_ERROR:
             error_list.append(Diagnostics.BMX160_UNSPECIFIED_ERROR)
 

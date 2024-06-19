@@ -223,7 +223,7 @@ class PyCubed:
             # Default LoRa Modulation Settings
             # Frequency: 433 MHz, SF7, BW125kHz, CR4/8, Preamble=8, CRC=True
             self.RADIO.dio0 = self.RADIO_DIO0
-            self.RADIO.enable_crc = True
+            self.RADIO.set_enable_crc(True)
             self.RADIO.ack_delay = 0.2
             self.RADIO.sleep()
             self.hardware["Radio1"] = True

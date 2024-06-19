@@ -130,22 +130,18 @@ class ADM1176(Driver):
             i2c.write(_extcmd)
         self.config("V_CONT,I_CONT")
 
-    @property
-    def device_on(self) -> bool:
-        return self._on
+    # def device_on(self) -> bool:
+    #     return self._on
 
-    @device_on.setter
-    def device_on(self, turn_on: bool) -> None:
+    def set_device_on(self, turn_on: bool) -> None:
         if turn_on:
             self.__turn_on()
         else:
             self.__turn_off()
 
-    @device_on.getter
     def device_on(self) -> bool:
-        return (self.status & STATUS_OFF_STATUS) != STATUS_OFF_STATUS
+        return (self.status() & STATUS_OFF_STATUS) != STATUS_OFF_STATUS
 
-    @property
     def overcurrent_level(self) -> int:
         """overcurrent_level: Sets the overcurrent level
 
@@ -154,8 +150,7 @@ class ADM1176(Driver):
         """
         return self._overcurrent_level
 
-    @overcurrent_level.setter
-    def overcurrent_level(self, value: int = 0xFF) -> None:
+    def set_overcurrent_level(self, value: int = 0xFF) -> None:
         # enable over current alert
         _extcmd[0] = ALERT_EN_EXT_REG_ADDR
         _extcmd[1] |= ALERT_EN_EN_ADC_OC4
@@ -171,11 +166,10 @@ class ADM1176(Driver):
 
         self._overcurrent_level = value
 
-    @overcurrent_level.getter
-    def overcurrent_level(self) -> int:
-        return self._overcurrent_level
+    # @overcurrent_level.getter
+    # def overcurrent_level(self) -> int:
+    #     return self._overcurrent_level
 
-    @property
     def clear(self) -> None:
         """clear: Clears the alerts after status register read"""
         _extcmd[0] = ALERT_EN_EXT_REG_ADDR
@@ -185,7 +179,6 @@ class ADM1176(Driver):
             i2c.write(_extcmd)
         _extcmd[1] = temp
 
-    @property
     def status(self) -> int:
         """status: Returns the status register values
 
@@ -210,10 +203,9 @@ class ADM1176(Driver):
     """
     ----------------------- HANDLER METHODS -----------------------
     """
-    @property
     def get_flags(self):
         flags = {}
-        status = self.status
+        status = self.status()
         if status & 0b1:
             flags['ADC_OC'] = None
         if status & 0b10:
@@ -265,20 +257,20 @@ class ADM1176(Driver):
         :return: true if test passes, false if fails
         """
         # Turn the device on
-        self.device_on = True
-        if not self.device_on:
+        self.set_device_on(True)
+        if not self.device_on():
             print("Error: Could not turn on device")
             return Diagnostics.ADM1176_COULD_NOT_TURN_ON
 
         # Turn the device off
-        self.device_on = False
-        if self.device_on:
+        self.set_device_on(False)
+        if self.device_on():
             print("Error: Could not turn off device")
             return Diagnostics.ADM1176_COULD_NOT_TURN_OFF
 
         # Turn the device on again
-        self.device_on = True
-        if not self.device_on:
+        self.set_device_on(True)
+        if not self.device_on():
             print("Error: Could not turn on device after turning off")
             return Diagnostics.ADM1176_COULD_NOT_TURN_ON
 
@@ -291,10 +283,10 @@ class ADM1176(Driver):
         :return: true if test passes, false if fails
         """
         # Set the overcurrent threshold to max
-        self.overcurrent_level = 0xFF
-        self.clear
+        self.set_overcurrent_level(0xFF)
+        self.clear()
 
-        status = self.status
+        status = self.status()
         if (status & STATUS_ADC_OC) == STATUS_ADC_OC:
             print("Error: ADC OC was triggered at overcurrent max")
             return Diagnostics.ADM1176_ADC_OC_OVERCURRENT_MAX

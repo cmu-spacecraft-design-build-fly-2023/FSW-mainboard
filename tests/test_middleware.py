@@ -30,17 +30,19 @@ class TestDevice(Driver):
         """
         self.flags = flags
         self.int_val = 8
+        self.__test_str = "test"
         self.update_int = 0
+        self.__property = 89
 
         super().__init__()
 
         self.handleable = {
-            'test_int': (True, self.int_checker, TestException),
-            'test_method': (False, lambda x, y: x, TestException)
+            'get_test_int': (self.int_checker, TestException),
+            'set_test_int': (lambda x, y: True, TestException),
+            'test_method': (lambda x, y: x, TestException)
         }
 
-    @property
-    def test_int(self) -> int:
+    def get_test_int(self) -> int:
         if self.flags & 0b001:
             # best we can do is try again
             raise TestException("Critical Error")
@@ -48,25 +50,29 @@ class TestDevice(Driver):
             raise TestException("Fixable Error")
         return self.int_val
 
-    @test_int.setter
-    def test_int(self, input: int) -> None:
+    def set_test_int(self, input: int) -> None:
         self.int_val = input
 
+    def get_test_str(self) -> int:
+        return self.__test_str
+
+    def set_test_str(self, input: str) -> None:
+        self.__test_str = input
+
     def int_checker(self, result, flags):
-        if 'fixable' in flags:
-            # fixable has occured
-            raise TestException("Fixable Error")
         if 'hidden' in flags:
-            raise TestException("Hidden Error")
+            return False
         if result > 9:
-            raise TestException("Erroneous Result")
-        return result
+            return False
+        return True
 
     def test_method(self):
         self.update_int += 1
         return 9
 
-    @property
+    def unhandled_method(self, num):
+        return num + 1
+
     def get_flags(self):
         res = {}
         if self.flags & 0b100:
@@ -86,17 +92,37 @@ class TestDevice(Driver):
 
 class TestClass:
     def test_method_call(self):
-        device = TestDevice(0b00)
+        device = TestDevice(0)
         mid = Middleware(device)
-        assert mid.test_method() == device.test_method()
-        assert mid.update_int == 2
 
-    def test_property_call(self):
-        device = TestDevice(0b00)
+        # test normal handled method
+        assert mid.get_test_int() == device.get_test_int()
+        assert mid.get_test_int() == 8
+
+        # test handled method with side effects
+        assert mid.test_method() == 9
+        assert mid.test_method() == device.test_method()
+        assert mid.update_int == 3
+
+        # test unhandled method
+        assert mid.unhandled_method(9) == 10
+        assert mid.unhandled_method(1) == device.unhandled_method(1)
+
+    def test_method_setters(self):
+        # test handled property test_int
+        device = TestDevice(0)
         mid = Middleware(device)
-        assert mid.test_int == 8
-        mid.test_int = 5
-        assert mid.test_int == 5
+        assert mid.get_test_int() == 8
+        assert device.get_test_int() == 8
+        mid.set_test_int(5)
+        assert mid.get_test_int() == 5
+        assert device.get_test_int() == 5
+
+        # test unhandled property test_str
+        assert mid.get_test_str() == "test"
+        mid.set_test_str("testing")
+        assert mid.get_test_str() == "testing"
+        assert device.get_test_str() == "testing"
 
     def test_exceptions(self):
         """
@@ -106,14 +132,14 @@ class TestClass:
         device = TestDevice(0b010)
         mid = Middleware(device)
         with pytest.raises(TestException):
-            device.test_int
-        assert mid.test_int == 8
+            device.get_test_int()
+        assert mid.get_test_int() == 8
 
         device = TestDevice(0b100)
         mid = Middleware(device)
-        assert mid.test_int == 8
+        assert mid.get_test_int() == 8
 
         device = TestDevice(0b001)
         mid = Middleware(device)
         with pytest.raises(TestException):
-            mid.test_int
+            mid.get_test_int()

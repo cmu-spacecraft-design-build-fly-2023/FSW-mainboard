@@ -90,49 +90,38 @@ class BQ25883(Driver):
 
         super().__init__()
 
-    @property
     def fault_status(self) -> int:
         return self._fault_status
 
-    @property
     def charger_status1(self) -> int:
         return self._chrgr_status1
 
-    @property
     def charger_status2(self) -> int:
         return self._chrgr_status2
 
-    @property
     def charge_status(self) -> int:
         return self._chrg_status
 
-    @property
     def ntc_status(self) -> int:
         return self._ntc_stat
 
-    @property
     def charge_en(self) -> bool:
         return self._chrg_ctrl2
 
-    @charge_en.setter
-    def charge_en(self, value: bool) -> None:
+    def set_charge_en(self, value: bool) -> None:
         self._en_chrg = value
 
-    @property
     def charging_current(self) -> int:
         return self._ichrg
 
-    @charging_current.setter
-    def charging_current(self, value: int) -> None:
+    def set_charging_current(self, value: int) -> None:
         # default:0x1e=1500mA, 0x8=400mA
         self._ichrg = value
 
-    @property
     def wdt(self) -> int:
         return self._wdt
 
-    @wdt.setter
-    def wdt(self, value: int) -> None:
+    def set_wdt(self, value: int) -> None:
         if not value:
             self._wdt = 0
             self._wdt = 0
@@ -140,21 +129,18 @@ class BQ25883(Driver):
             self._wdt = value
             self._wdt = value
 
-    @property
     def en_led(self) -> bool:
         return not self._stat_dis
 
-    @en_led.setter
     def led(self, value: bool) -> None:
         self._stat_dis = not value
 
     """
     ----------------------- HANDLER METHODS -----------------------
     """
-    @property
     def get_flags(self):
         flags = {}
-        status = self.fault_status
+        status = self.fault_status()
         if (status & 0x10):
             flags['VBUS_OVP_STAT'] = None
         if (status & (0x1 << 5)):
@@ -174,7 +160,7 @@ class BQ25883(Driver):
         """
         errors: list[int] = []
 
-        status = self.fault_status
+        status = self.fault_status()
 
         if (status & (0xF << 4)) != 0:
             list.append[Diagnostics.BQ25883_INPUT_OVERVOLTAGE]

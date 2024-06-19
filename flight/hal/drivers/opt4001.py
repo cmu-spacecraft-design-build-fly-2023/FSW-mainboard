@@ -426,7 +426,6 @@ class OPT4001(Driver):
 
         return lux if just_lux else (lux, counter, crc)
 
-    @property
     def lux(self) -> float:
         """
         Reads out JUST the lux value from the result register. The lux is calculated from the
@@ -441,7 +440,6 @@ class OPT4001(Driver):
         """
         return self.result_of_addr(True)
 
-    @property
     def result(self) -> tuple:
         """
         Returns, as a tuple, the lux calculated from the register, the counter, and the crc bits
@@ -495,7 +493,6 @@ class OPT4001(Driver):
         register_h, register_l = channels[id]
         return self.read_from_fifo(register_h, register_l, False)
 
-    @property
     def status(self):
         res = (self.overload_flag << 3 | (not self.conversion_ready_flag) << 2 | self.flag_h << 1 | self.flag_L)
         return res
@@ -503,7 +500,6 @@ class OPT4001(Driver):
     """
     ----------------------- HANDLER METHODS -----------------------
     """
-    @property
     def get_flags(self):
         flags = {}
         if self.flag_h:

@@ -66,15 +66,13 @@ class BurnWires(Driver):
 
         super().__init__(self.__enable)
 
-    @property
     def frequency_hz(self):
         """
         Get the current frequency in Hz for the PWM signal.
         """
         return self.__pwm_frequency
 
-    @frequency_hz.setter
-    def frequency_hz(self, frequency_hz):
+    def set_frequency_hz(self, frequency_hz):
         """
         Set the frequency in Hz for the PWM signal.
 
@@ -83,22 +81,13 @@ class BurnWires(Driver):
         """
         self.__pwm_frequency = frequency_hz
 
-    @frequency_hz.getter
-    def frequency_hz(self):
-        """
-        Get the current frequency in Hz for the PWM signal.
-        """
-        return self.__pwm_frequency
-
-    @property
     def duty_cycle_pct(self):
         """
         Get the current duty cycle percentage for the PWM signal.
         """
         return self.__duty_cycle
 
-    @duty_cycle_pct.setter
-    def duty_cycle_pct(self, duty_cycle_pct):
+    def set_duty_cycle_pct(self, duty_cycle_pct):
         """
         Set the duty cycle percentage for the PWM signal.
 
@@ -107,22 +96,13 @@ class BurnWires(Driver):
         """
         self.__duty_cycle = duty_cycle_pct
 
-    @duty_cycle_pct.getter
-    def duty_cycle_pct(self):
-        """
-        Get the current duty cycle percentage for the PWM signal.
-        """
-        return self.__duty_cycle
-
-    @property
     def duration_s(self):
         """
         Get the current duration in seconds for burning.
         """
         return self.__burn_duration
 
-    @duration_s.setter
-    def duration_s(self, duration_s):
+    def set_duration_s(self, duration_s):
         """
         Set the duration in seconds for burning.
 
@@ -130,13 +110,6 @@ class BurnWires(Driver):
             duration_s: The duration in seconds for burning.
         """
         self.__burn_duration = duration_s
-
-    @duration_s.getter
-    def duration_s(self):
-        """
-        Get the current duration in seconds for burning.
-        """
-        return self.__burn_duration
 
     def __turn_off_all_burns(self) -> None:
         """__turn_off_all_burns: turns off all the burn wires"""
@@ -240,6 +213,5 @@ class BurnWires(Driver):
     """
     ----------------------- HANDLER METHODS -----------------------
     """
-    @property
     def get_flags(self):
         return {}

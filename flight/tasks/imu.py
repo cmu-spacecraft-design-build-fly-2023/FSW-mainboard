@@ -42,9 +42,9 @@ class Task(TemplateTask):
             # SATELLITE.IMU.enable()
 
             readings = {
-                "accel": SATELLITE.IMU.accel,
-                "mag": SATELLITE.IMU.mag,
-                "gyro": SATELLITE.IMU.gyro,
+                "accel": SATELLITE.IMU.accel(),
+                "mag": SATELLITE.IMU.mag(),
+                "gyro": SATELLITE.IMU.gyro(),
             }
 
             # SATELLITE.IMU.disable()

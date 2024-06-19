@@ -14,7 +14,7 @@ Author: Harry Rosmann
 
 from typing import Any
 
-from diagnostics.diagnostics import Diagnostics
+from middleware.generic_driver import Driver, driver_cant_handle_exception
 
 # The default number of retries for the middleware
 # NOTE: Keep this value low to prevent loss of timing
@@ -30,23 +30,23 @@ class Middleware:
     by the flight software.
     """
 
-    def __init__(self, cls_instance: Diagnostics):
+    def __init__(self, cls_instance: Driver):
         """__init__: Constructor for the DriverMiddleware class.
 
         :param cls_instance: The instance of the driver class to wrap
         :param exception: The unique exception raised if fault not handled
         """
+        self._wrapped_attributes = {}
         self._wrapped_instance = cls_instance
-        self._wrapped_attributes = cls_instance.handleable
+        self.wrap_handleable()
 
     def wrap_handleable(self):
         for name in self._wrapped_instance.handleable:
             attr = getattr(self._wrapped_instance, name)
-            ref = getattr(type(self._wrapped_instance), name)
             if callable(attr):
-                self._wrapped_attributes[name] = self.wrap_attribute(attr)
-            elif isinstance(ref, property):
-                self._wrapped_attributes[name] = self.wrap_property(attr, ref)
+                self._wrapped_attributes[name] = self.wrap_method(attr)
+            else:
+                raise driver_cant_handle_exception("not a method")
 
     def get_instance(self):
         """get_instance: Get the wrapped instance of the driver."""
@@ -58,27 +58,8 @@ class Middleware:
         :param name: The name of the attribute to get
         """
         if name in self._wrapped_attributes:
-            (isProperty, checker, exn) = self._wrapped_attributes[name]
-            if isProperty:
-                return self._wrapped_instance.handle_property(name)
-            else:
-                return self._wrapped_instance.handler(getattr(self._wrapped_instance, name))
+            return self._wrapped_attributes[name]
         return getattr(self._wrapped_instance, name)
-
-    def wrap_attribute(self, attr):
-        """wrap_attribute: Wrap the attribute of the driver instance.
-
-        :param attr: The attribute to wrap
-        """
-        return self.wrap_method(attr)
-
-    def wrap_property(self, attr, ref):
-        return property(
-            fget=self.wrap_method(attr.fget) if attr.fget else None,
-            fset=self.wrap_method(attr.fset) if attr.fset else None,
-            fdel=self.wrap_method(attr.fdel) if attr.fdel else None,
-            doc=attr.__doc__,
-        )
 
     def wrap_method(self, method):
         """wrap_method: Wrap the method of the driver instance.

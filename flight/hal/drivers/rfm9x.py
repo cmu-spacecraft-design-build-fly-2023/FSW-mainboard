@@ -315,19 +315,19 @@ class RFM9x(Driver):
         self.idle()
 
         # Set frequency
-        self.frequency_mhz = frequency
+        self.set_frequency_mhz(frequency)
         # Set preamble length (default 8 bytes to match radiohead).
-        self.preamble_length = preamble_length
+        self.set_preamble_length(preamble_length)
         # Defaults set modem config to RadioHead compatible Bw125Cr45Sf128 mode.
-        self.signal_bandwidth = 125000
-        self.coding_rate = code_rate
-        self.spreading_factor = 7
+        self.set_signal_bandwidth(125000)
+        self.set_coding_rate(code_rate)
+        self.set_spreading_factor(7)
         # Default to disable CRC checking on incoming packets.
-        self.enable_crc = False
+        self.set_enable_crc(False)
         # Note no sync word is set for LoRa mode either!
         self._write_u8(_RH_RF95_REG_26_MODEM_CONFIG3, 0x00)
         # Set transmit power to 13 dBm, a safe value any module supports.
-        self.tx_power = 13
+        self.set_tx_power(13)
         # initialize last RSSI reading
         self.last_rssi = 0.0
         """The RSSI of the last received packet. Stored when the packet was received.
@@ -385,7 +385,7 @@ class RFM9x(Driver):
         self.pa_ramp = 0  # mode agnostic
         self.lna_boost = 3  # mode agnostic
 
-        self.enable_crc = True
+        self.set_enable_crc(True)
         self.ack_delay = 0.2
 
         super().__init__(self.__enable)
@@ -401,11 +401,11 @@ class RFM9x(Driver):
         if self.long_range_mode:
             # cache LoRa params
             cache = [
-                self.spreading_factor,
-                self.signal_bandwidth,
-                self.coding_rate,
-                self.preamble_length,
-                self.enable_crc,
+                self.spreading_factor(),
+                self.signal_bandwidth(),
+                self.coding_rate(),
+                self.preamble_length(),
+                self.enable_crc(),
             ]
 
         self.operation_mode = SLEEP_MODE
@@ -445,11 +445,11 @@ class RFM9x(Driver):
             self._write_u8(_RH_RF95_REG_0F_FIFO_RX_BASE_ADDR, 0x00)
             self._write_u8(_RH_RF95_REG_24_HOP_PERIOD, 0x00)
             self.idle()
-            self.spreading_factor = cache[0]
-            self.signal_bandwidth = cache[1]
-            self.coding_rate = cache[2]
-            self.preamble_length = cache[3]
-            self.enable_crc = cache[4]
+            self.set_spreading_factor(cache[0])
+            self.set_signal_bandwidth(cache[1])
+            self.set_coding_rate(cache[2])
+            self.set_preamble_length(cache[3])
+            self.set_enable_crc(cache[4])
             self.auto_agc = True
             self.low_datarate_optimize = True
         return success
@@ -531,7 +531,6 @@ class RFM9x(Driver):
         self.operation_mode = TX_MODE
         self.dio0_mapping = 0b01  # Interrupt on tx done.
 
-    @property
     def preamble_length(self):
         """The length of the preamble for sent and received packets, an unsigned
         16-bit value.  Received packets must match this length or they are
@@ -541,13 +540,11 @@ class RFM9x(Driver):
         lsb = self._read_u8(_RH_RF95_REG_21_PREAMBLE_LSB)
         return ((msb << 8) | lsb) & 0xFFFF
 
-    @preamble_length.setter
-    def preamble_length(self, val):
+    def set_preamble_length(self, val):
         assert 0 <= val <= 65535
         self._write_u8(_RH_RF95_REG_20_PREAMBLE_MSB, (val >> 8) & 0xFF)
         self._write_u8(_RH_RF95_REG_21_PREAMBLE_LSB, val & 0xFF)
 
-    @property
     def frequency_mhz(self):
         """The frequency of the radio in Megahertz. Only the allowed values for
         your radio must be specified (i.e. 433 vs. 915 mhz)!
@@ -559,8 +556,7 @@ class RFM9x(Driver):
         frequency = (frf * _RH_RF95_FSTEP) / 1000000.0
         return frequency
 
-    @frequency_mhz.setter
-    def frequency_mhz(self, val):
+    def set_frequency_mhz(self, val):
         if val < 240 or val > 960:
             raise RuntimeError("frequency_mhz must be between 240 and 960")
         # Calculate FRF register 24-bit value.
@@ -573,7 +569,6 @@ class RFM9x(Driver):
         self._write_u8(_RH_RF95_REG_07_FRF_MID, mid)
         self._write_u8(_RH_RF95_REG_08_FRF_LSB, lsb)
 
-    @property
     def tx_power(self):
         """The transmit power in dBm. Can be set to a value from 5 to 23 for
         high power devices (RFM95/96/97/98, high_power=True) or -1 to 14 for low
@@ -588,8 +583,7 @@ class RFM9x(Driver):
             return self.output_power + 5
         return self.output_power - 1
 
-    @tx_power.setter
-    def tx_power(self, val):
+    def set_tx_power(self, val):
         val = int(val)
         if self.max_output is True:
             print("RFM9X Max Output Power Enabled")
@@ -619,11 +613,9 @@ class RFM9x(Driver):
             self.output_power = (val + 1) & 0x0F
 
     # ADDED FOR PYCUBED
-    @property
     def packet_status(self):
         return (self.rssi, self._read_u8(_RH_RF95_REG_19_PKT_SNR_VALUE) / 4)
 
-    @property
     def pll_timeout(self):
         return self._read_u8(_RH_RF95_REG_1C_HOP_CHANNEL)
 
@@ -635,7 +627,6 @@ class RFM9x(Driver):
             return self._read_u8(_RH_RF95_REG_1A_PKT_RSSI_VALUE)
         return self._read_u8(_RH_RF95_REG_1A_PKT_RSSI_VALUE) - 137
 
-    @property
     def signal_bandwidth(self):
         """The signal bandwidth used by the radio (try setting to a higher
         value to increase throughput or to a lower value to increase the
@@ -648,8 +639,7 @@ class RFM9x(Driver):
             current_bandwidth = bw_bins[bw_id]
         return current_bandwidth
 
-    @signal_bandwidth.setter
-    def signal_bandwidth(self, val):
+    def set_signal_bandwidth(self, val):
         # Set signal bandwidth (set to 125000 to match RadioHead Bw125).
         for bw_id, cutoff in enumerate(bw_bins):
             if val <= cutoff:
@@ -675,7 +665,6 @@ class RFM9x(Driver):
                 self._write_u8(0x2F, 0x44)
             self._write_u8(0x30, 0)
 
-    @property
     def coding_rate(self):
         """The coding rate used by the radio to control forward error
         correction (try setting to a higher value to increase tolerance of
@@ -685,8 +674,7 @@ class RFM9x(Driver):
         denominator = cr_id + 4
         return denominator
 
-    @coding_rate.setter
-    def coding_rate(self, val):
+    def set_coding_rate(self, val):
         # Set coding rate (set to 5 to match RadioHead Cr45).
         denominator = min(max(val, 5), 8)
         cr_id = denominator - 4
@@ -696,7 +684,6 @@ class RFM9x(Driver):
             | (cr_id << 1),
         )
 
-    @property
     def spreading_factor(self):
         """The spreading factor used by the radio (try setting to a higher
         value to increase the receiver's ability to distinguish signal from
@@ -705,13 +692,12 @@ class RFM9x(Driver):
         sf_id = (self._read_u8(_RH_RF95_REG_1E_MODEM_CONFIG2) & 0xF0) >> 4
         return sf_id
 
-    @spreading_factor.setter
-    def spreading_factor(self, val):
+    def set_spreading_factor(self, val):
         # Set spreading factor (set to 7 to match RadioHead Sf128).
         val = min(max(val, 6), 12)
         self._write_u8(_RH_RF95_DETECTION_OPTIMIZE, 0xC5 if val == 6 else 0xC3)
 
-        if self.signal_bandwidth >= 5000000:
+        if self.signal_bandwidth() >= 5000000:
             self._write_u8(
                 _RH_RF95_DETECTION_OPTIMIZE, 0xC5 if val == 6 else 0xC3
             )
@@ -732,15 +718,13 @@ class RFM9x(Driver):
             ),
         )
 
-    @property
     def enable_crc(self):
         """Set to True to enable hardware CRC checking of incoming packets.
         Incoming packets that fail the CRC check are not processed.  Set to
         False to disable CRC checking and process all incoming packets."""
         return (self._read_u8(_RH_RF95_REG_1E_MODEM_CONFIG2) & 0x04) == 0x04
 
-    @enable_crc.setter
-    def enable_crc(self, val):
+    def set_enable_crc(self, val):
         # Optionally enable CRC checking on incoming packets.
         if val:
             self._write_u8(
@@ -984,7 +968,7 @@ class RFM9x(Driver):
         # Enter idle mode to stop receiving other packets.
         self.idle()
         if not timed_out:
-            if self.enable_crc and self.crc_error():
+            if self.enable_crc() and self.crc_error():
                 self.crc_error_count += 1
                 print("crc error")
                 if hasattr(self, "crc_errs"):
@@ -1077,7 +1061,7 @@ class RFM9x(Driver):
         length = 0
         fifo_length = 0
         self.idle()
-        if self.enable_crc and self.crc_error():
+        if self.enable_crc() and self.crc_error():
             self.crc_error_count += 1
             print("crc error")
             if hasattr(self, "crc_errs"):
@@ -1157,7 +1141,6 @@ class RFM9x(Driver):
     """
     ----------------------- HANDLER METHODS -----------------------
     """
-    @property
     def get_flags(self):
         return {}
 
