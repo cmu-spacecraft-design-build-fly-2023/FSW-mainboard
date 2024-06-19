@@ -138,7 +138,6 @@ class DRV8830(Driver):
     _ilimit = ROBit(_FAULT, 4, 1, False)  # Extended current limit event
     _clear = RWBit(_FAULT, 7, 1, False)  # Clears fault status flag bits
 
-    @property
     def throttle(self):
         """Current motor speed, ranging from -1.0 (full speed reverse) to
         +1.0 (full speed forward), or ``None`` (controller off). If ``None``,
@@ -152,8 +151,7 @@ class DRV8830(Driver):
             return -1 * round(self._vset / 0x3F, 3)
         return round(self._vset / 0x3F, 3)
 
-    @throttle.setter
-    def throttle(self, new_throttle):
+    def set_throttle(self, new_throttle):
         if new_throttle is None:
             self._vset = 0
             self._in_x = BridgeControl.COAST
@@ -171,7 +169,6 @@ class DRV8830(Driver):
             self._in_x = BridgeControl.BRAKE
         return
 
-    @property
     def throttle_volts(self):
         """Current motor speed, ranging from -5.06 volts (full speed reverse) to
         +5.06 volts (full speed forward), or ``None`` (controller off). If ``None``,
@@ -185,8 +182,7 @@ class DRV8830(Driver):
             return -1 * VoltageAdapter.index_to_voltage(self, self._vset)
         return VoltageAdapter.index_to_voltage(self, self._vset)
 
-    @throttle_volts.setter
-    def throttle_volts(self, new_throttle_volts):
+    def set_throttle_volts(self, new_throttle_volts):
         if new_throttle_volts is None:
             self._vset = 0
             self._in_x = BridgeControl.COAST
@@ -208,7 +204,6 @@ class DRV8830(Driver):
             self._in_x = BridgeControl.BRAKE
         return
 
-    @property
     def throttle_raw(self):
         """Current motor speed, 6-bit VSET byte value, ranging from -63 (full speed reverse) to
         63 (full speed forward), or ``None`` (controller off). If ``None``,
@@ -222,8 +217,7 @@ class DRV8830(Driver):
             return -1 * self._vset
         return self._vset
 
-    @throttle_raw.setter
-    def throttle_raw(self, new_throttle_raw):
+    def set_throttle_raw(self, new_throttle_raw):
         if new_throttle_raw is None:
             self._vset = 0
             self._in_x = BridgeControl.COAST
@@ -325,12 +319,12 @@ class DRV8830(Driver):
 
         :return: true if test passes, false if fails
         """
-        throttle_volts_val = self.throttle_volts
+        throttle_volts_val = self.throttle_volts()
         if throttle_volts_val is not None:
             if (throttle_volts_val < -5.06) or (throttle_volts_val > 5.06):
                 return Diagnostics.DRV8830_THROTTLE_OUTSIDE_RANGE
 
-        throttle_raw_val = self.throttle_volts
+        throttle_raw_val = self.throttle_raw()
         if throttle_raw_val is not None:
             if (throttle_raw_val < -63) or (throttle_raw_val > 63):
                 return Diagnostics.DRV8830_THROTTLE_OUTSIDE_RANGE

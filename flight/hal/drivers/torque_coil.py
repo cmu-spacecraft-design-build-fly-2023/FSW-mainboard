@@ -44,11 +44,10 @@ class TorqueInterface:
         if throttle > 1.0 or throttle < -1.0:
             raise ValueError("Throttle must be between -1.0 and 1.0")
 
-        self.drv_p.throttle = (
-            throttle  # Set to full speed forward for demonstration
-        )
+        # Set to full speed forward for demonstration
+        self.drv_p.set_throttle(throttle)
         if self.drv_n is not None:
-            self.drv_n.throttle = throttle
+            self.drv_n.set_throttle(throttle)
 
     def enable_volts(self, volts: float) -> None:
         """
@@ -59,14 +58,14 @@ class TorqueInterface:
         if volts > 5.1 or volts < -5.1:
             raise ValueError("Volts must be between -5.1 and 5.1")
 
-        self.drv_p.throttle_volts = volts
+        self.drv_p.set_throttle_volts(volts)
         if self.drv_n is not None:
-            self.drv_n.throttle_volts = volts
+            self.drv_n.set_throttle_volts(volts)
 
     def disable(self) -> None:
         """
         Disable the torque coil. This effectively disables the motor output.
         """
-        self.drv_p.throttle = None  # Set to None for high-impedance (coast)
+        self.drv_p.set_throttle(None)  # Set to None for high-impedance (coast)
         if self.drv_n is not None:
-            self.drv_n.throttle = None
+            self.drv_n.set_throttle(None)
