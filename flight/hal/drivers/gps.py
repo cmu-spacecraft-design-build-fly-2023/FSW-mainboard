@@ -175,24 +175,20 @@ class GPS(Driver):
             self.write(bytes("{:02x}".format(checksum).upper(), "ascii"))
         self.write(b"\r\n")
 
-    @property
     def has_fix(self):
         """True if a current fix for location information is available."""
         return self.fix_quality is not None and self.fix_quality >= 1
 
-    @property
     def has_3d_fix(self):
         """Returns true if there is a 3d fix available.
         use has_fix to determine if a 2d fix is available,
         passing it the same data"""
         return self.fix_quality_3d is not None and self.fix_quality_3d >= 2
 
-    @property
     def datetime(self):
         """Return struct_time object to feed rtc.set_time_source() function"""
         return self.timestamp_utc
 
-    @property
     def nmea_sentence(self):
         """Return raw_sentence which is the raw NMEA sentence read from the GPS"""
         return self._raw_sentence
@@ -207,7 +203,6 @@ class GPS(Driver):
         or checksums"""
         return self._uart.write(bytestr)
 
-    @property
     def in_waiting(self):
         """Returns number of bytes available in UART read buffer"""
         return self._uart.in_waiting
@@ -522,7 +517,6 @@ class GPS(Driver):
     """
     ----------------------- HANDLER METHODS -----------------------
     """
-    @property
     def get_flags(self):
         return {}
 
