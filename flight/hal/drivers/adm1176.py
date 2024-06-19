@@ -16,6 +16,15 @@ from hal.drivers.diagnostics.diagnostics import Diagnostics
 from hal.drivers.middleware.generic_driver import Driver
 from micropython import const
 
+"""
+properties list
+device_on
+overcurrent_level
+clear
+status
+get_flags
+"""
+
 
 def _to_signed(num):
     if num > 0x7FFF:
@@ -130,8 +139,8 @@ class ADM1176(Driver):
             i2c.write(_extcmd)
         self.config("V_CONT,I_CONT")
 
-    def device_on(self) -> bool:
-        return self._on
+    # def device_on(self) -> bool:
+    #     return self._on
 
     def set_device_on(self, turn_on: bool) -> None:
         if turn_on:
@@ -139,9 +148,8 @@ class ADM1176(Driver):
         else:
             self.__turn_off()
 
-    @device_on.getter
     def device_on(self) -> bool:
-        return (self.status & STATUS_OFF_STATUS) != STATUS_OFF_STATUS
+        return (self.status() & STATUS_OFF_STATUS) != STATUS_OFF_STATUS
 
     def overcurrent_level(self) -> int:
         """overcurrent_level: Sets the overcurrent level
@@ -206,7 +214,7 @@ class ADM1176(Driver):
     """
     def get_flags(self):
         flags = {}
-        status = self.status
+        status = self.status()
         if status & 0b1:
             flags['ADC_OC'] = None
         if status & 0b10:
@@ -258,20 +266,20 @@ class ADM1176(Driver):
         :return: true if test passes, false if fails
         """
         # Turn the device on
-        self.device_on = True
-        if not self.device_on:
+        self.set_device_on(True)
+        if not self.device_on():
             print("Error: Could not turn on device")
             return Diagnostics.ADM1176_COULD_NOT_TURN_ON
 
         # Turn the device off
-        self.device_on = False
-        if self.device_on:
+        self.set_device_on(False)
+        if self.device_on():
             print("Error: Could not turn off device")
             return Diagnostics.ADM1176_COULD_NOT_TURN_OFF
 
         # Turn the device on again
-        self.device_on = True
-        if not self.device_on:
+        self.set_device_on(True)
+        if not self.device_on():
             print("Error: Could not turn on device after turning off")
             return Diagnostics.ADM1176_COULD_NOT_TURN_ON
 
@@ -284,10 +292,10 @@ class ADM1176(Driver):
         :return: true if test passes, false if fails
         """
         # Set the overcurrent threshold to max
-        self.overcurrent_level = 0xFF
-        self.clear
+        self.set_overcurrent_level(0xFF)
+        self.clear()
 
-        status = self.status
+        status = self.status()
         if (status & STATUS_ADC_OC) == STATUS_ADC_OC:
             print("Error: ADC OC was triggered at overcurrent max")
             return Diagnostics.ADM1176_ADC_OC_OVERCURRENT_MAX
