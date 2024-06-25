@@ -17,3 +17,16 @@ fi
 chmod +x $MPY_EXEC
 
 echo "$MPY_EXEC is now executable"
+
+if [[ -z $1 ]];
+then
+    python3 build_tools/build.py && python3 build_tools/move_to_board.py
+elif [ "$1" == "emulate" ];
+then
+    python3 build_tools/build-emulator.py
+    cd build/ && python3 main.py
+    cd -
+elif [ "$1" == "simulate" ];
+then
+    echo "Simulator still in the works!"
+fi
