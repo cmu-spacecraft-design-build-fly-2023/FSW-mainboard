@@ -49,7 +49,6 @@ SM_CONFIGURATION = {
             "OBDH": {"Frequency": 1, "Priority": 2},
             "IMU": {"Frequency": 1, "Priority": 5, "ScheduleLater": True},
             "COMMS": {"Frequency": 0.1, "Priority": 5, "ScheduleLater": True},
-            "SUN": {"Frequency": 1, "Priority": 5, "ScheduleLater": True},
         },
         "MovesTo": ["DOWNLINK", "LOW_POWER", "SAFE"],
     },
