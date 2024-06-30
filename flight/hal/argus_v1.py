@@ -108,7 +108,6 @@ class ArgusV1Components:
     SUN_SENSOR_YP_I2C_ADDRESS = const(0x46)
     SUN_SENSOR_YM_I2C_ADDRESS = const(0x47)
     SUN_SENSOR_ZP_I2C_ADDRESS = const(0x48)
-    SUN_SENSOR_ZM_I2C_ADDRESS = const(0x4A)
 
     # RADIO
     RADIO_SPI = ArgusV1Interfaces.SPI
@@ -190,7 +189,6 @@ class ArgusV1(CubeSat):
         error_list += self.__sun_sensor_yp_boot()
         error_list += self.__sun_sensor_ym_boot()
         error_list += self.__sun_sensor_zp_boot()
-        error_list += self.__sun_sensor_zm_boot()
         error_list += self.__radio_boot()
         error_list += self.__neopixel_boot()
         error_list += self.__burn_wire_boot()
@@ -618,30 +616,6 @@ class ArgusV1(CubeSat):
 
         return [Diagnostics.NOERROR]
 
-    def __sun_sensor_zm_boot(self) -> list[int]:
-        """sun_sensor_zm_boot: Boot sequence for the sun sensor in the z- direction
-
-        :return: Error code if the sun sensor failed to initialize
-        """
-        try:
-            sun_sensor_zm = OPT4001(
-                ArgusV1Components.SUN_SENSORS_I2C,
-                ArgusV1Components.SUN_SENSOR_ZM_I2C_ADDRESS,
-            )
-
-            if self.__middleware_enabled:
-                sun_sensor_zm = Middleware(sun_sensor_zm)
-
-            self.__sun_sensor_zm = sun_sensor_zm
-            self.__device_list.append(sun_sensor_zm)
-        except Exception as e:
-            if self.__debug:
-                raise e
-
-            return [Diagnostics.OPT4001_NOT_INITIALIZED]
-
-        return [Diagnostics.NOERROR]
-
     def __radio_boot(self) -> list[int]:
         """radio_boot: Boot sequence for the radio
 
@@ -838,8 +812,6 @@ class ArgusV1(CubeSat):
             return Diagnostics.DIAGNOSTICS_ERROR_SUN_SENSOR_YM
         elif device is self.SUN_SENSOR_ZP:
             return Diagnostics.DIAGNOSTICS_ERROR_SUN_SENSOR_ZP
-        elif device is self.SUN_SENSOR_ZM:
-            return Diagnostics.DIAGNOSTICS_ERROR_SUN_SENSOR_ZM
         elif device is self.RADIO:
             return Diagnostics.DIAGNOSTICS_ERROR_RADIO
         elif device is self.NEOPIXEL:

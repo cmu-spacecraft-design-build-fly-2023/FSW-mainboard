@@ -170,18 +170,6 @@ class sun_sensor_zp_fatal_exception(Exception):
     def __str__(self):
         return f"{type(self.exception).__name__}: {self.exception}"
 
-
-class sun_sensor_zm_fatal_exception(Exception):
-    """sun_sensor_zm_fatal_exception: Exception for fatal sun sensor in the z direction errors"""
-
-    def __init__(self, exception: Exception):
-        self.exception = exception
-        super().__init__()
-
-    def __str__(self):
-        return f"{type(self.exception).__name__}: {self.exception}"
-
-
 class sun_sensor_overflow_exception(Exception):
     """lux measurement overflow"""
     def __init__(self, exception: Exception):

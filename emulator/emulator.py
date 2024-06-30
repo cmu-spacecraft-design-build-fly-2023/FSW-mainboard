@@ -57,7 +57,6 @@ class satellite(CubeSat):
         self._sun_sensor_yp = LightSensor(85000)
         self._sun_sensor_ym = LightSensor(200)
         self._sun_sensor_zp = LightSensor(12000)
-        self._sun_sensor_zm = LightSensor(5000)
 
         self._torque_x = None
         self._torque_y = None

@@ -37,7 +37,6 @@ class CubeSat:
         self._sun_sensor_yp = None
         self._sun_sensor_ym = None
         self._sun_sensor_zp = None
-        self._sun_sensor_zm = None
         self._rtc = None
         self._radio = None
         self._sd_card = None
@@ -171,13 +170,6 @@ class CubeSat:
         :return: object or None
         """
         return self._sun_sensor_zp
-
-    @property
-    def SUN_SENSOR_ZM(self):
-        """SUN_SENSOR_ZM: Returns the sun sensor in the z- direction
-        :return: object or None
-        """
-        return self._sun_sensor_zm
 
     @property
     def RTC(self):
