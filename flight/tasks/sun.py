@@ -2,7 +2,7 @@
 
 import time
 
-from apps.sun import read_light_sensors, compute_body_sun_vector, in_eclipse
+from apps.sun import read_light_sensors, compute_body_sun_vector_from_lux, in_eclipse
 from core import TemplateTask
 from core import state_manager as SM
 from core.data_handler import DataHandler as DH
@@ -34,7 +34,7 @@ class Task(TemplateTask):
             lux_readings = read_light_sensors()
 
 
-            self.status, self.sun_vector = compute_body_sun_vector(lux_readings)
+            self.status, self.sun_vector = compute_body_sun_vector_from_lux(lux_readings)
             self.eclipse_state = in_eclipse(lux_readings)
 
             readings = {

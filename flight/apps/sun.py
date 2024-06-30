@@ -37,7 +37,7 @@ def read_light_sensors():
     return lux_readings
 
 
-def compute_body_sun_vector(I_vec):
+def compute_body_sun_vector_from_lux(I_vec):
     """
     Get unit sun vector expressed in the body frame from solar flux values.
 
@@ -50,17 +50,31 @@ def compute_body_sun_vector(I_vec):
     """
 
     status = False
+    sun_body = [0, 0, 0]
 
-    sun_body = [I_vec[0] - I_vec[1], I_vec[2] - I_vec[3], I_vec[4]]
+    num_valid_readings = len(I_vec) - I_vec.count(None)
 
-    norm = (sun_body[0] ** 2 + sun_body[1] ** 2 + sun_body[2] ** 2) ** 0.5
+    if num_valid_readings >= 3: # only if unique determination is possible
 
-    # Normalize the vector if the norm is not zero
-    if norm != 0:
-        sun_body = [x / norm for x in sun_body]
-        status = True
+        for i in range(len(I_vec)): # if None replace with 0 to cancel
+            if I_vec[i] is None:
+                I_vec[i] = 0
+        
+        sun_body[0] = I_vec[0] - I_vec[1]
+        sun_body[1] = I_vec[2] - I_vec[3]
+        sun_body[2] = I_vec[4]
+
+        norm = (sun_body[0] ** 2 + sun_body[1] ** 2 + sun_body[2] ** 2) ** 0.5
+
+        # Normalize the vector if the norm is not zero
+        if norm != 0:
+            sun_body = [x / norm for x in sun_body]
+            status = True
 
     return status, sun_body
+
+
+
 
 
 def in_eclipse(raw_readings):
