@@ -368,7 +368,7 @@ class OPT4001(Driver):
         while monotonic() < start_time:
             if self.conversion_ready_flag:
                 break
-            sleep(0.001)
+            sleep(0.0008) # TODO remove sleep
 
         """
         15-12: EXPONENT

@@ -8,17 +8,31 @@ def read_light_sensors():
         lux_readings: list of lux readings on each face
     """
 
-    
-
-
-
-    lux_readings = [
-        SATELLITE.LIGHT_SENSOR_XP.lux(),
-        SATELLITE.LIGHT_SENSOR_XM.lux(),
-        SATELLITE.LIGHT_SENSOR_YP.lux(),
-        SATELLITE.LIGHT_SENSOR_YM.lux(),
-        SATELLITE.LIGHT_SENSOR_ZP.lux(),
+    sensor_faces = [
+        'LIGHT_SENSOR_XP',
+        'LIGHT_SENSOR_XM',
+        'LIGHT_SENSOR_YP',
+        'LIGHT_SENSOR_YM',
+        'LIGHT_SENSOR_ZP'
     ]
+    
+    lux_readings = []
+
+    for face in sensor_faces:
+        try:
+            s = getattr(SATELLITE, face).lux()
+            lux_readings.append(s)
+        except AttributeError as e:
+            #logging.error(f"AttributeError for {face}: {e}")
+            print(f"AttributeError for {face}: {e}")
+            lux_readings.append(None)
+        except Exception as e:
+            #logging.error(f"Error reading {face}: {e}")
+            print(f"Error reading {face}: {e}")
+            lux_readings.append(None)
+
+
+    # Read the z- face - not implemented in the HAL yet
 
     return lux_readings
 
