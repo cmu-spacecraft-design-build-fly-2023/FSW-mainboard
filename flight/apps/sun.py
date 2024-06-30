@@ -1,3 +1,28 @@
+from hal.configuration import SATELLITE
+
+def read_light_sensors():
+    """
+    Read the light sensors on the x+,x-,y+,y-, and z+ faces of the satellite
+
+    Returns:
+        lux_readings: list of lux readings on each face
+    """
+
+    
+
+
+
+    lux_readings = [
+        SATELLITE.LIGHT_SENSOR_XP.lux(),
+        SATELLITE.LIGHT_SENSOR_XM.lux(),
+        SATELLITE.LIGHT_SENSOR_YP.lux(),
+        SATELLITE.LIGHT_SENSOR_YM.lux(),
+        SATELLITE.LIGHT_SENSOR_ZP.lux(),
+    ]
+
+    return lux_readings
+
+
 def compute_body_sun_vector(I_vec):
     """
     Get unit sun vector expressed in the body frame from solar flux values.

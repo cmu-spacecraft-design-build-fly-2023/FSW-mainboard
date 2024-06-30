@@ -213,7 +213,7 @@ class OPT4001(Driver):
         package: int = 0,
         quick_wakeup: bool = False,
         lux_range: int = 0b1100,
-        conversion_time: int = 0b1000,
+        conversion_time: int = 0b0000,
         operating_mode: int = 0b00,
         latch: bool = True,
         int_pol: bool = False,
