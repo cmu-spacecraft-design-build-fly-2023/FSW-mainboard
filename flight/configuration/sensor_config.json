@@ -1,0 +1,124 @@
+{
+    "light_sensor_xp": 
+    {
+        "translation": {
+            "x": 0.1,
+            "y": 0.0,
+            "z": 0.0
+        },
+        "rotation": {
+            "w": 0.7071068,
+            "x": 0.0,
+            "y": 0.7071068,
+            "z": 0.0
+        }
+    },
+
+    "light_sensor_xm": 
+    {
+        "translation": {
+            "x": -0.1,
+            "y": 0.0,
+            "z": 0.0
+        },
+        "rotation": {
+            "w": 0.7071068,
+            "x": 0.0,
+            "y": -0.7071068,
+            "z": 0.0
+        }
+    },
+
+    "light_sensor_yp": 
+    {
+        "translation": {
+            "x": 0.0,
+            "y": 0.1,
+            "z": 0.0
+        },
+        "rotation": {
+            "w": 0.7071068,
+            "x": -0.7071068,
+            "y": 0.0,
+            "z": 0.0
+        }
+    },
+
+    "light_sensor_ym": 
+    {
+        "translation": {
+            "x": 0.0,
+            "y": -0.1,
+            "z": 0.0
+        },
+        "rotation": {
+            "w": 0.7071068,
+            "x": 0.7071068,
+            "y": 0.0,
+            "z": 0.0
+        }
+    },
+
+    "light_sensor_zp": 
+    {
+        "translation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.1
+        },
+        "rotation": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        }
+    },
+
+    "light_sensor_zm1": 
+    {
+        "translation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": -0.1
+        },
+        "rotation": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        }
+    },
+
+    "light_sensor_zm2": 
+    {
+        "translation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": -0.1
+        },
+        "rotation": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        }
+    },
+
+    "light_sensor_zm3": 
+    {
+        "translation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": -0.1
+        },
+        "rotation": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        }
+    }
+
+
+
+}
