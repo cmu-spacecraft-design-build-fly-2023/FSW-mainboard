@@ -86,7 +86,7 @@ class OPT4001(Driver):
 
     **address**
 
-    The i2c address of the sun sensor you are using. the default is 0x44
+    The i2c address of the light sensor you are using. the default is 0x44
 
     Keyword Arguments
     +++++++++++++++++
