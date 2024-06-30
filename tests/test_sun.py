@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 import tests.cp_mock  # noqa: F401
-from flight.apps.sun import compute_body_sun_vector
+from flight.apps.sun import compute_body_sun_vector_from_lux
 
 MAX_RANGE_OPT4001 = 117000
 
@@ -29,7 +29,7 @@ MAX_RANGE_OPT4001 = 117000
     ],
 )
 def test_compute_body_sun_vector(I_vec, expected):
-    result = compute_body_sun_vector(I_vec)
+    result = compute_body_sun_vector_from_lux(I_vec)
     assert result == pytest.approx(expected, rel=1e-6)
 
 

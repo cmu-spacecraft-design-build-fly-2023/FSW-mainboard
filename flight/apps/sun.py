@@ -68,7 +68,10 @@ def compute_body_sun_vector_from_lux(I_vec):
 
         # Normalize the vector if the norm is not zero
         if norm != 0:
-            sun_body = [x / norm for x in sun_body]
+            sun_body[0] = sun_body[0] / norm
+            sun_body[1] = sun_body[1] / norm
+            sun_body[2] = sun_body[2] / norm
+            
             status = True
 
     return status, sun_body
