@@ -17,7 +17,6 @@ class Task(TemplateTask):
 
     THRESHOLD_ILLUMINATION_LUX = 2000
 
-    # Fake starting sun vector
     status = False
     sun_vector = [1, 0, 0]
     eclipse_state = False
