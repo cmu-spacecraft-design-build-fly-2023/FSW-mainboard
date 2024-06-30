@@ -80,15 +80,18 @@ def compute_body_sun_vector_from_lux(I_vec):
 
 
 
-def in_eclipse(raw_readings):
+def in_eclipse(raw_readings, threshold_lux_illumination=1000):
     """
     Check the eclipse conditions based on the lux readings
 
     Parameters:
-
-
+        raw_readings (list): list of lux readings on each face (X+ face, X- face, Y+ face, Y- face, Z+ face)
+        
     Returns:
 
     """
-    # TODO
-    return False
+    for reading in raw_readings:
+        if reading is not None:
+            if reading > threshold_lux_illumination:
+                return False
+    return True
