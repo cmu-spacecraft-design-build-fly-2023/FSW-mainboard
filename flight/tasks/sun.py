@@ -6,7 +6,6 @@ from apps.sun import read_light_sensors, compute_body_sun_vector_from_lux, in_ec
 from core import TemplateTask
 from core import state_manager as SM
 from core.data_handler import DataHandler as DH
-from hal.configuration import SATELLITE
 
 
 class Task(TemplateTask):
@@ -15,6 +14,8 @@ class Task(TemplateTask):
     ID = 0x11
 
     data_keys = ["time", "status", "x", "y", "z", "eclipse"]
+
+    THRESHOLD_ILLUMINATION_LUX = 2000
 
     # Fake starting sun vector
     status = False
@@ -35,7 +36,7 @@ class Task(TemplateTask):
 
 
             self.status, self.sun_vector = compute_body_sun_vector_from_lux(lux_readings)
-            self.eclipse_state = in_eclipse(lux_readings)
+            self.eclipse_state = in_eclipse(lux_readings, threshold_lux_illumination=self.THRESHOLD_ILLUMINATION_LUX)
 
             readings = {
                 "time": time.time(),

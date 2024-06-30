@@ -78,8 +78,6 @@ def compute_body_sun_vector_from_lux(I_vec):
 
 
 
-
-
 def in_eclipse(raw_readings, threshold_lux_illumination=1000):
     """
     Check the eclipse conditions based on the lux readings
@@ -88,10 +86,11 @@ def in_eclipse(raw_readings, threshold_lux_illumination=1000):
         raw_readings (list): list of lux readings on each face (X+ face, X- face, Y+ face, Y- face, Z+ face)
         
     Returns:
+        eclipse (bool): True if the satellite is in eclipse, False otherwise
 
     """
+    eclipse = False
     for reading in raw_readings:
-        if reading is not None:
-            if reading > threshold_lux_illumination:
-                return False
-    return True
+        if reading is not None and reading < threshold_lux_illumination:
+            eclipse = True
+    return eclipse
