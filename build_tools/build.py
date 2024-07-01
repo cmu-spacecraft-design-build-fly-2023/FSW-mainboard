@@ -9,7 +9,9 @@ ROOT_PATH = os.getcwd()
 MPY_CROSS_NAME = "mpy-cross"
 if platform.system() == "Darwin":
     MPY_CROSS_NAME = "mpy-cross-macos"
-MPY_CROSS_PATH = f"{os.getcwd()}/{MPY_CROSS_NAME}"
+if platform.node() == "raspberrypi":
+    MPY_CROSS_NAME = "mpy-cross-rpi"
+MPY_CROSS_PATH = f"{os.getcwd()}/build_tools/{MPY_CROSS_NAME}"
 
 
 def check_directory_location(source_folder):
@@ -58,7 +60,7 @@ def create_build(source_folder):
                     file_name = os.path.basename(file)
 
                 try:
-                    os.system(f"{ROOT_PATH}/{MPY_CROSS_NAME} {file_name} -O3")
+                    os.system(f"{MPY_CROSS_PATH} {file_name} -O3")
                 except Exception as e:
                     print(f"Error occurred while compiling {file_name}: {str(e)}")
 
