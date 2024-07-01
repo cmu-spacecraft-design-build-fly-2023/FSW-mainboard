@@ -5,8 +5,6 @@ import tests.cp_mock  # noqa: F401
 from flight.apps.sun import compute_body_sun_vector_from_lux, in_eclipse, SUN_VECTOR_STATUS
 
 
-
-
 @pytest.mark.parametrize(
     "I_vec, expected",
     [
