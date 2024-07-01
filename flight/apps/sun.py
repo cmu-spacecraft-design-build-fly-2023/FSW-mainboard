@@ -7,6 +7,9 @@ class SUN_VECTOR_STATUS:
     UNDETERMINED_VECTOR = 0x1 # Vector computed with less than 3 lux readings
     NOT_ENOUGH_READINGS = 0x2 # Computation failed due to lack of readings (less than 3 valid readings)
     NO_READINGS = 0x3
+    MISSING_X_AXIS_READING = 0x4
+    MISSING_Y_AXIS_READING = 0x5
+    MISSING_Z_AXIS_READING = 0x6
 
 
 
@@ -57,70 +60,44 @@ def compute_body_sun_vector_from_lux(I_vec):
     Returns:
         sun_body: unit vector from spacecraft to sun expressed in body frame
     """
-    norm = MAX_RANGE
+
     status = None
     sun_body = [0, 0, 0]
 
+    I_vec = [100, 0, 0, 0, 0]
+
     num_valid_readings = 5 - I_vec.count(None)
 
-    if num_valid_readings == 5: # All readings are valid 
-        sun_body[0] = I_vec[0] - I_vec[1]
-        sun_body[1] = I_vec[2] - I_vec[3]
-        sun_body[2] = I_vec[4]
-
-        # TODO
-        #norm = (sun_body[0] ** 2 + sun_body[1] ** 2 + sun_body[2] ** 2) ** 0.5
-        norm = MAX_RANGE
-
-        # Normalize the vector if the norm is not zero
-        if norm != 0:
-            sun_body[0] = sun_body[0] / norm
-            sun_body[1] = sun_body[1] / norm
-            sun_body[2] = sun_body[2] / norm
-
-            status = SUN_VECTOR_STATUS.UNIQUE_DETERMINATION
-
-    elif num_valid_readings == 0:
-        
+    if num_valid_readings == 0:
         status = SUN_VECTOR_STATUS.NO_READINGS
+    elif num_valid_readings == 1 or num_valid_readings == 2:
+        status = SUN_VECTOR_STATUS.UNDETERMINED_VECTOR
+    elif I_vec[4] is None:
+        status = SUN_VECTOR_STATUS.MISSING_Z_AXIS_READING
+    elif I_vec[0] is None and I_vec[1] is None:
+        status = SUN_VECTOR_STATUS.MISSING_X_AXIS_READING
+    elif I_vec[2] is None and I_vec[3] is None:
+        status = SUN_VECTOR_STATUS.MISSING_Y_AXIS_READING
+    elif num_valid_readings == 5: # All readings are valid and unique determination is possible
+        status = SUN_VECTOR_STATUS.UNIQUE_DETERMINATION
 
+    
+    for i in range(len(I_vec)): # if None replace with 0 to cancel
+        if I_vec[i] is None:
+            I_vec[i] = 0
 
-    """elif 
+    sun_body[0] = I_vec[0] - I_vec[1]
+    sun_body[1] = I_vec[2] - I_vec[3]
+    sun_body[2] = I_vec[4]
 
-    elif num_valid_readings < 3:
-        for i in range(len(I_vec)): # if None replace with 0 to cancel
-            if I_vec[i] is None:
-                I_vec[i] = 0
-        sun_body[0] = I_vec[0] - I_vec[1]
-        sun_body[1] = I_vec[2] - I_vec[3]
-        sun_body[2] = I_vec[4]
-        
+    # TODO
+    norm = (sun_body[0] ** 2 + sun_body[1] ** 2 + sun_body[2] ** 2) ** 0.5
+    #norm = MAX_RANGE
 
-    if num_valid_readings < 3:
-        return SUN_VECTOR_STATUS.NOT_ENOUGH_READINGS, sun_body
+    sun_body[0] = sun_body[0] / norm
+    sun_body[1] = sun_body[1] / norm
+    sun_body[2] = sun_body[2] / norm
 
-
-
-    if num_valid_readings >= 3: # only if unique determination is possible
-
-        for i in range(len(I_vec)): # if None replace with 0 to cancel
-            if I_vec[i] is None:
-                I_vec[i] = 0
-        
-        sun_body[0] = I_vec[0] - I_vec[1]
-        sun_body[1] = I_vec[2] - I_vec[3]
-        sun_body[2] = I_vec[4]
-
-        #norm = (sun_body[0] ** 2 + sun_body[1] ** 2 + sun_body[2] ** 2) ** 0.5
-        norm = MAX_RANGE
-
-        # Normalize the vector if the norm is not zero
-        if norm != 0:
-            sun_body[0] = sun_body[0] / norm
-            sun_body[1] = sun_body[1] / norm
-            sun_body[2] = sun_body[2] / norm
-            
-            status = True"""
 
     return status, sun_body
 
@@ -142,3 +119,7 @@ def in_eclipse(raw_readings, threshold_lux_illumination=1000):
         if reading is not None and reading < threshold_lux_illumination:
             eclipse = True
     return eclipse
+
+
+def read_sun_sensor_zm():
+    pass
