@@ -80,12 +80,13 @@ def compute_body_sun_vector_from_lux(I_vec):
 
             status = SUN_VECTOR_STATUS.UNIQUE_DETERMINATION
 
+    elif num_valid_readings == 0:
+        
+        status = SUN_VECTOR_STATUS.NO_READINGS
+
+
     """elif 
 
-
-
-    if num_valid_readings == 0:
-        return SUN_VECTOR_STATUS.NO_READINGS, sun_body
     elif num_valid_readings < 3:
         for i in range(len(I_vec)): # if None replace with 0 to cancel
             if I_vec[i] is None:
