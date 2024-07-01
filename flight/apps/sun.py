@@ -101,8 +101,16 @@ def compute_body_sun_vector_from_lux(I_vec):
         if i_vec[i] is ERROR_LUX:
             i_vec[i] = 0
 
-    sun_body[0] = i_vec[0] - i_vec[1]
-    sun_body[1] = i_vec[2] - i_vec[3]
+    if i_vec[0] > i_vec[1]:
+        sun_body[0] = i_vec[0]
+    else:
+        sun_body[0] = -i_vec[1]
+
+    if i_vec[2] > i_vec[3]:
+        sun_body[1] = i_vec[2]
+    else:
+        sun_body[1] = -i_vec[3]
+
     sun_body[2] = i_vec[4]
 
     # TODO
