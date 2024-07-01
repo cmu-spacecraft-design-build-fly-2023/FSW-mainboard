@@ -83,6 +83,14 @@ def compute_body_sun_vector_from_lux(I_vec):
         status = SUN_VECTOR_STATUS.MISSING_FULL_X_AXIS_READING
     elif I_vec[2] is None and I_vec[3] is None:
         status = SUN_VECTOR_STATUS.MISSING_FULL_Y_AXIS_READING
+    elif I_vec[0] is None:
+        status = SUN_VECTOR_STATUS.MISSING_XP_READING
+    elif I_vec[1] is None:
+        status = SUN_VECTOR_STATUS.MISSING_XM_READING
+    elif I_vec[2] is None:
+        status = SUN_VECTOR_STATUS.MISSING_YP_READING
+    elif I_vec[3] is None:
+        status = SUN_VECTOR_STATUS.MISSING_YM_READING
     elif num_valid_readings == 5: # All readings are valid and unique determination is possible
         status = SUN_VECTOR_STATUS.UNIQUE_DETERMINATION
 
@@ -99,7 +107,7 @@ def compute_body_sun_vector_from_lux(I_vec):
     norm = (sun_body[0] ** 2 + sun_body[1] ** 2 + sun_body[2] ** 2) ** 0.5
     #norm = MAX_RANGE
 
-    if norm == 0:  # Avoid division by zero
+    if norm == 0:  # Avoid division by zero - not perfect
         status = SUN_VECTOR_STATUS.UNDETERMINED_VECTOR
         return status, sun_body
 
@@ -123,11 +131,15 @@ def in_eclipse(raw_readings, threshold_lux_illumination=1000):
         eclipse (bool): True if the satellite is in eclipse, False otherwise
 
     """
-    eclipse = False
+    eclipse = True
+
+
+    # Check if all readings are below the threshold
     for reading in raw_readings:
-        if reading is not None and reading < threshold_lux_illumination:
-            eclipse = True
+        if reading is not None and reading >= threshold_lux_illumination:
+            return False
     return eclipse
+
 
 
 def read_sun_sensor_zm():
