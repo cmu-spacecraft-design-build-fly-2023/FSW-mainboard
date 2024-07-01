@@ -2,6 +2,7 @@ from hal.configuration import SATELLITE
 
 
 MAX_RANGE = 117000 # OPT4001
+NUM_LIGHT_SENSORS = 5
 class SUN_VECTOR_STATUS:
     UNIQUE_DETERMINATION = 0x0 # Successful computation with at least 3 lux readings
     UNDETERMINED_VECTOR = 0x1 # Vector computed with less than 3 lux readings
@@ -70,7 +71,7 @@ def compute_body_sun_vector_from_lux(I_vec):
     sun_body = [0, 0, 0]
 
 
-    num_valid_readings = 5 - I_vec.count(None)
+    num_valid_readings = NUM_LIGHT_SENSORS - I_vec.count(None)
 
     if num_valid_readings == 0:
         status = SUN_VECTOR_STATUS.NO_READINGS
@@ -131,13 +132,19 @@ def in_eclipse(raw_readings, threshold_lux_illumination=1000):
         eclipse (bool): True if the satellite is in eclipse, False otherwise
 
     """
-    eclipse = True
+    eclipse = None
+
+    if raw_readings.count(None) == NUM_LIGHT_SENSORS:
+        return eclipse
 
 
     # Check if all readings are below the threshold
     for reading in raw_readings:
         if reading is not None and reading >= threshold_lux_illumination:
             return False
+        
+    eclipse = True
+    
     return eclipse
 
 
