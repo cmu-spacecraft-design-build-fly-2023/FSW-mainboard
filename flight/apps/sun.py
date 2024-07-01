@@ -1,13 +1,14 @@
 from hal.configuration import SATELLITE
 
-
-MAX_RANGE = 117000 # OPT4001
+MAX_RANGE = 117000  # OPT4001
 NUM_LIGHT_SENSORS = 5
 ERROR_LUX = -1
+
+
 class SUN_VECTOR_STATUS:
-    UNIQUE_DETERMINATION = 0x0 # Successful computation with at least 3 lux readings
-    UNDETERMINED_VECTOR = 0x1 # Vector computed with less than 3 lux readings
-    NOT_ENOUGH_READINGS = 0x2 # Computation failed due to lack of readings (less than 3 valid readings)
+    UNIQUE_DETERMINATION = 0x0  # Successful computation with at least 3 lux readings
+    UNDETERMINED_VECTOR = 0x1  # Vector computed with less than 3 lux readings
+    NOT_ENOUGH_READINGS = 0x2  # Computation failed due to lack of readings (less than 3 valid readings)
     NO_READINGS = 0x3
     MISSING_XP_READING = 0x4
     MISSING_XM_READING = 0x5
@@ -19,7 +20,6 @@ class SUN_VECTOR_STATUS:
     MISSING_FULL_Z_AXIS_READING = 0xB
 
 
-
 def read_light_sensors():
     """
     Read the light sensors on the x+,x-,y+,y-, and z+ faces of the satellite
@@ -29,13 +29,13 @@ def read_light_sensors():
     """
 
     sensor_faces = [
-        'LIGHT_SENSOR_XP',
-        'LIGHT_SENSOR_XM',
-        'LIGHT_SENSOR_YP',
-        'LIGHT_SENSOR_YM',
-        'LIGHT_SENSOR_ZP'
+        "LIGHT_SENSOR_XP",
+        "LIGHT_SENSOR_XM",
+        "LIGHT_SENSOR_YP",
+        "LIGHT_SENSOR_YM",
+        "LIGHT_SENSOR_ZP",
     ]
-    
+
     lux_readings = []
 
     for face in sensor_faces:
@@ -43,17 +43,17 @@ def read_light_sensors():
             s = getattr(SATELLITE, face).lux()
             lux_readings.append(s)
         except AttributeError as e:
-            #logging.error(f"AttributeError for {face}: {e}")
+            # logging.error(f"AttributeError for {face}: {e}")
             print(f"AttributeError for {face}: {e}")
             lux_readings.append(ERROR_LUX)
         except Exception as e:
-            #logging.error(f"Error reading {face}: {e}")
+            # logging.error(f"Error reading {face}: {e}")
             print(f"Error reading {face}: {e}")
             lux_readings.append(ERROR_LUX)
 
     # Read the z- face - not implemented in the HAL yet
 
-    return lux_readings 
+    return lux_readings
 
 
 def compute_body_sun_vector_from_lux(I_vec):
@@ -70,7 +70,6 @@ def compute_body_sun_vector_from_lux(I_vec):
 
     status = None
     sun_body = [0, 0, 0]
-
 
     num_valid_readings = NUM_LIGHT_SENSORS - I_vec.count(ERROR_LUX)
 
@@ -93,13 +92,12 @@ def compute_body_sun_vector_from_lux(I_vec):
         status = SUN_VECTOR_STATUS.MISSING_YP_READING
     elif I_vec[3] == ERROR_LUX:
         status = SUN_VECTOR_STATUS.MISSING_YM_READING
-    elif num_valid_readings == 5: # All readings are valid and unique determination is possible
+    elif num_valid_readings == 5:  # All readings are valid and unique determination is possible
         status = SUN_VECTOR_STATUS.UNIQUE_DETERMINATION
 
-    
     i_vec = I_vec.copy()
 
-    for i in range(len(I_vec)): # if ERROR_LUX replace with 0 to cancel
+    for i in range(len(I_vec)):  # if ERROR_LUX replace with 0 to cancel
         if i_vec[i] is ERROR_LUX:
             i_vec[i] = 0
 
@@ -109,7 +107,7 @@ def compute_body_sun_vector_from_lux(I_vec):
 
     # TODO
     norm = (sun_body[0] ** 2 + sun_body[1] ** 2 + sun_body[2] ** 2) ** 0.5
-    #norm = MAX_RANGE
+    # norm = MAX_RANGE
 
     if norm == 0:  # Avoid division by zero - not perfect
         status = SUN_VECTOR_STATUS.UNDETERMINED_VECTOR
@@ -119,9 +117,7 @@ def compute_body_sun_vector_from_lux(I_vec):
     sun_body[1] = sun_body[1] / norm
     sun_body[2] = sun_body[2] / norm
 
-
     return status, sun_body
-
 
 
 def in_eclipse(raw_readings, threshold_lux_illumination=1000):
@@ -130,7 +126,7 @@ def in_eclipse(raw_readings, threshold_lux_illumination=1000):
 
     Parameters:
         raw_readings (list): list of lux readings on each face (X+ face, X- face, Y+ face, Y- face, Z+ face)
-        
+
     Returns:
         eclipse (bool): True if the satellite is in eclipse, False otherwise
 
@@ -140,16 +136,14 @@ def in_eclipse(raw_readings, threshold_lux_illumination=1000):
     if raw_readings.count(ERROR_LUX) == NUM_LIGHT_SENSORS:
         return eclipse
 
-
     # Check if all readings are below the threshold
     for reading in raw_readings:
         if reading != ERROR_LUX and reading >= threshold_lux_illumination:
             return False
-        
-    eclipse = True
-    
-    return eclipse
 
+    eclipse = True
+
+    return eclipse
 
 
 def read_sun_sensor_zm():

@@ -170,6 +170,7 @@ class light_sensor_zp_fatal_exception(Exception):
     def __str__(self):
         return f"{type(self.exception).__name__}: {self.exception}"
 
+
 class rtc_fatal_exception(Exception):
     """rtc_fatal_exception: Exception for fatal RTC errors"""
 

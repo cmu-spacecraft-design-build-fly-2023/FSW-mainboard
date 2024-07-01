@@ -5,6 +5,7 @@ This file contains the base class for all components which need diagnostic tests
 
 Author: Harry Rosmann
 """
+
 import time
 
 
@@ -119,9 +120,7 @@ class Diagnostics:
 
     def run_diagnostics(self) -> list:
         """run_diagnostic_test: Run all tests for the component"""
-        raise NotImplementedError(
-            "Subclasses must implement run_diagnostic_test method"
-        )
+        raise NotImplementedError("Subclasses must implement run_diagnostic_test method")
 
     @property
     def resetable(self):
