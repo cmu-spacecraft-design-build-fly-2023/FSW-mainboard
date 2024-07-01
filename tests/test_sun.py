@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 import tests.cp_mock  # noqa: F401
-from flight.apps.sun import compute_body_sun_vector_from_lux, in_eclipse, SUN_VECTOR_STATUS
+from flight.apps.sun import compute_body_sun_vector_from_lux, in_eclipse, SUN_VECTOR_STATUS, ERROR_LUX
 
 
 @pytest.mark.parametrize(
@@ -14,10 +14,10 @@ from flight.apps.sun import compute_body_sun_vector_from_lux, in_eclipse, SUN_VE
         ([0, 0, 117000, 0, 0], (SUN_VECTOR_STATUS.UNIQUE_DETERMINATION, [0.0, 1.0, 0.0])),
         ([0, 0, 0, 117000, 0], (SUN_VECTOR_STATUS.UNIQUE_DETERMINATION, [0.0, -1.0, 0.0])),
         ([0, 0, 0, 0, 117000], (SUN_VECTOR_STATUS.UNIQUE_DETERMINATION, [0.0, 0.0, 1.0])),
-        ([None, 117000, 0, 0, 0], (SUN_VECTOR_STATUS.MISSING_XP_READING, [-1.0, 0, 0])),
-        ([0, None, 0, 117000, 0], (SUN_VECTOR_STATUS.MISSING_XM_READING, [0.0, -1.0, 0.0])),
-        ([None, 20000, 0, None, None], (SUN_VECTOR_STATUS.NOT_ENOUGH_READINGS, [-1.0, 0.0, 0.0])),
-        ([None, None, None, None, None], (SUN_VECTOR_STATUS.NO_READINGS, [0.0, 0.0, 0.0])),
+        ([ERROR_LUX, 117000, 0, 0, 0], (SUN_VECTOR_STATUS.MISSING_XP_READING, [-1.0, 0, 0])),
+        ([0, ERROR_LUX, 0, 117000, 0], (SUN_VECTOR_STATUS.MISSING_XM_READING, [0.0, -1.0, 0.0])),
+        ([ERROR_LUX, 20000, 0, ERROR_LUX, ERROR_LUX], (SUN_VECTOR_STATUS.NOT_ENOUGH_READINGS, [-1.0, 0.0, 0.0])),
+        ([ERROR_LUX, ERROR_LUX, ERROR_LUX, ERROR_LUX, ERROR_LUX], (SUN_VECTOR_STATUS.NO_READINGS, [0.0, 0.0, 0.0])),
     ],
 )
 def test_compute_body_sun_vector_from_lux(I_vec, expected):
@@ -31,7 +31,7 @@ def test_compute_body_sun_vector_from_lux(I_vec, expected):
     ([2000, 3000, 2500, 4000, 3500], 1000, False), # All readings are above threshold
     ([500, 600, 700, 400, 550], 5000, True), # All readings are below threshold
     ([2000, 300, 2500, 400, 3500], 1000, False), # Aboove and below threshold
-    ([None, None, None, None, None], 1000, None) # All readings are None
+    ([ERROR_LUX, ERROR_LUX, ERROR_LUX, ERROR_LUX, ERROR_LUX], 1000, None) # All readings are ERROR_LUX
 ],)
 def test_in_eclipse(raw_readings, threshold_lux_illumination, expected):
     assert in_eclipse(raw_readings, threshold_lux_illumination) == expected
