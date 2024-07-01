@@ -1,19 +1,23 @@
 # Flight Software for the PyCubed Board (Argus-1)
 
-The repository contains the current flight software stack for the **PyCubed Board** within Argus-1. Argus-1 is a technology demonstration mission with the goal of (not exhaustive):
-- Demonstrating Visual Attitude and Orbit Determination (A&OD) on a low-cost satellite (Independance from any GPS or ground involvement in the A&OD process)
+The repository contains the current flight software stack for the **Mainboard** of Argus-1. Argus-1 is a technology demonstration mission with the goal of:
+- Demonstrating Visual-Inertial Orbit Determination (A&OD) on a low-cost satellite (devoid of any GPS or ground involvement)
 - Collecting a dataset of images of the Earth to further efforts in CubeSat visual applications.
 - Demonstrating efficient on-orbit ML/GPU Payload processing 
 
 ## Build and Execution
 
+### With mainboard
+
 Building current files and moving them to the board can be handled by the run.sh script which can be run via:
 ```bash
 ./run.sh
 ```
-This script first builds and compiles files to .mpy files and then transfers them to the mainboard you are connected to.
+The script first builds and compiles the flight software files to .mpy files and transfers them to the mainboard you are connected to.
 
-If you are not connected to a mainboard you should either run the simulator or emulator.
+### Without mainboard
+
+In the absence of the mainboard, you should either run the simulator or emulator.
 
 To run the emulator:
 ```bash
@@ -25,8 +29,9 @@ To run the simulator:
 ./run.sh simulate
 ```
 
+### Build or move 
 
-If you want to just do one of build or move to the baord then building and moving to the flight software code to the Argus board can be automated using the build.py and move_to_board.py scripts in the build_tools directory. It automatically updates all changes (including adding and deleting files).
+For only building files or moving them to the board as individual actions, you can use the automated scripts, build.py and move_to_board.py, in the build_tools directory. Note that move_to_board.py automatically updates all changes (including adding and deleting files) on the target board.
 
 To build:
 ```bash

@@ -28,5 +28,5 @@ then
     cd -
 elif [ "$1" == "simulate" ];
 then
-    echo "Simulator still in the works!"
+    echo "Simulator still in the works :)"
 fi
