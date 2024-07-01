@@ -6,8 +6,7 @@ Onboard Data Handling (OBDH) Module
 This module provides the main interface for the onboard data handling system consisting of:
 - Persistent storage management and single point of access for the onboard mass storage system (SD Card)
 - Logging interface for flight software tasks
-- Automated file services for the flight software, including telemetry (TM) 
-and telecommand (TC) file generation for transmission
+- Automated file services, including telemetry (TM) and telecommand (TC) file generation for transmission
 - Data processing and formatting for the flight software
 
 Author: Ibrahima Sory Sow
@@ -116,7 +115,7 @@ class DataProcess:
 
         # TODO Check formating e.g. 'iff', 'iif', 'fff', 'iii', etc. ~ done within compute_bytesize()
         self.data_format = "<" + data_format
-        # Need to specify endianness to disable padding 
+        # Need to specify endianness to disable padding
         # (https://stackoverflow.com/questions/47750056/python-struct-unpack-length-error/47750278#47750278)
         self.bytesize = self.compute_bytesize(self.data_format)
 
@@ -359,7 +358,7 @@ class DataProcess:
         Reads the content of the current file.
 
         Returns:
-            A list of tuples representing the content of the file. 
+            A list of tuples representing the content of the file.
             Each tuple contains the unpacked data from a line in the file.
 
         Raises:
@@ -470,7 +469,8 @@ class DataHandler:
     Managing class for all data processes and the SD card.
 
 
-    Note: If the same SPI bus is shared with other peripherals, the SD card must be initialized before accessing any other peripheral on the bus.
+    Note: If the same SPI bus is shared with other peripherals, the SD card must be initialized before accessing
+    any other peripheral on the bus.
     Failure to do so can prevent the SD card from being recognized until it is powered off or re-inserted.
     """
 
@@ -889,7 +889,8 @@ class DataHandler:
 
 def path_exist(path: str) -> bool:
     """
-    Replacement for os.path.exists() function, which is not implemented in micropython. If the request for a directory, the function will return True if the directory exists, even if it is empty.
+    Replacement for os.path.exists() function, which is not implemented in micropython.
+    If the request for a directory, the function will return True if the directory exists, even if it is empty.
     """
     try_path = path
     if path[-1] == "/":
