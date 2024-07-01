@@ -4,27 +4,19 @@ import pytest
 import tests.cp_mock  # noqa: F401
 from flight.apps.sun import compute_body_sun_vector_from_lux, in_eclipse
 
-MAX_RANGE_OPT4001 = 117000
 
 
-# TODO - use realistics values
+
 @pytest.mark.parametrize(
     "I_vec, expected",
     [
-        (
-            [80000, 0, 30000, 0, 0, 20000],
-            [0.91168461, 0.34188173, -0.22792115],
-        ),
-        ([117000, 0, 0, 0, 0], [1.0, 0.0, 0.0]),
-        ([0, 117000, 0, 0, 0], [-1.0, 0.0, 0.0]),
-        ([0, 0, 117000, 0, 0], [0.0, 1.0, 0.0]),
-        ([0, 0, 0, 117000, 0], [0.0, -1.0, 0.0]),
-        ([0, 0, 0, 0, 117000], [0.0, 0.0, 1.0]),
-        ([0, 0, 0, 0, 0, 0], [0.0, 0.0, 0.0]),  # Edge case: all zeros
-        (
-            [500, 500, 500, 500, 500],
-            [0.0, 0.0, 0.0],
-        ),  # Edge case: equal flux on all faces (impossible though)
+        ([80000, 0, 30000, 0, 0, 20000],(True, [0.91168461, 0.34188173, -0.22792115])),
+        ([117000, 0, 0, 0, 0], (True, [1.0, 0.0, 0.0])),
+        ([0, 117000, 0, 0, 0], (True, [-1.0, 0.0, 0.0])),
+        ([0, 0, 117000, 0, 0], (True, [0.0, 1.0, 0.0])),
+        ([0, None, 0, 117000, 0], (True, [0.0, -1.0, 0.0])),
+        ([0, 0, 0, 0, 117000], (True, [0.0, 0.0, 1.0])),
+        ([None, 0, 0, None, None], (False, [0.0, 0.0, 0.0])),  
     ],
 )
 def test_compute_body_sun_vector_from_lux(I_vec, expected):
@@ -41,6 +33,8 @@ def test_compute_body_sun_vector_from_lux(I_vec, expected):
 ],)
 def test_in_eclipse(raw_readings, threshold_lux_illumination, expected):
     assert in_eclipse(raw_readings, threshold_lux_illumination) == expected
+
+
 
 
 if __name__ == "__main__":
