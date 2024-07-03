@@ -108,6 +108,7 @@ class ArgusV1Components:
     LIGHT_SENSOR_YP_I2C_ADDRESS = const(0x46)
     LIGHT_SENSOR_YM_I2C_ADDRESS = const(0x47)
     LIGHT_SENSOR_ZP_I2C_ADDRESS = const(0x48)
+    LIGHT_SENSOR_CONVERSION_TIME = 0b0000
 
     # RADIO
     RADIO_SPI = ArgusV1Interfaces.SPI
@@ -497,6 +498,7 @@ class ArgusV1(CubeSat):
             light_sensor_xp = OPT4001(
                 ArgusV1Components.LIGHT_SENSORS_I2C,
                 ArgusV1Components.LIGHT_SENSOR_XP_I2C_ADDRESS,
+                conversion_time=ArgusV1Components.LIGHT_SENSOR_CONVERSION_TIME,
             )
 
             if self.__middleware_enabled:
@@ -521,6 +523,7 @@ class ArgusV1(CubeSat):
             light_sensor_xm = OPT4001(
                 ArgusV1Components.LIGHT_SENSORS_I2C,
                 ArgusV1Components.LIGHT_SENSOR_XM_I2C_ADDRESS,
+                conversion_time=ArgusV1Components.LIGHT_SENSOR_CONVERSION_TIME,
             )
 
             if self.__middleware_enabled:
@@ -545,6 +548,7 @@ class ArgusV1(CubeSat):
             light_sensor_yp = OPT4001(
                 ArgusV1Components.LIGHT_SENSORS_I2C,
                 ArgusV1Components.LIGHT_SENSOR_YP_I2C_ADDRESS,
+                conversion_time=ArgusV1Components.LIGHT_SENSOR_CONVERSION_TIME,
             )
 
             if self.__middleware_enabled:
@@ -569,6 +573,7 @@ class ArgusV1(CubeSat):
             light_sensor_ym = OPT4001(
                 ArgusV1Components.LIGHT_SENSORS_I2C,
                 ArgusV1Components.LIGHT_SENSOR_YM_I2C_ADDRESS,
+                conversion_time=ArgusV1Components.LIGHT_SENSOR_CONVERSION_TIME,
             )
 
             if self.__middleware_enabled:
@@ -593,6 +598,7 @@ class ArgusV1(CubeSat):
             light_sensor_zp = OPT4001(
                 ArgusV1Components.LIGHT_SENSORS_I2C,
                 ArgusV1Components.LIGHT_SENSOR_ZP_I2C_ADDRESS,
+                conversion_time=ArgusV1Components.LIGHT_SENSOR_CONVERSION_TIME,
             )
 
             if self.__middleware_enabled:

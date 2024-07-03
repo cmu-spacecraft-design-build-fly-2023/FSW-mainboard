@@ -1,4 +1,5 @@
 from hal.configuration import SATELLITE
+from ulab import numpy as np
 
 MAX_RANGE = 117000  # OPT4001
 NUM_LIGHT_SENSORS = 5
@@ -69,7 +70,7 @@ def compute_body_sun_vector_from_lux(I_vec):
     """
 
     status = None
-    sun_body = [0, 0, 0]
+    sun_body = np.zeros(3)
 
     num_valid_readings = NUM_LIGHT_SENSORS - I_vec.count(ERROR_LUX)
 
@@ -121,9 +122,7 @@ def compute_body_sun_vector_from_lux(I_vec):
         status = SUN_VECTOR_STATUS.UNDETERMINED_VECTOR
         return status, sun_body
 
-    sun_body[0] = sun_body[0] / norm
-    sun_body[1] = sun_body[1] / norm
-    sun_body[2] = sun_body[2] / norm
+    sun_body = sun_body / norm
 
     return status, sun_body
 

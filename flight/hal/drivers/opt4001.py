@@ -207,7 +207,7 @@ class OPT4001(Driver):
         package: int = 0,
         quick_wakeup: bool = False,
         lux_range: int = 0b1100,
-        conversion_time: int = 0b0000,
+        conversion_time: int = 0b1000,
         operating_mode: int = 0b00,
         latch: bool = True,
         int_pol: bool = False,
@@ -362,7 +362,7 @@ class OPT4001(Driver):
         while monotonic() < start_time:
             if self.conversion_ready_flag:
                 break
-            sleep(0.0008)  # TODO remove sleep
+            sleep(0.001)  # TODO remove sleep
 
         """
         15-12: EXPONENT
