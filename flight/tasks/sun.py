@@ -2,7 +2,7 @@
 
 import time
 
-from apps.sun import compute_body_sun_vector_from_lux, in_eclipse, read_light_sensors
+from apps.sun import SUN_VECTOR_STATUS, compute_body_sun_vector_from_lux, in_eclipse, read_light_sensors
 from core import TemplateTask
 from core import state_manager as SM
 from core.data_handler import DataHandler as DH
@@ -29,8 +29,8 @@ class Task(TemplateTask):
 
     THRESHOLD_ILLUMINATION_LUX = 3000
 
-    status = False
-    sun_vector = [1, 0, 0]
+    status = SUN_VECTOR_STATUS.NO_READINGS
+    sun_vector = [0, 0, 0]
     eclipse_state = False
 
     async def main_task(self):
