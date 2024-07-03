@@ -321,13 +321,11 @@ class DataProcess:
         Returns storage information for the current file process which includes:
         - Number of files in the directory
         - Total directory size in bytes
-        - TODO
 
         Returns:
             A tuple containing the number of files and the total directory size.
         """
         files = os.listdir(self.dir_path)
-        # TODO - implement the rest of the function
         total_size = len(files) * self.size_limit + self.get_current_file_size()
         return len(files), total_size
 

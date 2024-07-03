@@ -126,7 +126,7 @@ def in_eclipse(raw_readings, threshold_lux_illumination=1000):
         raw_readings (list): list of lux readings on each face (X+ face, X- face, Y+ face, Y- face, Z+ face)
 
     Returns:
-        eclipse (bool): True if the satellite is in eclipse, False otherwise
+        eclipse (bool or None): True if the satellite is in eclipse, False if no eclipse, None if all readings are ERROR_LUX
 
     """
     eclipse = None
