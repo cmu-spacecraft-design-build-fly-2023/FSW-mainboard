@@ -1,3 +1,4 @@
+import time
 from typing import List, Optional
 
 from hal.cubesat import CubeSat
@@ -7,6 +8,7 @@ from hal.drivers.light_sensor import LightSensor
 from hal.drivers.payload import Payload
 from hal.drivers.power_monitor import PowerMonitor
 from hal.drivers.radio import Radio
+from hal.drivers.rtc import RTC
 from hal.drivers.sd import SD
 from numpy import array
 
@@ -70,6 +72,8 @@ class satellite(CubeSat):
 
         self._jetson_monitor = PowerMonitor(4, 0.05)
         self._battery_monitor = PowerMonitor(4.2, 0.04)
+
+        self._rtc = RTC(time.gmtime())
 
     def boot_sequence(self) -> List[int]:
         pass

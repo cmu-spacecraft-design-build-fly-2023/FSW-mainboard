@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from hal.drivers.diagnostics.diagnostics import Diagnostics
+from hal.drivers.middleware.generic_driver import Driver, ErrorCodes
 
 
 class CubeSat:
@@ -8,10 +8,10 @@ class CubeSat:
 
     def __init__(self):
         # List of successfully initialized devices
-        self._device_list: List[Diagnostics] = []
+        self._device_list: List[Driver] = []
 
         # List of errors from most recent system diagnostic test
-        self._recent_errors: List[int] = [Diagnostics.NOERROR]
+        self._recent_errors: List[int] = [ErrorCodes.NOERROR]
 
         # State flags
         self._state_flags = None
