@@ -1,4 +1,5 @@
 from time import struct_time
+
 from hal.drivers.middleware.generic_driver import Driver
 
 

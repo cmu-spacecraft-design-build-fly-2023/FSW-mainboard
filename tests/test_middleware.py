@@ -1,8 +1,8 @@
 import sys
 
 import pytest
-from tests.test_lib.example_driver import TestDevice, TestException
 
+from tests.test_lib.example_driver import TestDevice, TestException
 
 sys.path.insert(0, "./emulator/drivers/")
 from hal.drivers.middleware.middleware import Middleware  # noqa: E402
