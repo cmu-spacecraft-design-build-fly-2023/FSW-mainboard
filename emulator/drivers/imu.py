@@ -1,4 +1,7 @@
-class IMU:
+from hal.drivers.middleware.generic_driver import Driver
+
+
+class IMU(Driver):
     def __init__(self, accel, mag, gyro, temp) -> None:
         self.__accel = accel
         self.__mag = mag
@@ -23,3 +26,6 @@ class IMU:
 
     def disable(self):
         self.__enable = False
+
+    def run_diagnostics(self) -> list:
+        return []

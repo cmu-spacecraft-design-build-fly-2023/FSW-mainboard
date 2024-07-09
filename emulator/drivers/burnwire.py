@@ -9,4 +9,4 @@ class BurnWires(Driver):
         assert 0 <= duty_cycle <= 0xFFFF
 
     def run_diagnostics(self) -> list:
-        return {}
+        return []

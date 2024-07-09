@@ -1,6 +1,7 @@
 import asyncio
 import queue
 import random
+import time
 
 
 class RadioDebug:
@@ -46,9 +47,9 @@ class Radio:
     def listen(self):
         self.listening = True
 
-    async def receive(self, *, keep_listening=True, with_header=False, with_ack=False, timeout=None, debug=False):
+    def receive(self, *, keep_listening=True, with_header=False, with_ack=False, timeout=None, debug=False):
         rx_time = self._rx_time_bias + (random.random() - 0.5) * self._rx_time_dev
-        await asyncio.sleep(rx_time)
+        time.sleep(rx_time)
         if self._rx_queue.empty():
             return None
         return self._rx_queue.get().observe()
@@ -62,9 +63,9 @@ class Radio:
     def sleep(self):
         self.listening = False
 
-    async def send(self, packet, destination=0x00, keep_listening=True):
+    def send(self, packet, destination=0x00, keep_listening=True):
         tx_time = self._tx_time_bias + (random.random() - 0.5) * self._tx_time_dev
-        await asyncio.sleep(tx_time)
+        time.sleep(tx_time)
         self.test.last_tx_packet = packet
         return None
 
@@ -74,3 +75,6 @@ class Radio:
 
     def fifo_empty(self):
         return True
+
+    def crc_error(self):
+        return 0
