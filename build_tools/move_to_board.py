@@ -14,7 +14,8 @@ elif platform.system() == "Linux":
         BOARD_PATH = f"/media/{username}/PYCUBED"
 elif platform.system() == "Darwin":
     BOARD_PATH = "/Volumes/ARGUS"
-
+if platform.node() == "raspberrypi":
+    BOARD_PATH = "/mnt/mainboard"
 
 def copy_folder(source_folder, destination_folder, show_identical_files=True):
 
@@ -66,6 +67,8 @@ if __name__ == "__main__":
             BOARD_PATH = f"/media/{username}/PYCUBED"
     elif platform.system() == "Darwin":
         BOARD_PATH = "/Volumes/ARGUS"
+    if platform.node() == "raspberrypi":
+        BOARD_PATH = "/mnt/mainboard"
 
     # Parses command line arguments.
     parser = argparse.ArgumentParser()
