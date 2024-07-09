@@ -190,10 +190,14 @@ class DRV8830(Driver):
         # Constrain throttle voltage value
         new_throttle_volts = min(max(new_throttle_volts, -5.1), +5.1)
         if new_throttle_volts < 0:
-            self._vset = VoltageAdapter.voltage_to_index(self, abs(new_throttle_volts))
+            self._vset = VoltageAdapter.voltage_to_index(
+                self, abs(new_throttle_volts)
+            )
             self._in_x = BridgeControl.REVERSE
         elif new_throttle_volts > 0:
-            self._vset = VoltageAdapter.voltage_to_index(self, new_throttle_volts)
+            self._vset = VoltageAdapter.voltage_to_index(
+                self, new_throttle_volts
+            )
             self._in_x = BridgeControl.FORWARD
         else:
             self._vset = 0
@@ -269,19 +273,18 @@ class DRV8830(Driver):
     """
     ----------------------- HANDLER METHODS -----------------------
     """
-
     @property
     def get_flags(self):
         flags = {}
         if self._fault:
             if self._ocp:
-                flags["ocp"] = None
+                flags['ocp'] = None
             if self._uvlo:
-                flags["uvlo"] = None
+                flags['uvlo'] = None
             if self._ots:
-                flags["ots"] = None
+                flags['ots'] = None
             if self._ilimit:
-                flags["ilimit"] = None
+                flags['ilimit'] = None
         return flags
 
     ######################### DIAGNOSTICS #########################

@@ -213,6 +213,5 @@ class BurnWires(Driver):
     """
     ----------------------- HANDLER METHODS -----------------------
     """
-
     def get_flags(self):
         return {}

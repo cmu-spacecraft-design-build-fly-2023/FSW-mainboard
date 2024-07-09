@@ -3,4 +3,4 @@ class BurnWires:
         pass
 
     def duty_cycle(self, duty_cycle):
-        assert 0 <= duty_cycle <= 0xFFFF
+        assert 0 <= duty_cycle <= 0xffff
