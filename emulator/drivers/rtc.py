@@ -14,4 +14,7 @@ class RTC(Driver):
         self.datetime = date_input
 
     def run_diagnostics(self):
+        return []
+
+    def get_flags(self) -> dict:
         return {}

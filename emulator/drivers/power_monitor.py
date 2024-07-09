@@ -11,3 +11,6 @@ class PowerMonitor(Driver):
 
     def run_diagnostics(self):
         return []
+
+    def get_flags(self) -> dict:
+        return {}

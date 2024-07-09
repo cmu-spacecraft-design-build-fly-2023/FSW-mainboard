@@ -10,6 +10,7 @@ from hal.drivers.power_monitor import PowerMonitor
 from hal.drivers.radio import Radio
 from hal.drivers.rtc import RTC
 from hal.drivers.sd import SD
+from hal.drivers.middleware.middleware import Middleware
 from numpy import array
 
 
@@ -44,6 +45,9 @@ class satellite(CubeSat):
         self.__debug = debug
 
         super().__init__()
+
+        if self.__middleware_enabled:
+            self._burnwires = Middleware(BurnWires())
 
         self._burnwires = BurnWires()
         self._radio = Radio()
