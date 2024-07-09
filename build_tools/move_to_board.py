@@ -17,6 +17,7 @@ elif platform.system() == "Darwin":
 if platform.node() == "raspberrypi":
     BOARD_PATH = "/mnt/mainboard"
 
+
 def copy_folder(source_folder, destination_folder, show_identical_files=True):
 
     for root, dirs, files in os.walk(source_folder):
