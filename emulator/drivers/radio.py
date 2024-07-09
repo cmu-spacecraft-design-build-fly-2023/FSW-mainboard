@@ -1,4 +1,3 @@
-import asyncio
 import queue
 import random
 import time
