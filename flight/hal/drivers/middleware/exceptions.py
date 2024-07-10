@@ -184,6 +184,7 @@ class sun_sensor_zm_fatal_exception(Exception):
 
 class sun_sensor_overflow_exception(Exception):
     """lux measurement overflow"""
+
     def __init__(self, exception: Exception):
         self.exception = exception
         super.__init__()
@@ -263,6 +264,7 @@ class handler_cant_handle_exception(Exception):
     to be used when the handler attempts to handle a method that wasn't given to it
     as a handlable method
     """
+
     def __init__(self, exception: Exception):
         self.exception = exception
         super().__init__()
