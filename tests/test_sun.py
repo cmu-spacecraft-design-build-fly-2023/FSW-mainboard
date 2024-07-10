@@ -79,7 +79,7 @@ def test_compute_body_sun_vector_from_lux(I_vec, expected):
         (
             [ERROR_LUX, ERROR_LUX, ERROR_LUX, ERROR_LUX, ERROR_LUX],
             1000,
-            None,
+            False,
         ),  # All readings are ERROR_LUX
     ],
 )

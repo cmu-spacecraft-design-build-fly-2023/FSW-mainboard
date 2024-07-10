@@ -126,10 +126,10 @@ def in_eclipse(raw_readings, threshold_lux_illumination=1000):
         raw_readings (list): list of lux readings on each face (X+ face, X- face, Y+ face, Y- face, Z+ face)
 
     Returns:
-        eclipse (bool or None): True if the satellite is in eclipse, False if no eclipse, None if all readings are ERROR_LUX
+        eclipse (bool): True if the satellite is in eclipse, False if no eclipse or no correct readings.
 
     """
-    eclipse = None
+    eclipse = False
 
     if raw_readings.count(ERROR_LUX) == NUM_LIGHT_SENSORS:
         return eclipse
@@ -137,7 +137,7 @@ def in_eclipse(raw_readings, threshold_lux_illumination=1000):
     # Check if all readings are below the threshold
     for reading in raw_readings:
         if reading != ERROR_LUX and reading >= threshold_lux_illumination:
-            return False
+            return eclipse
 
     eclipse = True
 
