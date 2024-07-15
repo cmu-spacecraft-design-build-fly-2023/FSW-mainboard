@@ -8,6 +8,7 @@ class IMU(Driver):
         self.__gyro = gyro
         self.__temp = temp
         self.__enable = False
+        super().__init__(None)
 
     def accel(self):
         return self.__accel if self.__enable else None

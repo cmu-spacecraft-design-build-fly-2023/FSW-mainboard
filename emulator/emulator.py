@@ -5,12 +5,13 @@ from hal.cubesat import CubeSat
 from hal.drivers.burnwire import BurnWires
 from hal.drivers.imu import IMU
 from hal.drivers.light_sensor import LightSensor
+from hal.drivers.middleware.generic_driver import Driver
+from hal.drivers.middleware.middleware import Middleware
 from hal.drivers.payload import Payload
 from hal.drivers.power_monitor import PowerMonitor
 from hal.drivers.radio import Radio
 from hal.drivers.rtc import RTC
 from hal.drivers.sd import SD
-from hal.drivers.middleware.middleware import Middleware
 from numpy import array
 
 
@@ -46,23 +47,20 @@ class satellite(CubeSat):
 
         super().__init__()
 
-        if self.__middleware_enabled:
-            self._burnwires = Middleware(BurnWires())
-
-        self._burnwires = BurnWires()
         self._radio = Radio()
         self._sd_card = SD()
-        self._payload_uart = Payload()
+        self._burnwires = self.init_device(BurnWires())
+        self._payload_uart = self.init_device(Payload())
 
         self._vfs = None
         self._gps = None
         self._charger = None
 
-        self._light_sensor_xp = LightSensor(900)
-        self._light_sensor_xm = LightSensor(48000)
-        self._light_sensor_yp = LightSensor(85000)
-        self._light_sensor_ym = LightSensor(200)
-        self._light_sensor_zp = LightSensor(12000)
+        self._light_sensor_xp = self.init_device(LightSensor(900))
+        self._light_sensor_xm = self.init_device(LightSensor(48000))
+        self._light_sensor_yp = self.init_device(LightSensor(85000))
+        self._light_sensor_ym = self.init_device(LightSensor(200))
+        self._light_sensor_zp = self.init_device(LightSensor(12000))
 
         self._torque_x = None
         self._torque_y = None
@@ -71,13 +69,18 @@ class satellite(CubeSat):
         accel = array([1.0, 2.0, 3.0])
         mag = array([4.0, 3.0, 1.0])
         gyro = array([0.0, 0.0, 0.0])
-        self._imu = IMU(accel=accel, mag=mag, gyro=gyro, temp=20)
+        self._imu = self.init_device(IMU(accel=accel, mag=mag, gyro=gyro, temp=20))
         self._imu.enable()
 
-        self._jetson_monitor = PowerMonitor(4, 0.05)
-        self._battery_monitor = PowerMonitor(4.2, 0.04)
+        self._jetson_monitor = self.init_device(PowerMonitor(4, 0.05))
+        self._battery_monitor = self.init_device(PowerMonitor(4.2, 0.04))
 
-        self._rtc = RTC(time.gmtime())
+        self._rtc = self.init_device(RTC(time.gmtime()))
+
+    def init_device(self, device) -> Driver:
+        if self.__middleware_enabled:
+            return Middleware(device)
+        return device
 
     def boot_sequence(self) -> List[int]:
         pass
