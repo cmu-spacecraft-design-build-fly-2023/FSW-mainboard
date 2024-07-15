@@ -14,7 +14,7 @@ Implementation Notes
 from adafruit_bus_device.i2c_device import I2CDevice
 from adafruit_register.i2c_bit import RWBit
 from adafruit_register.i2c_bits import ROBits, RWBits
-from hal.drivers.diagnostics.diagnostics import Diagnostics
+from hal.drivers.middleware.errors import Errors
 from hal.drivers.middleware.generic_driver import Driver
 from micropython import const
 
@@ -164,13 +164,13 @@ class BQ25883(Driver):
         status = self.fault_status()
 
         if (status & (0xF << 4)) != 0:
-            list.append[Diagnostics.BQ25883_INPUT_OVERVOLTAGE]
+            list.append[Errors.BQ25883_INPUT_OVERVOLTAGE]
         if (status & (0x1 << 5)) != 0:
-            list.append[Diagnostics.BQ25883_THERMAL_SHUTDOWN]
+            list.append[Errors.BQ25883_THERMAL_SHUTDOWN]
         if (status & (0x1 << 6)) != 0:
-            list.append[Diagnostics.BQ25883_BATTERY_OVERVOLTAGE]
+            list.append[Errors.BQ25883_BATTERY_OVERVOLTAGE]
         if (status & (0x1 << 7)) != 0:
-            list.append[Diagnostics.BQ25883_CHARGE_SAFETY_TIMER_EXPIRED]
+            list.append[Errors.BQ25883_CHARGE_SAFETY_TIMER_EXPIRED]
 
         return errors
 
@@ -185,7 +185,7 @@ class BQ25883(Driver):
 
         error_list = list(set(error_list))
 
-        if Diagnostics.NOERROR not in error_list:
+        if Errors.NOERROR not in error_list:
             self.errors_present = True
 
         return error_list

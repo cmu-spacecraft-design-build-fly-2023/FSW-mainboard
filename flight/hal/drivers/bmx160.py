@@ -5,7 +5,7 @@ from adafruit_register.i2c_bit import ROBit
 from adafruit_register.i2c_bits import ROBits, RWBits
 from adafruit_register.i2c_struct import Struct
 from digitalio import DigitalInOut
-from hal.drivers.diagnostics.diagnostics import Diagnostics
+from hal.drivers.middleware.errors import Errors
 from hal.drivers.middleware.generic_driver import Driver
 
 # from adafruit_bus_device.spi_device import SPIDevice
@@ -722,19 +722,19 @@ class BMX160(Driver):
 
         error_reg = self.query_error()
         if error_reg != NO_ERROR:
-            error_list.append(Diagnostics.BMX160_UNSPECIFIED_ERROR)
+            error_list.append(Errors.BMX160_UNSPECIFIED_ERROR)
 
         if self.fatal_err != 0:
-            error_list.append(Diagnostics.BMX160_FATAL_ERROR)
+            error_list.append(Errors.BMX160_FATAL_ERROR)
 
         if self.error_code in self.BMX160_ERROR_CODES:
-            error_list.append(Diagnostics.BMX160_NON_FATAL_ERROR)
+            error_list.append(Errors.BMX160_NON_FATAL_ERROR)
 
         if self.drop_cmd_err != 0:
-            error_list.append(Diagnostics.BMX160_DROP_COMMAND_ERROR)
+            error_list.append(Errors.BMX160_DROP_COMMAND_ERROR)
 
         if error_list.count() == 0:
-            error_list.append(Diagnostics.NOERROR)
+            error_list.append(Errors.NOERROR)
 
     def run_diagnostics(self) -> list[int] | None:
         """run_diagnostic_test: Run all tests for the component
@@ -747,7 +747,7 @@ class BMX160(Driver):
 
         error_list = list(set(error_list))
 
-        if Diagnostics.NOERROR not in error_list:
+        if Errors.NOERROR not in error_list:
             self.errors_present = True
 
         return error_list
@@ -771,11 +771,8 @@ def find_nearest_valid(desired, possible_values):
 def settingswarning(interp=""):
     if interp != "":
         interp = " --" + interp + " -- "
-    print(
-        "BMX160 error occurred during "
-        + interp
-        + "setting change. \nSetting not successfully changed and BMX160 may be in error state."
-    )
+    print(f"BMX160 error occurred during {interp} setting change.")
+    print("Setting not successfully changed and BMX160 may be in error state.")
 
 
 def format_binary(b):

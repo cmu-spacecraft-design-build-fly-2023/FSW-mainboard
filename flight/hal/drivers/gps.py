@@ -45,7 +45,7 @@ Implementation Notes
 from time import sleep, struct_time
 
 from digitalio import DigitalInOut
-from hal.drivers.diagnostics.diagnostics import Diagnostics
+from hal.drivers.middleware.errors import Errors
 from hal.drivers.middleware.generic_driver import Driver
 from micropython import const
 
@@ -499,11 +499,11 @@ class GPS(Driver):
 
             success = self.update()
             if success:
-                return Diagnostics.NOERROR
+                return Errors.NOERROR
 
             sleep(1)
 
-        return Diagnostics.GPS_UPDATE_CHECK_FAILED
+        return Errors.GPS_UPDATE_CHECK_FAILED
 
     def run_diagnostics(self) -> list[int] | None:
         """run_diagnostic_test: Run all tests for the component
@@ -516,7 +516,7 @@ class GPS(Driver):
 
         error_list = list(set(error_list))
 
-        if Diagnostics.NOERROR not in error_list:
+        if Errors.NOERROR not in error_list:
             self.errors_present = True
 
         return error_list

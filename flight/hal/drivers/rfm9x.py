@@ -16,7 +16,7 @@ from time import monotonic, sleep
 
 import adafruit_bus_device.spi_device as spidev
 from digitalio import DigitalInOut, Pull
-from hal.drivers.diagnostics.diagnostics import Diagnostics
+from hal.drivers.middleware.errors import Errors
 from hal.drivers.middleware.generic_driver import Driver
 from micropython import const
 
@@ -107,7 +107,10 @@ RX_MODE = const(5)  # 0b101
 # (dot+gap)+dash+gap+dot+sgap+\
 # ((dot+gap)*3)+dash+gap+dash+sgap+\
 # dash+gap+((dot+gap)*2)+dash+gap
-VR3X = b"\xff\x00\xff\x00\xff\x00\xff\x00\x00\x00\xff\xff\xff\x00\xff\x00\x00\x00\xff\x00\xff\xff\xff\x00\xff\x00\xff\x00\xff\x00\x00\x00\xff\x00\x00\x00\xff\xff\xff\x00\x00\x00\xff\x00\xff\x00\xff\x00\x00\x00\xff"
+VR3X = (
+    b"\xff\x00\xff\x00\xff\x00\xff\x00\x00\x00\xff\xff\xff\x00\xff\x00\x00\x00\xff\x00\xff\xff\xff\x00\xff\x00"
+    b"\xff\x00\xff\x00\x00\x00\xff\x00\x00\x00\xff\xff\xff\x00\x00\x00\xff\x00\xff\x00\xff\x00\x00\x00\xff"
+)
 
 
 # Disable the too many instance members warning.  Pylint has no knowledge
@@ -1112,7 +1115,7 @@ class RFM9x(Driver):
 
         error_list = list(set(error_list))
 
-        if Diagnostics.NOERROR not in error_list:
+        if Errors.NOERROR not in error_list:
             self.errors_present = True
 
         return error_list
