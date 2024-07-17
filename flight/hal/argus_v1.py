@@ -196,9 +196,7 @@ class ArgusV1(CubeSat):
         error_list += self.__burn_wire_boot()
         error_list += self.__payload_uart_boot()
 
-        error_list = [
-            error for error in error_list if error != Diagnostics.NOERROR
-        ]
+        error_list = [error for error in error_list if error != Diagnostics.NOERROR]
 
         if self.__debug:
             print("Boot Errors:")
@@ -221,9 +219,7 @@ class ArgusV1(CubeSat):
         :return: Error code if the GPS failed to initialize
         """
         try:
-            gps1 = GPS(
-                ArgusV1Components.GPS_UART, ArgusV1Components.GPS_ENABLE
-            )
+            gps1 = GPS(ArgusV1Components.GPS_UART, ArgusV1Components.GPS_ENABLE)
 
             if self.__middleware_enabled:
                 gps1 = Middleware(gps1)
@@ -470,9 +466,7 @@ class ArgusV1(CubeSat):
 
         # X direction
         try:
-            torque_interface = TorqueInterface(
-                self.__torque_xp_driver, self.__torque_xm_driver
-            )
+            torque_interface = TorqueInterface(self.__torque_xp_driver, self.__torque_xm_driver)
             self.__torque_x = torque_interface
         except Exception as e:
             if self.__debug:
@@ -480,9 +474,7 @@ class ArgusV1(CubeSat):
 
         # Y direction
         try:
-            torque_interface = TorqueInterface(
-                self.__torque_yp_driver, self.__torque_ym_driver
-            )
+            torque_interface = TorqueInterface(self.__torque_yp_driver, self.__torque_ym_driver)
             self.__torque_y = torque_interface
         except Exception as e:
             if self.__debug:
@@ -676,9 +668,7 @@ class ArgusV1(CubeSat):
         :return: Error code if the RTC failed to initialize
         """
         try:
-            rtc = PCF8523(
-                ArgusV1Components.RTC_I2C, ArgusV1Components.RTC_I2C_ADDRESS
-            )
+            rtc = PCF8523(ArgusV1Components.RTC_I2C, ArgusV1Components.RTC_I2C_ADDRESS)
 
             if self.__middleware_enabled:
                 rtc = Middleware(rtc)
@@ -799,11 +789,9 @@ class ArgusV1(CubeSat):
         return [Diagnostics.NOERROR]
 
     ######################## DIAGNOSTICS ########################
-    def __get_device_diagnostic_error(self, device) -> list[int]:
+    def __get_device_diagnostic_error(self, device) -> list[int]:  # noqa: C901
         """__get_device_diagnostic_error: Get the error code for a device that failed to initialize"""
-        if isinstance(
-            device, Middleware
-        ):  # Convert device to the wrapped instance
+        if isinstance(device, Middleware):  # Convert device to the wrapped instance
             device = device.get_instance()
 
         if device is self.RTC:
