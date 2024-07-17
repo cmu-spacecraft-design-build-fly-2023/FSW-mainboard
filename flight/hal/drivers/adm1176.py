@@ -12,7 +12,7 @@ Implementation Notes
 """
 
 from adafruit_bus_device.i2c_device import I2CDevice
-from hal.drivers.diagnostics.diagnostics import Diagnostics
+from hal.drivers.middleware.errors import Errors
 from hal.drivers.middleware.generic_driver import Driver
 from micropython import const
 
@@ -239,15 +239,15 @@ class ADM1176(Driver):
                     " Current: ",
                     rCurrent,
                 )
-                return Diagnostics.ADM1176_NOT_CONNECTED_TO_POWER
+                return Errors.ADM1176_NOT_CONNECTED_TO_POWER
             elif rVoltage > V_MAX or rVoltage < V_MIN:
                 print(
                     "Error: Voltage out of typical range!! Voltage Reading: ",
                     rVoltage,
                 )
-                return Diagnostics.ADM1176_VOLTAGE_OUT_OF_RANGE
+                return Errors.ADM1176_VOLTAGE_OUT_OF_RANGE
 
-        return Diagnostics.NOERROR
+        return Errors.NOERROR
 
     def __on_off_test(self) -> int:
         """_on_off_test: Turns the device on, off, and on
@@ -259,21 +259,21 @@ class ADM1176(Driver):
         self.set_device_on(True)
         if not self.device_on():
             print("Error: Could not turn on device")
-            return Diagnostics.ADM1176_COULD_NOT_TURN_ON
+            return Errors.ADM1176_COULD_NOT_TURN_ON
 
         # Turn the device off
         self.set_device_on(False)
         if self.device_on():
             print("Error: Could not turn off device")
-            return Diagnostics.ADM1176_COULD_NOT_TURN_OFF
+            return Errors.ADM1176_COULD_NOT_TURN_OFF
 
         # Turn the device on again
         self.set_device_on(True)
         if not self.device_on():
             print("Error: Could not turn on device after turning off")
-            return Diagnostics.ADM1176_COULD_NOT_TURN_ON
+            return Errors.ADM1176_COULD_NOT_TURN_ON
 
-        return Diagnostics.NOERROR
+        return Errors.NOERROR
 
     def __overcurrent_test(self) -> bool:
         """_overcurrent_test: Tests that the threshold is triggering
@@ -288,12 +288,12 @@ class ADM1176(Driver):
         status = self.status()
         if (status & STATUS_ADC_OC) == STATUS_ADC_OC:
             print("Error: ADC OC was triggered at overcurrent max")
-            return Diagnostics.ADM1176_ADC_OC_OVERCURRENT_MAX
+            return Errors.ADM1176_ADC_OC_OVERCURRENT_MAX
         elif (status & STATUS_ADC_ALERT) == STATUS_ADC_ALERT:
             print("Error: ADC Alert was triggered at overcurrent max")
-            return Diagnostics.ADM1176_ADC_ALERT_OVERCURRENT_MAX
+            return Errors.ADM1176_ADC_ALERT_OVERCURRENT_MAX
 
-        return Diagnostics.NOERROR
+        return Errors.NOERROR
 
     def run_diagnostics(self) -> list[int] | None:
         """run_diagnostic_test: Run all tests for the component
@@ -308,7 +308,7 @@ class ADM1176(Driver):
 
         error_list = list(set(error_list))
 
-        if Diagnostics.NOERROR not in error_list:
+        if Errors.NOERROR not in error_list:
             self.errors_present = True
 
         return error_list

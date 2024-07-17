@@ -48,7 +48,7 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_PCF8523.git"
 
 from adafruit_bus_device.i2c_device import I2CDevice
 from adafruit_register import i2c_bcd_alarm, i2c_bcd_datetime, i2c_bit, i2c_bits
-from hal.drivers.diagnostics.diagnostics import Diagnostics
+from hal.drivers.middleware.errors import Errors
 from hal.drivers.middleware.generic_driver import Driver
 
 try:
@@ -200,9 +200,9 @@ class PCF8523(Driver):
         :return: True if power was lost, otherwise true
         """
         if self.lost_power:
-            return Diagnostics.PCF8523_LOST_POWER
+            return Errors.PCF8523_LOST_POWER
 
-        return Diagnostics.NOERROR
+        return Errors.NOERROR
 
     def __check_battery_status(self) -> int:
         """_check_battery_status: Checks if the battery status is low.
@@ -210,9 +210,9 @@ class PCF8523(Driver):
         :return: False if the battery is low, otherwise true
         """
         if self.battery_low:
-            return Diagnostics.PCF8523_BATTERY_LOW
+            return Errors.PCF8523_BATTERY_LOW
 
-        return Diagnostics.NOERROR
+        return Errors.NOERROR
 
     def run_diagnostics(self) -> list[int] | None:
         """run_diagnostic_test: Run all tests for the component
@@ -226,7 +226,7 @@ class PCF8523(Driver):
 
         error_list = list(set(error_list))
 
-        if Diagnostics.NOERROR not in error_list:
+        if Errors.NOERROR not in error_list:
             self.errors_present = True
 
         return error_list
