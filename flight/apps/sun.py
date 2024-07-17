@@ -45,11 +45,13 @@ def read_light_sensors():
             lux_readings.append(s)
         except AttributeError as e:
             # logging.error(f"AttributeError for {face}: {e}")
-            print(f"AttributeError for {face}: {e}")
+            err_msg = f"AttributeError for {face}: {e}"
+            print(err_msg)
             lux_readings.append(ERROR_LUX)
         except Exception as e:
             # logging.error(f"Error reading {face}: {e}")
-            print(f"Error reading {face}: {e}")
+            err_msg = f"Error reading {face}: {e}"
+            print(err_msg)
             lux_readings.append(ERROR_LUX)
 
     # Read the z- face - not implemented in the HAL yet
