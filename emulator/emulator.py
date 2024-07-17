@@ -1,12 +1,16 @@
+import time
 from typing import List, Optional
 
 from hal.cubesat import CubeSat
 from hal.drivers.burnwire import BurnWires
 from hal.drivers.imu import IMU
 from hal.drivers.light_sensor import LightSensor
+from hal.drivers.middleware.generic_driver import Driver
+from hal.drivers.middleware.middleware import Middleware
 from hal.drivers.payload import Payload
 from hal.drivers.power_monitor import PowerMonitor
 from hal.drivers.radio import Radio
+from hal.drivers.rtc import RTC
 from hal.drivers.sd import SD
 from numpy import array
 
@@ -43,10 +47,10 @@ class satellite(CubeSat):
 
         super().__init__()
 
-        self._burnwires = BurnWires()
         self._radio = Radio()
         self._sd_card = SD()
-        self._payload_uart = Payload()
+        self._burnwires = self.init_device(BurnWires())
+        self._payload_uart = self.init_device(Payload())
 
         self._vfs = None
         self._gps = None
@@ -66,11 +70,18 @@ class satellite(CubeSat):
         accel = array([1.0, 2.0, 3.0])
         mag = array([4.0, 3.0, 1.0])
         gyro = array([0.0, 0.0, 0.0])
-        self._imu = IMU(accel=accel, mag=mag, gyro=gyro, temp=20)
+        self._imu = self.init_device(IMU(accel=accel, mag=mag, gyro=gyro, temp=20))
         self._imu.enable()
 
-        self._jetson_monitor = PowerMonitor(4, 0.05)
-        self._battery_monitor = PowerMonitor(4.2, 0.04)
+        self._jetson_monitor = self.init_device(PowerMonitor(4, 0.05))
+        self._battery_monitor = self.init_device(PowerMonitor(4.2, 0.04))
+
+        self._rtc = self.init_device(RTC(time.gmtime()))
+
+    def init_device(self, device) -> Driver:
+        if self.__middleware_enabled:
+            return Middleware(device)
+        return device
 
     def boot_sequence(self) -> List[int]:
         pass
