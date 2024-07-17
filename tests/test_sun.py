@@ -55,10 +55,7 @@ def in_eclipse(sun_vector, x_pos_eci):
 
     # Compute illumination parameter
     illumination_param = True
-    if (
-        s / np.linalg.norm(s) >= 1.0
-        or np.linalg.norm(x_pos_eci - s * sun_vector) > 6378.0e3
-    ):
+    if s / np.linalg.norm(s) >= 1.0 or np.linalg.norm(x_pos_eci - s * sun_vector) > 6378.0e3:
         illumination_param = False
 
     return illumination_param

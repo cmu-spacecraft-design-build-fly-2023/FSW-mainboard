@@ -25,9 +25,7 @@ class Task(TemplateTask):
         if SM.current_state == "NOMINAL":
 
             if not DH.data_process_exists("sun"):
-                DH.register_data_process(
-                    "sun", self.data_keys, "ffffb", True, line_limit=50
-                )
+                DH.register_data_process("sun", self.data_keys, "ffffb", True, line_limit=50)
 
             # TODO: Access Sun Sensor Readings - Satellite must return the array directly
             lux_readings = [

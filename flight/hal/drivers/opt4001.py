@@ -188,17 +188,11 @@ class OPT4001(Driver):
     # Locations of these bits are descirbed in page 30 and 31 of the datasheet
     quick_wakeup = RWBit(CONFIGURATION, 15, register_width=2, lsb_first=False)
     lux_range = RWBits(4, CONFIGURATION, 10, register_width=2, lsb_first=False)
-    conversion_time = RWBits(
-        4, CONFIGURATION, 6, register_width=2, lsb_first=False
-    )
-    operating_mode = RWBits(
-        2, CONFIGURATION, 4, register_width=2, lsb_first=False
-    )
+    conversion_time = RWBits(4, CONFIGURATION, 6, register_width=2, lsb_first=False)
+    operating_mode = RWBits(2, CONFIGURATION, 4, register_width=2, lsb_first=False)
     latch = RWBit(CONFIGURATION, 3, register_width=2, lsb_first=False)
     int_pol = RWBit(CONFIGURATION, 2, register_width=2, lsb_first=False)
-    fault_count = RWBits(
-        2, CONFIGURATION, 0, register_width=2, lsb_first=False
-    )
+    fault_count = RWBits(2, CONFIGURATION, 0, register_width=2, lsb_first=False)
 
     # flags
     overload_flag = ROBit(FLAGS, 3, register_width=2, lsb_first=False)
@@ -494,22 +488,23 @@ class OPT4001(Driver):
         return self.read_from_fifo(register_h, register_l, False)
 
     def status(self):
-        res = (self.overload_flag << 3 | (not self.conversion_ready_flag) << 2 | self.flag_h << 1 | self.flag_L)
+        res = self.overload_flag << 3 | (not self.conversion_ready_flag) << 2 | self.flag_h << 1 | self.flag_L
         return res
 
     """
     ----------------------- HANDLER METHODS -----------------------
     """
+
     def get_flags(self):
         flags = {}
         if self.flag_h:
-            flags['flag_H'] = None
+            flags["flag_H"] = None
         if self.flag_L:
-            flags['flag_L'] = None
+            flags["flag_L"] = None
         if self.overload_flag:
-            flags['overload_flag'] = None
+            flags["overload_flag"] = None
         if self.conversion_ready_flag:
-            flags['conversion_ready_flag'] = None
+            flags["conversion_ready_flag"] = None
         return flags
 
     ######################### DIAGNOSTICS #########################
@@ -530,9 +525,7 @@ class OPT4001(Driver):
 
         :return: True if pass, otherwise false
         """
-        _, counter, _ = self.get_lsb_counter_crc(
-            self.RESULT_L
-        )  # looking at register 1
+        _, counter, _ = self.get_lsb_counter_crc(self.RESULT_L)  # looking at register 1
         if not ((0 <= counter) and (counter <= 15)):
             return Diagnostics.OPT4001_CRC_COUNTER_TEST_FAILED
 
