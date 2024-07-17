@@ -84,11 +84,12 @@ class Errors:
     DIAGNOSTICS_ERROR_TORQUE_YP = const(48)
     DIAGNOSTICS_ERROR_TORQUE_YM = const(49)
     DIAGNOSTICS_ERROR_TORQUE_Z = const(50)
-    DIAGNOSTICS_ERROR_LIGHT_SENSOR_XP = const(51)
-    DIAGNOSTICS_ERROR_LIGHT_SENSOR_XM = const(52)
-    DIAGNOSTICS_ERROR_LIGHT_SENSOR_YP = const(53)
-    DIAGNOSTICS_ERROR_LIGHT_SENSOR_YM = const(54)
-    DIAGNOSTICS_ERROR_LIGHT_SENSOR_ZP = const(55)
+    DIAGNOSTICS_ERROR_SUN_SENSOR_XP = const(51)
+    DIAGNOSTICS_ERROR_SUN_SENSOR_XM = const(52)
+    DIAGNOSTICS_ERROR_SUN_SENSOR_YP = const(53)
+    DIAGNOSTICS_ERROR_SUN_SENSOR_YM = const(54)
+    DIAGNOSTICS_ERROR_SUN_SENSOR_ZP = const(55)
+    DIAGNOSTICS_ERROR_SUN_SENSOR_ZM = const(56)
     DIAGNOSTICS_ERROR_RTC = const(57)
     DIAGNOSTICS_ERROR_RADIO = const(58)
     DIAGNOSTICS_ERROR_NEOPIXEL = const(59)
@@ -155,11 +156,12 @@ class Errors:
         DIAGNOSTICS_ERROR_TORQUE_YP: "torque yp error",
         DIAGNOSTICS_ERROR_TORQUE_YM: "torque ym error",
         DIAGNOSTICS_ERROR_TORQUE_Z: "torque z error",
-        DIAGNOSTICS_ERROR_LIGHT_SENSOR_XP: "light sensor xp error",
-        DIAGNOSTICS_ERROR_LIGHT_SENSOR_XM: "light sensor xm error",
-        DIAGNOSTICS_ERROR_LIGHT_SENSOR_YP: "light sensor yp error",
-        DIAGNOSTICS_ERROR_LIGHT_SENSOR_YM: "light sensor ym error",
-        DIAGNOSTICS_ERROR_LIGHT_SENSOR_ZP: "light sensor zp error",
+        DIAGNOSTICS_ERROR_SUN_SENSOR_XP: "light sensor xp error",
+        DIAGNOSTICS_ERROR_SUN_SENSOR_XM: "light sensor xm error",
+        DIAGNOSTICS_ERROR_SUN_SENSOR_YP: "light sensor yp error",
+        DIAGNOSTICS_ERROR_SUN_SENSOR_YM: "light sensor ym error",
+        DIAGNOSTICS_ERROR_SUN_SENSOR_ZP: "light sensor zp error",
+        DIAGNOSTICS_ERROR_SUN_SENSOR_ZM: "light sensor zm error",
         DIAGNOSTICS_ERROR_RTC: "rtc error",
         DIAGNOSTICS_ERROR_RADIO: "radio error",
         DIAGNOSTICS_ERROR_NEOPIXEL: "neopixel error",
