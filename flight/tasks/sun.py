@@ -13,19 +13,7 @@ class Task(TemplateTask):
     name = "SUN"
     ID = 0x11
 
-    data_keys = [
-        "time",
-        "status",
-        "x",
-        "y",
-        "z",
-        "eclipse",
-        "xp",
-        "xm",
-        "yp",
-        "ym",
-        "zp",
-    ]
+    data_keys = ["time", "status", "x", "y", "z", "eclipse"]
 
     THRESHOLD_ILLUMINATION_LUX = 3000
 
@@ -38,7 +26,7 @@ class Task(TemplateTask):
         if SM.current_state == "NOMINAL":
 
             if not DH.data_process_exists("sun"):
-                DH.register_data_process("sun", self.data_keys, "fbfffbiiiii", True, line_limit=100)
+                DH.register_data_process("sun", self.data_keys, "fbfffb", True, line_limit=100)
 
             # Access Sun Sensor Readings - Satellite must return the array directly
             lux_readings = read_light_sensors()
@@ -56,11 +44,6 @@ class Task(TemplateTask):
                 "y": self.sun_vector[1],
                 "z": self.sun_vector[2],
                 "eclipse": self.eclipse_state,
-                "xp": lux_readings[0],
-                "xm": lux_readings[1],
-                "yp": lux_readings[2],
-                "ym": lux_readings[3],
-                "zp": lux_readings[4],
             }
 
             DH.log_data("sun", readings)
