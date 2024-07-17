@@ -14,7 +14,7 @@ Author: Harry Rosmann
 
 from typing import Any
 
-from middleware.generic_driver import Driver, driver_cant_handle_exception
+from hal.drivers.middleware.generic_driver import Driver, driver_cant_handle_exception
 
 # The default number of retries for the middleware
 # NOTE: Keep this value low to prevent loss of timing
