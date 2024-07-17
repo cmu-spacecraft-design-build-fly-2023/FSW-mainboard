@@ -86,7 +86,7 @@ class OPT4001(Driver):
 
     **address**
 
-    The i2c address of the sun sensor you are using. the default is 0x44
+    The i2c address of the light sensor you are using. the default is 0x44
 
     Keyword Arguments
     +++++++++++++++++
@@ -362,7 +362,7 @@ class OPT4001(Driver):
         while monotonic() < start_time:
             if self.conversion_ready_flag:
                 break
-            sleep(0.001)
+            sleep(0.001)  # TODO remove sleep
 
         """
         15-12: EXPONENT

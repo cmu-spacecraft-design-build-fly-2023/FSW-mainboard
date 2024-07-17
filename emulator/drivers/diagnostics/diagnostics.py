@@ -92,12 +92,12 @@ class Diagnostics:
     DIAGNOSTICS_ERROR_TORQUE_YP = 48
     DIAGNOSTICS_ERROR_TORQUE_YM = 49
     DIAGNOSTICS_ERROR_TORQUE_Z = 50
-    DIAGNOSTICS_ERROR_SUN_SENSOR_XP = 51
-    DIAGNOSTICS_ERROR_SUN_SENSOR_XM = 52
-    DIAGNOSTICS_ERROR_SUN_SENSOR_YP = 53
-    DIAGNOSTICS_ERROR_SUN_SENSOR_YM = 54
-    DIAGNOSTICS_ERROR_SUN_SENSOR_ZP = 55
-    DIAGNOSTICS_ERROR_SUN_SENSOR_ZM = 56
+    DIAGNOSTICS_ERROR_LIGHT_SENSOR_XP = 51
+    DIAGNOSTICS_ERROR_LIGHT_SENSOR_XM = 52
+    DIAGNOSTICS_ERROR_LIGHT_SENSOR_YP = 53
+    DIAGNOSTICS_ERROR_LIGHT_SENSOR_YM = 54
+    DIAGNOSTICS_ERROR_LIGHT_SENSOR_ZP = 55
+    # DIAGNOSTICS_ERROR_LIGHT_SENSOR_ZM = 56
     DIAGNOSTICS_ERROR_RTC = 57
     DIAGNOSTICS_ERROR_RADIO = 58
     DIAGNOSTICS_ERROR_NEOPIXEL = 59
@@ -279,17 +279,17 @@ class Diagnostics:
     #         return "Diagnostics error: Torque YM"
     #     elif error == Diagnostics.DIAGNOSTICS_ERROR_TORQUE_Z:
     #         return "Diagnostics error: Torque Z"
-    #     elif error == Diagnostics.DIAGNOSTICS_ERROR_SUN_SENSOR_XP:
+    #     elif error == Diagnostics.DIAGNOSTICS_ERROR_LIGHT_SENSOR_XP:
     #         return "Diagnostics error: Sun sensor XP"
-    #     elif error == Diagnostics.DIAGNOSTICS_ERROR_SUN_SENSOR_XM:
+    #     elif error == Diagnostics.DIAGNOSTICS_ERROR_LIGHT_SENSOR_XM:
     #         return "Diagnostics error: Sun sensor XM"
-    #     elif error == Diagnostics.DIAGNOSTICS_ERROR_SUN_SENSOR_YP:
+    #     elif error == Diagnostics.DIAGNOSTICS_ERROR_LIGHT_SENSOR_YP:
     #         return "Diagnostics error: Sun sensor YP"
-    #     elif error == Diagnostics.DIAGNOSTICS_ERROR_SUN_SENSOR_YM:
+    #     elif error == Diagnostics.DIAGNOSTICS_ERROR_LIGHT_SENSOR_YM:
     #         return "Diagnostics error: Sun sensor YM"
-    #     elif error == Diagnostics.DIAGNOSTICS_ERROR_SUN_SENSOR_ZP:
+    #     elif error == Diagnostics.DIAGNOSTICS_ERROR_LIGHT_SENSOR_ZP:
     #         return "Diagnostics error: Sun sensor ZP"
-    #     elif error == Diagnostics.DIAGNOSTICS_ERROR_SUN_SENSOR_ZM:
+    #     elif error == Diagnostics.DIAGNOSTICS_ERROR_LIGHT_SENSOR_ZM:
     #         return "Diagnostics error: Sun sensor ZM"
     #     elif error == Diagnostics.DIAGNOSTICS_ERROR_RTC:
     #         return "Diagnostics error: RTC"
