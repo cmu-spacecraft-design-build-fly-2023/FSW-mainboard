@@ -93,7 +93,7 @@ class PyCubed:
             cls.instance = super(PyCubed, cls).__new__(cls)
         return cls.instance
 
-    def __init__(self):
+    def __init__(self):  # noqa: C901
         """
         Big init routine as the whole board is brought up.
         """

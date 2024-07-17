@@ -104,7 +104,9 @@ RX_MODE = const(5)  # 0b101
 # (dot+gap)+dash+gap+dot+sgap+\
 # ((dot+gap)*3)+dash+gap+dash+sgap+\
 # dash+gap+((dot+gap)*2)+dash+gap
-VR3X = b"\xff\x00\xff\x00\xff\x00\xff\x00\x00\x00\xff\xff\xff\x00\xff\x00\x00\x00\xff\x00\xff\xff\xff\x00\xff\x00\xff\x00\xff\x00\x00\x00\xff\x00\x00\x00\xff\xff\xff\x00\x00\x00\xff\x00\xff\x00\xff\x00\x00\x00\xff"
+VR3X = b"\xff\x00\xff\x00\xff\x00\xff\x00\x00\x00\xff\xff\xff\x00\xff\x00\x00\x00 \
+        \xff\x00\xff\xff\xff\x00\xff\x00\xff\x00\xff\x00\x00\x00\xff \
+        \x00\x00\x00\xff\xff\xff\x00\x00\x00\xff\x00\xff\x00\xff\x00\x00\x00\xff"
 
 
 # Disable the too many instance members warning.  Pylint has no knowledge
@@ -856,7 +858,9 @@ class RFM9x:
         return got_ack
 
     # pylint: disable=too-many-branches
-    def receive(self, *, keep_listening=True, with_header=False, with_ack=False, timeout=None, debug=False, view=False):
+    def receive(  # noqa: C901
+        self, *, keep_listening=True, with_header=False, with_ack=False, timeout=None, debug=False, view=False
+    ):
         """Wait to receive a packet from the receiver. If a packet is found the payload bytes
         are returned, otherwise None is returned (which indicates the timeout elapsed with no
         reception).
