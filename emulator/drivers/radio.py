@@ -1,5 +1,6 @@
 import queue
 import random
+import socket
 import time
 
 
@@ -65,7 +66,17 @@ class Radio:
     def send(self, packet, destination=0x00, keep_listening=True):
         tx_time = self._tx_time_bias + (random.random() - 0.5) * self._tx_time_dev
         time.sleep(tx_time)
-        self.test.last_tx_packet = packet
+        payload = bytearray(len(packet) + 4)
+        payload[0] = destination
+        payload[1] = 0xFF
+        payload[2] = 0x00
+        payload[3] = 0x00
+        payload[4:] = packet
+        self.test.last_tx_packet = payload
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((socket.gethostname(), 5000))
+            s.sendall(payload)
+
         return None
 
     async def send_with_ack(self, packet, keep_listening=True):
