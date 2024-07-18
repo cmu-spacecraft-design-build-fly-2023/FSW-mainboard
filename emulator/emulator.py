@@ -56,11 +56,11 @@ class satellite(CubeSat):
         self._gps = None
         self._charger = None
 
-        self._light_sensor_xp = LightSensor(900)
-        self._light_sensor_xm = LightSensor(48000)
-        self._light_sensor_yp = LightSensor(85000)
-        self._light_sensor_ym = LightSensor(200)
-        self._light_sensor_zp = LightSensor(12000)
+        self._light_sensor_xp = self.init_device(LightSensor(900))
+        self._light_sensor_xm = self.init_device(LightSensor(48000))
+        self._light_sensor_yp = self.init_device(LightSensor(85000))
+        self._light_sensor_ym = self.init_device(LightSensor(200))
+        self._light_sensor_zp = self.init_device(LightSensor(12000))
 
         self._torque_x = None
         self._torque_y = None
