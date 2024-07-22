@@ -74,7 +74,7 @@ class Radio:
         payload[4:] = packet
         self.test.last_tx_packet = payload
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((socket.gethostname(), 5000))
+            s.connect((socket.gethostname(), 5500))
             s.sendall(payload)
 
         return None
