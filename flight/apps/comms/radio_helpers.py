@@ -340,6 +340,7 @@ class SATELLITE_RADIO:
                 # Transmit SAT heartbeat or ACK
                 tx_message = construct_message(self.gs_req_message_ID)
 
+            # TODO: remove
             print(f"[100][SERIAL OUTPUT] {tx_message}")
             # Send a message to GS
             self.sat.RADIO.send(tx_message)
