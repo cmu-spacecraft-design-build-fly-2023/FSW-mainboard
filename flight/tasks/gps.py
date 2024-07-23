@@ -39,7 +39,7 @@ class Task(TemplateTask):
             pass
         elif SM.current_state == "NOMINAL":
             if not DH.data_process_exists("gps"):
-                DH.register_data_process("gps", self.data_keys, "fffffff", True, line_limit=200)
+                DH.register_data_process("gps", self.data_keys, "BBBHIiiiiHHHHHiiiiii", True, line_limit=200)
             pass
 
         # TODO GPS readings
