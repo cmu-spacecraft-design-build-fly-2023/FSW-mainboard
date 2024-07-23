@@ -65,7 +65,7 @@ class Task(TemplateTask):
 
             #  Must return the array directly
             lux_readings = read_light_sensors()
-            self.status, self.sun_vector = compute_body_sun_vector_from_lux(lux_readings)
+            self.sun_status, self.sun_vector = compute_body_sun_vector_from_lux(lux_readings)
             self.eclipse_state = in_eclipse(
                 lux_readings,
                 threshold_lux_illumination=self.THRESHOLD_ILLUMINATION_LUX,
