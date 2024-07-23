@@ -28,7 +28,7 @@ class SUN_VECTOR_STATUS:
     MISSING_XM_READING = 0x5
     MISSING_YP_READING = 0x6
     MISSING_YM_READING = 0x7
-    MISSING_ZP_READING = 0x8
+    MISSING_ZM_READING = 0x8
     MISSING_FULL_X_AXIS_READING = 0x9
     MISSING_FULL_Y_AXIS_READING = 0xA
     MISSING_FULL_Z_AXIS_READING = 0xB
@@ -36,7 +36,7 @@ class SUN_VECTOR_STATUS:
 
 def read_light_sensors():
     """
-    Read the light sensors on the x+,x-,y+,y-, and z+ faces of the satellite
+    Read the light sensors on the x+,x-,y+,y-, and z- faces of the satellite
 
     Returns:
         lux_readings: list of lux readings on each face. A "ERROR_LUX" reading comes from a dysfunctional sensor
@@ -47,7 +47,7 @@ def read_light_sensors():
         "LIGHT_SENSOR_XM",
         "LIGHT_SENSOR_YP",
         "LIGHT_SENSOR_YM",
-        "LIGHT_SENSOR_ZP",
+        "LIGHT_SENSOR_ZM",
     ]
 
     lux_readings = []
@@ -67,7 +67,7 @@ def read_light_sensors():
             print(err_msg)
             lux_readings.append(ERROR_LUX)
 
-    # Read the z- face - not implemented in the HAL yet
+    # Read the pyramid on z+ face - not implemented in the HAL yet
 
     return lux_readings
 
@@ -78,7 +78,7 @@ def compute_body_sun_vector_from_lux(I_vec):
 
     Args:
         I_vec: flux values on each face in the following order
-        - X+ face, X- face, Y+ face, Y- face, Z+ face
+        - X+ face, X- face, Y+ face, Y- face, Z- face
 
     Returns:
         sun_body: unit vector from spacecraft to sun expressed in body frame
@@ -95,7 +95,7 @@ def compute_body_sun_vector_from_lux(I_vec):
     elif num_valid_readings < 3:
         status = SUN_VECTOR_STATUS.NOT_ENOUGH_READINGS
     elif I_vec[4] == ERROR_LUX:
-        status = SUN_VECTOR_STATUS.MISSING_ZP_READING
+        status = SUN_VECTOR_STATUS.MISSING_ZM_READING
     elif I_vec[0] == ERROR_LUX and I_vec[1] == ERROR_LUX:
         status = SUN_VECTOR_STATUS.MISSING_FULL_X_AXIS_READING
     elif I_vec[2] == ERROR_LUX and I_vec[3] == ERROR_LUX:
@@ -138,7 +138,7 @@ def in_eclipse(raw_readings, threshold_lux_illumination=1000):
     Check the eclipse conditions based on the lux readings
 
     Parameters:
-        raw_readings (list): list of lux readings on each face (X+ face, X- face, Y+ face, Y- face, Z+ face)
+        raw_readings (list): list of lux readings on each face (X+ face, X- face, Y+ face, Y- face, Z- face)
 
     Returns:
         eclipse (bool): True if the satellite is in eclipse, False if no eclipse or no correct readings.
@@ -159,5 +159,5 @@ def in_eclipse(raw_readings, threshold_lux_illumination=1000):
     return eclipse
 
 
-def read_sun_sensor_zm():
+def read_pyramid_sun_sensor_zm():
     pass
