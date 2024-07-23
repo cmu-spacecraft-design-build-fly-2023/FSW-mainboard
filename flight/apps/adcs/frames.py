@@ -1,5 +1,4 @@
-import ulab.numpy as np
-from ulab.numpy import arctan2, array, cos, pi, sin, sqrt
+from ulab import numpy as np
 
 J2000 = 946684800  # unix timestamp for the Julian date 2000-01-01
 MJD_ZERO = 2400000.5  # Offset of Modified Julian Days representation with respect to Julian Days.
@@ -21,7 +20,7 @@ def rotZ(theta):
     :type theta: float
     :returns: A 3x3 numpy array.
     """
-    return array([[cos(theta), sin(theta), 0], [-sin(theta), cos(theta), 0], [0, 0, 1]])
+    return np.array([[np.cos(theta), np.sin(theta), 0], [-np.sin(theta), np.cos(theta), 0], [0, 0, 1]])
 
 
 def ERA(utime):
@@ -90,11 +89,11 @@ def ned_to_ecef(lon, lat):
     :param lat: float
     :returns: A 3x3 numpy array.
     """
-    return array(
+    return np.array(
         [
-            [-sin(lat) * cos(lon), -sin(lon), -cos(lat) * cos(lon)],
-            [-sin(lat) * sin(lon), cos(lon), -cos(lat) * sin(lon)],
-            [cos(lat), 0.0, -sin(lat)],
+            [-np.sin(lat) * np.cos(lon), -np.sin(lon), -np.cos(lat) * np.cos(lon)],
+            [-np.sin(lat) * np.sin(lon), np.cos(lon), -np.cos(lat) * np.sin(lon)],
+            [np.cos(lat), 0.0, -np.sin(lat)],
         ]
     )
 
@@ -109,13 +108,13 @@ def convert_ecef_to_geoc(ecef, degrees=False):
     :returns: A 3x1 numpy arary containing the geocentric coordinates long, lat, alt (radians, radians, km)
     """
     x, y, z = ecef
-    lat = arctan2(z, sqrt(x * x + y * y))
-    lon = arctan2(y, x)
-    alt = sqrt(x * x + y * y + z * z) - EQUATORIAL_RADIUS
+    lat = np.arctan2(z, np.sqrt(x * x + y * y))
+    lon = np.arctan2(y, x)
+    alt = np.sqrt(x * x + y * y + z * z) - EQUATORIAL_RADIUS
 
     # Convert output to degrees
     if degrees:
-        lat = lat * 180.0 / pi
-        lon = lon * 180.0 / pi
+        lat = lat * 180.0 / np.pi
+        lon = lon * 180.0 / np.pi
 
-    return array([lon, lat, alt])
+    return np.array([lon, lat, alt])
