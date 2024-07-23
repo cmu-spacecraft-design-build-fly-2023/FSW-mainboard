@@ -1,3 +1,16 @@
+"""
+
+Sun Acquisition Module for the Attitude Determination and Control Subsystem (ADCS).
+
+This module is responsible for acquiring and processing light sensor data to determine the
+sun vector relative to the satellite's body frame. It also determines whether the satellite
+is in an eclipse based on the sensor readings.
+
+Argus posseses 5 light sensors, 1 on each of the x+, x-, y+, y-, and z- faces of the
+satellite, and a pyramid of 4 light sensors angled at 45 degrees on the z+ face.
+
+"""
+
 from hal.configuration import SATELLITE
 from ulab import numpy as np
 
