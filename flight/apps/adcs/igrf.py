@@ -1,6 +1,6 @@
 """
 
-Fifth order approximation from the IGRF-13 model.
+Fifth order approximation of the IGRF-13 model.
 Based on: https://github.com/RoboticExplorationLab/pycubed_circuitpython/blob/master/IGRF/igrf.py
 
 """
@@ -21,7 +21,7 @@ def unix_time_to_years_since_2020(unix_time):
     return t
 
 
-def _igrf13_5(gh, date, latitude_degrees, elongitude_degrees, r_norm_km, cl, sl, p, q):
+def _igrf13_5(gh, unix_time, latitude_degrees, elongitude_degrees, r_norm_km, cl, sl, p, q):
 
     # reset the lists that are passed by reference
     reset_array(cl)
@@ -44,7 +44,7 @@ def _igrf13_5(gh, date, latitude_degrees, elongitude_degrees, r_norm_km, cl, sl,
     t = 0.0
     tc = 0.0
 
-    t = unix_time_to_years_since_2020(date)
+    t = unix_time_to_years_since_2020(unix_time)
     tc = 1.0
 
     ll = 0
@@ -211,11 +211,11 @@ class _PARAMS:
     q = [0.0 for _ in range(21)]
 
 
-def igrf(date, latitude_degrees, elongitude_degrees, r_norm_km):
+def igrf(unix_timestamp, latitude_degrees, elongitude_degrees, r_norm_km):
     """Returns the fifth order approximation from the IGRF-13 model.
     Only contains data from 2020, so it should only be accurate from 2020-2025.
     Args:
-        - date: A unix timestamp.
+        - unix_timestamp: A unix timestamp.
         - latitude_degrees: Latitude in degrees (geocentric)
         - elongitude_degrees: Longitude in degrees (geocentric)
         - r_norm_km: Distance from the center of the earth (km)
@@ -223,30 +223,36 @@ def igrf(date, latitude_degrees, elongitude_degrees, r_norm_km):
         - [x, y, z] the magnetic field in nanotesla in (North, East, Down)
     """
     return _igrf13_5(
-        _PARAMS.gh, date, latitude_degrees, elongitude_degrees, r_norm_km, _PARAMS.cl, _PARAMS.sl, _PARAMS.p, _PARAMS.q
+        _PARAMS.gh,
+        unix_timestamp,
+        latitude_degrees,
+        elongitude_degrees,
+        r_norm_km,
+        _PARAMS.cl,
+        _PARAMS.sl,
+        _PARAMS.p,
+        _PARAMS.q,
     )
 
 
-def igrf_eci(date, r_eci):
+def igrf_eci(unix_timestamp, r_eci):
     """Returns the fifth order approximation from the IGRF-13 model.
     Only contains data from 2020, so it should only be accurate from 2020-2025.
-    IGRF-13 Takes in geocentric coordinates, and outputs in NED (North, East, Down).
+    IGRF-13 takes in geocentric coordinates, and outputs in NED (North, East, Down).
     We solve this by applying the following conversions: ECI->ECEF->GEOC=>[IGRF]=>NED->ECEF->ECI
 
     Args:
-        - date: A unix timestamp.
+        - unix_timestamp: A unix timestamp.
         - r_eci: Earth Centered Interital frame position (km)
     Returns:
         - [x, y, z] the magnetic field in nanotesla in ECI (Earth Centered Inertial)
     """
-    ecef_eci = frames.eci_to_ecef(date)
+    ecef_eci = frames.eci_to_ecef(unix_timestamp)
     eci_ecef = ecef_eci.transpose()
 
     r_ecef = np.dot(ecef_eci, r_eci)
     long, lat, _ = frames.convert_ecef_to_geoc(r_ecef)
 
-    b_ned = igrf(date, (lat / np.pi) * 180, (long / np.pi) * 180, np.linalg.norm(r_eci))
-
+    b_ned = igrf(unix_timestamp, (lat / np.pi) * 180, (long / np.pi) * 180, np.linalg.norm(r_eci))
     ecef_ned = frames.ned_to_ecef(long, lat)
-
     return np.dot(eci_ecef, np.dot(ecef_ned, b_ned))

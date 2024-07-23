@@ -2,7 +2,15 @@
 
 import time
 
-from apps.sun import SUN_VECTOR_STATUS, compute_body_sun_vector_from_lux, in_eclipse, read_light_sensors
+from apps.adcs.ad import TRIAD
+from apps.adcs.igrf import igrf_eci
+from apps.adcs.sun import (
+    SUN_VECTOR_STATUS,
+    approx_sun_position_ECI,
+    compute_body_sun_vector_from_lux,
+    in_eclipse,
+    read_light_sensors,
+)
 from core import TemplateTask
 from core import state_manager as SM
 from core.data_handler import DataHandler as DH
