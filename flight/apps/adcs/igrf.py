@@ -1,12 +1,12 @@
-# flake8: noqa E741
-# Based on: https://github.com/RoboticExplorationLab/pycubed_circuitpython/blob/master/IGRF/igrf.py
-# Fifth order approximation
+"""
 
-import math
-import time
+Fifth order approximation from the IGRF-13 model.
+Based on: https://github.com/RoboticExplorationLab/pycubed_circuitpython/blob/master/IGRF/igrf.py
+
+"""
+# flake8: noqa E741
 
 import apps.frames as frames
-import board
 from ulab import numpy as np
 
 
@@ -56,10 +56,10 @@ def _igrf13_5(gh, date, latitude_degrees, elongitude_degrees, r_norm_km, cl, sl,
     kmx = 21
 
     r = r_norm_km
-    ct = math.cos(colat * math.pi / 180)
-    st = math.sin(colat * math.pi / 180)
-    cl[0] = math.cos(elongitude_degrees * math.pi / 180)
-    sl[0] = math.sin(elongitude_degrees * math.pi / 180)
+    ct = np.cos(colat * np.pi / 180)
+    st = np.sin(colat * np.pi / 180)
+    cl[0] = np.cos(elongitude_degrees * np.pi / 180)
+    sl[0] = np.sin(elongitude_degrees * np.pi / 180)
     Cd = 1.0
     sd = 0.0
     l = 1
@@ -86,7 +86,7 @@ def _igrf13_5(gh, date, latitude_degrees, elongitude_degrees, r_norm_km, cl, sl,
 
         if m == n:
             if k != 3:
-                one = math.sqrt(1 - 0.5 / fm)
+                one = np.sqrt(1 - 0.5 / fm)
                 j = k - n - 1
                 p[k - 1] = one * st * p[j - 1]
                 q[k - 1] = one * (st * q[j - 1] + ct * p[j - 1])
@@ -94,8 +94,8 @@ def _igrf13_5(gh, date, latitude_degrees, elongitude_degrees, r_norm_km, cl, sl,
                 sl[m - 1] = sl[m - 2] * cl[0] + cl[m - 2] * sl[0]
         else:
             gmm = m**2
-            one = math.sqrt(fn**2 - gmm)
-            two = math.sqrt(gn**2 - gmm) / one
+            one = np.sqrt(fn**2 - gmm)
+            two = np.sqrt(gn**2 - gmm) / one
             three = (fn + gn) / one
             i = k - n
             j = i - n + 1
