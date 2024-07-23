@@ -341,7 +341,7 @@ class SATELLITE_RADIO:
                 tx_message = construct_message(self.gs_req_message_ID)
 
             # TODO: remove
-            print(f"[100][SERIAL OUTPUT] {tx_message}")
+            print(f"[100][SERIAL OUTPUT]:{bytearray([0xff, 0xff, 0x00, 0x00])}{tx_message}")
             # Send a message to GS
             self.sat.RADIO.send(tx_message)
             self.crc_count = 0
