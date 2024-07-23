@@ -1,7 +1,7 @@
 import pytest
 
 import tests.cp_mock  # noqa: F401
-from flight.apps.ad import TRIAD
+from flight.apps.adcs.ad import TRIAD
 
 
 @pytest.mark.parametrize(
