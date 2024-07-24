@@ -41,13 +41,14 @@ class device:
 
 
 class satellite(CubeSat):
-    def __init__(self, enable_middleware, debug) -> None:
+    def __init__(self, enable_middleware, debug, use_socket) -> None:
         self.__middleware_enabled = enable_middleware
         self.__debug = debug
+        self.__use_socket = use_socket
 
         super().__init__()
 
-        self._radio = Radio()
+        self._radio = Radio(self.__use_socket)
         self._sd_card = SD()
         self._burnwires = self.init_device(BurnWires())
         self._payload_uart = self.init_device(Payload())

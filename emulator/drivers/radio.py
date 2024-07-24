@@ -27,7 +27,9 @@ class RadioDebug:
 
 
 class Radio:
-    def __init__(self):
+    def __init__(self, use_socket):
+        self.use_socket = use_socket
+
         self.node = 0
         self.listening = False
 
@@ -64,20 +66,29 @@ class Radio:
         self.listening = False
 
     def send(self, packet, destination=0x00, keep_listening=True):
-        tx_time = self._tx_time_bias + (random.random() - 0.5) * self._tx_time_dev
-        time.sleep(tx_time)
-        payload = bytearray(len(packet) + 4)
-        payload[0] = destination
-        payload[1] = 0xFF
-        payload[2] = 0x00
-        payload[3] = 0x00
-        payload[4:] = packet
-        self.test.last_tx_packet = payload
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((socket.gethostname(), 5500))
-            s.sendall(payload)
-
-        return None
+        if self.use_socket:
+            tx_time = self._tx_time_bias + (random.random() - 0.5) * self._tx_time_dev
+            time.sleep(tx_time)
+            payload = bytearray(len(packet) + 4)
+            payload[0] = destination
+            payload[1] = 0xFF
+            payload[2] = 0x00
+            payload[3] = 0x00
+            payload[4:] = packet
+            self.test.last_tx_packet = payload
+            try:
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    s.connect((socket.gethostname(), 5500))
+                    s.sendall(payload)
+                    return True
+            except Exception as e:
+                print(e)
+                return False
+        else:
+            tx_time = self._tx_time_bias + (random.random() - 0.5) * self._tx_time_dev
+            time.sleep(tx_time)
+            self.test.last_tx_packet = packet
+        return True
 
     async def send_with_ack(self, packet, keep_listening=True):
         await self.send(packet)
