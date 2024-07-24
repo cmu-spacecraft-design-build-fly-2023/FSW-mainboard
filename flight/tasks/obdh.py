@@ -28,7 +28,7 @@ class Task(TemplateTask):
             # TODO Temporarily start global state switch here
             # TODO should have a verification checklist in monitor and switch from there
             SM.switch_to("NOMINAL")
-        elif SM.current_state == "NOMINAL":
-            self.SD_stored_volume = DH.compute_total_size_files()
+        # elif SM.current_state == "NOMINAL":
+        #     self.SD_stored_volume = DH.compute_total_size_files()
 
-        print(f"[{self.ID}][{self.name}] Stored files: {self.SD_stored_volume} bytes.")
+        # print(f"[{self.ID}][{self.name}] Stored files: {self.SD_stored_volume} bytes.")
