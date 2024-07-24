@@ -343,7 +343,7 @@ class SATELLITE_RADIO:
 
             # TODO: remove
             msg = hexlify(bytes([0xFF, 0xFF, 0x00, 0x00]) + tx_message)
-            print(b"[100][SERIAL OUTPUT]:" + {msg})
+            print(f"[100][SERIAL OUTPUT]:{msg}")
             # Send a message to GS
             self.sat.RADIO.send(tx_message)
             self.crc_count = 0
