@@ -11,6 +11,7 @@ Authors: DJ Morvay, Akshat Sahay
 # Common CircuitPython Libs
 import os
 import time
+from binascii import hexlify
 
 # Argus-1 Lib
 from apps.comms.radio_protocol import IMAGES, Definitions, construct_message
@@ -341,7 +342,8 @@ class SATELLITE_RADIO:
                 tx_message = construct_message(self.gs_req_message_ID)
 
             # TODO: remove
-            print(f"[100][SERIAL OUTPUT]:{bytes([0xff, 0xff, 0x00, 0x00]) + tx_message}")
+            msg = hexlify(bytes([0xFF, 0xFF, 0x00, 0x00]) + tx_message)
+            print(b"[100][SERIAL OUTPUT]:" + {msg})
             # Send a message to GS
             self.sat.RADIO.send(tx_message)
             self.crc_count = 0
