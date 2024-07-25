@@ -38,7 +38,7 @@ class Task(TemplateTask):
             )
 
             readings = {
-                "time": int(time.time()),
+                "time": time.time(),
                 "status": self.status,
                 "x": self.sun_vector[0],
                 "y": self.sun_vector[1],

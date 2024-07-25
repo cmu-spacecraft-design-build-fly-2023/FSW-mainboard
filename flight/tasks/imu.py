@@ -48,7 +48,7 @@ class Task(TemplateTask):
             # SATELLITE.IMU.disable()
 
             log_data = {
-                "time": int(time.time()),
+                "time": time.time(),
                 "accel_x": readings["accel"][0],
                 "accel_y": readings["accel"][1],
                 "accel_z": readings["accel"][2],

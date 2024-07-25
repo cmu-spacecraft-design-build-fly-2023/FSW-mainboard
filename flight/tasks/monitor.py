@@ -47,7 +47,7 @@ class Task(TemplateTask):
 
         # Read data for monitoring
         readings = {
-            "time": int(time.time()),
+            "time": time.time(),
             "system_status": 0,
             "batt_soc": self.batt_soc,
             "current": self.current,
