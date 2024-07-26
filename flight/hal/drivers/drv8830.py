@@ -48,7 +48,7 @@ Implementation Notes
 from adafruit_bus_device.i2c_device import I2CDevice
 from adafruit_register.i2c_bit import ROBit, RWBit
 from adafruit_register.i2c_bits import RWBits
-from hal.drivers.diagnostics.diagnostics import Diagnostics
+from hal.drivers.middleware.errors import Errors
 from hal.drivers.middleware.generic_driver import Driver
 
 # DEVICE REGISTER MAP
@@ -293,18 +293,18 @@ class DRV8830(Driver):
         faults_flag, faults = self.fault
 
         if not faults_flag:
-            return [Diagnostics.NOERROR]
+            return [Errors.NOERROR]
 
         errors: list[int] = []
 
         if "OCP" in faults:
-            errors.append(Diagnostics.DRV8830_OVERCURRENT_EVENT)
+            errors.append(Errors.DRV8830_OVERCURRENT_EVENT)
         if "UVLO" in faults:
-            errors.append(Diagnostics.DRV8830_UNDERVOLTAGE_LOCKOUT)
+            errors.append(Errors.DRV8830_UNDERVOLTAGE_LOCKOUT)
         if "OTS" in faults:
-            errors.append(Diagnostics.DRV8830_OVERTEMPERATURE_CONDITION)
+            errors.append(Errors.DRV8830_OVERTEMPERATURE_CONDITION)
         if "ILIMIT" in faults:
-            errors.append(Diagnostics.DRV8830_EXTENDED_CURRENT_LIMIT_EVENT)
+            errors.append(Errors.DRV8830_EXTENDED_CURRENT_LIMIT_EVENT)
 
         self.clear_faults()
 
@@ -319,14 +319,14 @@ class DRV8830(Driver):
         throttle_volts_val = self.throttle_volts()
         if throttle_volts_val is not None:
             if (throttle_volts_val < -5.06) or (throttle_volts_val > 5.06):
-                return Diagnostics.DRV8830_THROTTLE_OUTSIDE_RANGE
+                return Errors.DRV8830_THROTTLE_OUTSIDE_RANGE
 
         throttle_raw_val = self.throttle_raw()
         if throttle_raw_val is not None:
             if (throttle_raw_val < -63) or (throttle_raw_val > 63):
-                return Diagnostics.DRV8830_THROTTLE_OUTSIDE_RANGE
+                return Errors.DRV8830_THROTTLE_OUTSIDE_RANGE
 
-        return Diagnostics.NOERROR
+        return Errors.NOERROR
 
     def run_diagnostics(self) -> list[int] | None:
         """run_diagnostic_test: Run all tests for the component"""
@@ -337,7 +337,7 @@ class DRV8830(Driver):
 
         error_list = list(set(error_list))
 
-        if Diagnostics.NOERROR not in error_list:
+        if Errors.NOERROR not in error_list:
             self.errors_present = True
 
         return error_list
