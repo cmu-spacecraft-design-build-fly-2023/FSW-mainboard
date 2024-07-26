@@ -23,7 +23,14 @@ then
     python3 build_tools/build.py && python3 build_tools/move_to_board.py
 elif [ "$1" == "emulate" ];
 then
-    python3 build_tools/build-emulator.py
+    if [[ -z $2 ]];
+    then
+        python3 build_tools/build-emulator.py
+    elif [ "$2" == "faketime" ];
+    then
+        export fake_time="y"
+        python3 build_tools/build-emulator.py
+    fi
     cd build/ && python3 main.py
     cd -
 elif [ "$1" == "simulate" ];
