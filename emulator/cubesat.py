@@ -36,7 +36,7 @@ class CubeSat:
         self._light_sensor_xm = None
         self._light_sensor_yp = None
         self._light_sensor_ym = None
-        self._light_sensor_zp = None
+        self._light_sensor_zm = None
         self._rtc = None
         self._radio = None
         self._sd_card = None
@@ -165,11 +165,11 @@ class CubeSat:
         return self._light_sensor_ym
 
     @property
-    def LIGHT_SENSOR_ZP(self):
-        """LIGHT_SENSOR_ZP: Returns the light sensor in the z+ direction
+    def LIGHT_SENSOR_ZM(self):
+        """LIGHT_SENSOR_ZM: Returns the light sensor in the z- direction
         :return: object or None
         """
-        return self._light_sensor_zp
+        return self._light_sensor_zm
 
     @property
     def RTC(self):
