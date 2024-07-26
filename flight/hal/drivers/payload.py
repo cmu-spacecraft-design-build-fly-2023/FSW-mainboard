@@ -9,7 +9,7 @@ Author(s): Harry Rosmann
 """
 
 from digitalio import DigitalInOut
-from hal.drivers.diagnostics.diagnostics import Diagnostics
+from hal.drivers.middleware.errors import Errors
 from hal.drivers.middleware.generic_driver import Driver
 
 
@@ -45,4 +45,4 @@ class PayloadUART(Driver):
 
     def run_diagnostics(self) -> list[int] | None:
         """run_diagnostic_test: Run all tests for the component"""
-        return [Diagnostics.NOERROR]
+        return [Errors.NOERROR]

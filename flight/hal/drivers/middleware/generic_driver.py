@@ -1,5 +1,6 @@
+import time
+
 from digitalio import DigitalInOut
-from hal.drivers.diagnostics.diagnostics import Diagnostics
 
 FAULT_HANDLE_RETRIES = 1
 
@@ -18,14 +19,14 @@ class driver_cant_handle_exception(Exception):
         return f"{type(self.exception).__name__}: {self.exception}"
 
 
-class Driver(Diagnostics):
+class Driver:
     # set of strings containing method names
     # dict of method name to checker function and method-specific exception to give to middlware
 
     def __init__(self, enable: DigitalInOut = None) -> None:
         self.handleable = {}
         self.checkers = {}
-        super().__init__(enable)
+        self._enable = enable
 
     def handler(self, method):
         if method.__name__ not in self.handleable:
@@ -60,33 +61,6 @@ class Driver(Diagnostics):
 
         return handle
 
-    # def handle_property(self, name):
-    #     checker, m_exception = self.handleable[name]
-    #     try:
-    #         res = getattr(self, name)
-    #         flags = self.get_flags
-    #         if checker(res, flags):
-    #             return res
-    #         else:
-    #             raise m_exception("erroneus result")
-    #     except Exception:
-    #         flags = self.get_flags
-    #         for flag in flags:
-    #             fixer = flags[flag]
-    #             if fixer is not None:
-    #                 fixer()
-    #         try:
-    #             if val := self.retry(name, None, None):
-    #                 flags = self.get_flags
-    #                 if checker(val, flags):
-    #                     return val
-    #                 else:
-    #                     raise m_exception("erroneus result")
-    #             else:
-    #                 raise m_exception("couldn't retry")
-    #         except Exception as e:
-    #             raise m_exception(e)
-
     def get_flags(self) -> dict:
         """
         should return a dictionary of (raised flag -> fixer function)
@@ -111,3 +85,29 @@ class Driver(Diagnostics):
             except Exception:
                 tries += 1
         return None  # Fault could not be handled after retries
+
+    def run_diagnostics(self) -> list[int] | None:
+        """run_diagnostic_test: Run all tests for the component"""
+        raise NotImplementedError("Subclasses must implement run_diagnostic_test method")
+
+    @property
+    def resetable(self):
+        """resetable: Check if the component is resetable"""
+        return self._enable is not None
+
+    def reset(self) -> None:
+        """reset: Reset the component by quickly turning off and on"""
+        if self._enable is not None:
+            self._enable.value = False
+            time.sleep(self.RESET_DELAY)
+            self._enable.value = True
+
+    def enable(self):
+        """enable: Enable the component"""
+        if self._enable is not None:
+            self._enable.value = True
+
+    def disable(self):
+        """disable: Disable the component"""
+        if self._enable is not None:
+            self._enable.value = False
