@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from simulation.argusloop.spacecraft import Spacecraft
 
@@ -20,14 +20,13 @@ class Simulator:
             "third_body": True,
         }
         self.time = self.epoch_time
-        # self.u = np.zeros(3)
 
         self.spacecraft = Spacecraft(config)
 
-    # def advance_to_time(self, time: datetime):
-    #     time_diff = time - self.time
-    #     secs = time_diff.total_seconds()
-    #     iters = int(secs / self.dt)
-    #     for _ in range(iters):
-    #         self.spacecraft.advance(self.u)
-    #     self.time += timedelta(seconds=(iters * self.dt))
+    def advance_to_time(self, time: datetime):
+        time_diff = time - self.time
+        secs = time_diff.total_seconds()
+        iters = int(secs / self.dt)
+        for _ in range(iters):
+            self.spacecraft.advance([0.0, 0.0, 0.0])
+        self.time += timedelta(seconds=(iters * self.dt))

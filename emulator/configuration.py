@@ -10,7 +10,7 @@ from hal.simulator import Simulator
 DEBUG_MODE = False
 EN_MIDDLEWARE = True
 SOCKET_RADIO = False
-SIMULATION = False
+SIMULATION = True
 
 
 SPACECRAFT: Simulator = None
