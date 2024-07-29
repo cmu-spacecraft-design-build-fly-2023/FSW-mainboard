@@ -30,6 +30,6 @@ class Simulator:
         time_diff = time - self.time
         secs = time_diff.total_seconds()
         iters = int(secs / self.dt)
-        for i in range(iters):
+        for _ in range(iters):
             self.spacecraft.advance(self.u)
         self.time += timedelta(seconds=(iters * self.dt))
