@@ -60,6 +60,19 @@ def create_build(source_folder, emulator_folder):
             shutil.copy2(source_path, build_path)
             print(f"Copied {source_path} to {build_path}")
 
+    # copy the simulation files into build/simulation
+    sim_folder = "build/simulation"
+    for root, dirs, files in os.walk(simulation_folder):
+        for file in files:
+            relpath = os.path.relpath(root, simulation_folder)
+            print(relpath)
+            if relpath.startswith("argusloop") or relpath.startswith("data") or relpath.startswith("configuration"):
+                source_path = os.path.join(root, file)
+                build_path = os.path.join(sim_folder, os.path.relpath(source_path, simulation_folder))
+                os.makedirs(os.path.dirname(build_path), exist_ok=True)
+                shutil.copy2(source_path, build_path)
+                print(f"Copied {source_path} to {build_path}")
+
     shutil.copy2("emulator/fake_core/data_handler.py", "build/lib/core/data_handler.py")
 
     # Create main.py file with single import statement "import main_module"
@@ -68,6 +81,8 @@ def create_build(source_folder, emulator_folder):
         f.write("import sys\n")
         f.write("if '/lib' not in sys.path:\n")
         f.write("   sys.path.insert(0, './lib')\n")
+        f.write("if './simulation' not in sys.path:\n")
+        f.write("   sys.path.insert(0, './simulation')\n")
         f.write("import hal.cp_mock\n")
         f.write("import lib.main_module\n")
 
@@ -131,9 +146,11 @@ if __name__ == "__main__":
         help="emulator folder path",
         required=False,
     )
+    parser.add_argument("-a", "--simulation_folder", type=str, default="simulation", help="ArgusLoop filepath", required=False)
     args = parser.parse_args()
 
     source_folder = args.source_folder
     emulator_folder = args.emulator_folder
+    simulation_folder = args.simulation_folder
 
     build_folder = create_build(source_folder, emulator_folder)

@@ -41,10 +41,11 @@ class device:
 
 
 class satellite(CubeSat):
-    def __init__(self, enable_middleware, debug, use_socket) -> None:
+    def __init__(self, enable_middleware, debug, use_socket, sim_spacecraft=None) -> None:
         self.__middleware_enabled = enable_middleware
         self.__debug = debug
         self.__use_socket = use_socket
+        self._spacecraft = sim_spacecraft
 
         super().__init__()
 
@@ -70,7 +71,7 @@ class satellite(CubeSat):
         accel = array([1.0, 2.0, 3.0])
         mag = array([4.0, 3.0, 1.0])
         gyro = array([0.0, 0.0, 0.0])
-        self._imu = self.init_device(IMU(accel=accel, mag=mag, gyro=gyro, temp=20))
+        self._imu = self.init_device(IMU(accel=accel, mag=mag, gyro=gyro, temp=20, sim=self._spacecraft))
         self._imu.enable()
 
         self._jetson_monitor = self.init_device(PowerMonitor(4, 0.05))
