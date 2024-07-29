@@ -1,6 +1,3 @@
-from datetime import datetime
-from time import time
-
 from hal.cubesat import CubeSat
 from hal.emulator import satellite
 from hal.simulator import Simulator
