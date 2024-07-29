@@ -65,7 +65,6 @@ def create_build(source_folder, emulator_folder):
     for root, dirs, files in os.walk(simulation_folder):
         for file in files:
             relpath = os.path.relpath(root, simulation_folder)
-            print(relpath)
             if relpath.startswith("argusloop") or relpath.startswith("data") or relpath.startswith("configuration"):
                 source_path = os.path.join(root, file)
                 build_path = os.path.join(sim_folder, os.path.relpath(source_path, simulation_folder))
