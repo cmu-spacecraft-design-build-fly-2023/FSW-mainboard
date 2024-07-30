@@ -1,6 +1,8 @@
 import realtime
 
 time_offset = 0
+tzname = realtime.tzname
+daylight = realtime.daylight
 
 
 def time() -> int:
@@ -30,3 +32,15 @@ def struct_time(data):
 def sleep(seconds):
     global time_offset
     time_offset += seconds
+
+
+def localtime(seconds=None):
+    return realtime.localtime(seconds)
+
+
+def perf_counter():
+    return realtime.perf_counter()
+
+
+def strftime(*args, **kwargs):
+    return realtime.strftime(*args, **kwargs)
