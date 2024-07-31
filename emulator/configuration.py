@@ -1,3 +1,5 @@
+import os
+
 from hal.cubesat import CubeSat
 from hal.emulator import satellite
 from hal.simulator import Simulator
@@ -10,7 +12,7 @@ from hal.simulator import Simulator
 DEBUG_MODE = False
 EN_MIDDLEWARE = True
 SOCKET_RADIO = False
-SIMULATION = True
+SIMULATION = (os.environ["sim"] == "y") if "sim" in os.environ else False
 
 
 SPACECRAFT: Simulator = None
