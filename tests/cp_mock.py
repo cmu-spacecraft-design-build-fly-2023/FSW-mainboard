@@ -4,6 +4,7 @@ import sys
 # Add necessary paths
 sys.path.append("emulator/cp/")
 sys.path.append("flight/")
+sys.path.append("simulation/")
 
 # Alias 'hal' to 'emulator'
 sys.modules["hal"] = importlib.import_module("emulator")

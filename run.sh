@@ -18,6 +18,14 @@ chmod +x $MPY_EXEC
 
 echo "$MPY_EXEC is now executable"
 
+if [[ -z $2 ]];
+then
+    export fake_time="n"
+elif [ "$2" == "faketime" ];
+then
+    export fake_time="y"
+fi
+
 if [[ -z $1 ]];
 then
     python3 build_tools/build.py && python3 build_tools/move_to_board.py
@@ -28,5 +36,8 @@ then
     cd -
 elif [ "$1" == "simulate" ];
 then
-    echo "Simulator still in the works :)"
+    export sim="y"
+    python3 build_tools/build-emulator.py
+    cd build/ && python3 main.py
+    cd -
 fi

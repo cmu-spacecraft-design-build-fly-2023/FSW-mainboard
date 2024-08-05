@@ -6,3 +6,11 @@ flake8
 black
 isort
 pre-commit
+brahe @ git+https://github.com/Ibrassow/brahe@click
+scipy>=1.3.3
+spaceweather>=0.2.3
+nrlmsise00>=0.1.2
+pandas
+pyIGRF>=0.3.3
+meshcat>=0.3.2
+trimesh>=3.19.4
