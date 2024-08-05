@@ -12,6 +12,8 @@ from hal.simulator import Simulator
 DEBUG_MODE = False
 EN_MIDDLEWARE = True
 SOCKET_RADIO = False
+
+# this environment value set when running './run.sh'
 SIMULATION = (os.environ["sim"] == "y") if "sim" in os.environ else False
 
 
